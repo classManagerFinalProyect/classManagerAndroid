@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-
+import com.example.classmanagerandroid.Navigation.Destinations
 
 
 @Composable
@@ -91,6 +91,8 @@ fun defaultAppBar(
                             DropdownMenuItem(
                                 onClick = {
                                     expanded.value = false
+                                    navController.navigate("${Destinations.ViewMembersClass.route}/${mainViewModelClass.selectedClass.id}")
+
                                 },
                                 content = {
                                     Text(text = "Ver miembros")

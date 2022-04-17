@@ -42,15 +42,18 @@ fun MainCourse(
         mainViewModelCourse.getSelectedCourse(courseId)
         getCourse.value = false
     }
+    val (getInformation, onValueChangeGetInformation) = remember { mutableStateOf(false) }
 
     val (IdOfUser,onValueChangeIdOfUser) = remember { mutableStateOf("") }
     val (addNewUser,onValueChangeAddNewUser) = remember { mutableStateOf(false) }
-    val (getMoreInformation,onValueChangeGetMoreInformation) = remember { mutableStateOf(false) }
     val (textSelectedItem,onValueChangeTextSelectedItem) = remember { mutableStateOf("") }
-    var selectedRolUser by remember { mutableStateOf(mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol) }
+    val (viewMembers,onValueChangeViewMembers) = remember { mutableStateOf(false) }
 
-    if (getMoreInformation) {
-
+    if(getInformation) {
+        getInformation(
+            onValueChangeGetInformation = onValueChangeGetInformation,
+            mainViewModelCourse = mainViewModelCourse
+        )
     }
 
     if (addNewUser) {
@@ -65,7 +68,7 @@ fun MainCourse(
                 mainViewModelCourse.addNewUser(IdOfUser, context, textSelectedItem)
                 onValueChangeAddNewUser(false)
             },
-            rol = selectedRolUser
+            rol = mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol
         )
     }
 
@@ -132,7 +135,7 @@ fun MainCourse(
                         mainViewModelCourse = mainViewModelCourse,
                         onValueChangeDeleteItem = onValueChangeDeleteItem,
                         onValueChangeAddNewUser = onValueChangeAddNewUser,
-                        onValueChangeGetMoreInformation = onValueChangeGetMoreInformation
+                        onValueChangeGetInformation = onValueChangeGetInformation
                     )
                 },
                 content = {
@@ -259,7 +262,7 @@ private fun MainAppBar(
     mainViewModelCourse: MainViewModelCourse,
     onValueChangeDeleteItem: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
-    onValueChangeGetMoreInformation: (Boolean) -> Unit
+    onValueChangeGetInformation: (Boolean) -> Unit
 ) {
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
@@ -269,7 +272,7 @@ private fun MainAppBar(
                 mainViewModelCourse = mainViewModelCourse,
                 onValueChangeDeleteItem = onValueChangeDeleteItem,
                 onValueChangeAddNewUser = onValueChangeAddNewUser,
-                onValueChangeGetMoreInformation = onValueChangeGetMoreInformation,
+                onValueChangeGetInformation = onValueChangeGetInformation,
             )
         }
         SearchWidgetState.OPENED -> {

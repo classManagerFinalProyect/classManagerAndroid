@@ -109,8 +109,11 @@ class MainViewModelClass:ViewModel() {
                 db.collection("classes")
                     .document(selectedClass.id)
                     .set(selectedClass).addOnSuccessListener {
-                        CurrentUser.updateDates()
-                        navController.navigate("${Destinations.Practice.route}/${idOfDocument}")
+                        CurrentUser.updateDates(
+                            onFinished = {
+                                navController.navigate("${Destinations.Practice.route}/${idOfDocument}")
+                            }
+                        )
                     }
             }
         }
@@ -166,8 +169,11 @@ class MainViewModelClass:ViewModel() {
 
                 selectedPractices.clear()
 
-                CurrentUser.uploadCurrentUser()
-                navController.popBackStack()
+                CurrentUser.uploadCurrentUser(
+                    onFinished = {
+                        navController.popBackStack()
+                    }
+                )
                 Toast.makeText(context,"La clase se ha eliminado correctamente", Toast.LENGTH_SHORT).show()
             }
     }
@@ -237,8 +243,11 @@ class MainViewModelClass:ViewModel() {
                                     .document(selectedClass.id)
                                     .set(selectedClass)
                                     .addOnSuccessListener {
-                                        CurrentUser.updateDates()
-                                        Toast.makeText(context,"El usuario se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                        CurrentUser.updateDates(
+                                            onFinished = {
+                                                Toast.makeText(context,"El usuario se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                            }
+                                        )
                                     }
                             }
                     }

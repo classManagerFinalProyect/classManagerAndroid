@@ -23,7 +23,7 @@ fun defaultAppBar(
     onSearchClicked: () -> Unit,
     navController: NavController,
     mainViewModelEvent: MainViewModelEvent,
-    onValueChangeDeleteItem: (Boolean) -> Unit,
+    onValueChangeDeleteItems: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
 ) {
     val expanded = remember { mutableStateOf(false) }
@@ -31,7 +31,7 @@ fun defaultAppBar(
 
     TopAppBar(
         title = {
-            Text(text = "${"mainViewModelEvent.selectedEvent.name"}")
+            Text(text = "List of events")
         },
         actions = {
             IconButton(
@@ -66,54 +66,11 @@ fun defaultAppBar(
                             DropdownMenuItem(
                                 onClick = {
                                     expanded.value = false
-                                },
-                                content = {
-                                    Text(text = "Ver info")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                },
-                                content = {
-                                    Text(text = "Ver ayuda")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                    navController.navigate(Destinations.Events.route)
-                                },
-                                content = {
-                                    Text(text = "Lista de eventos")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                },
-                                content = {
-                                    Text(text = "Ver miembros")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                    onValueChangeAddNewUser(true)
-
-                                },
-                                content = {
-                                    Text(text = "Añadir usuario")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                    onValueChangeDeleteItem(true)
+                                    onValueChangeDeleteItems(true)
                                 },
                                 content = {
                                     Text(
-                                        text = "Eliminar curso",
+                                        text = "Eliminar todos los eventos",
                                         color = Color.Red
                                     )
                                 }

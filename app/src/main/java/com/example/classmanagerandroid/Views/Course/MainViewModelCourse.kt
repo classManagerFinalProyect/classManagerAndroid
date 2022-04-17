@@ -13,6 +13,7 @@ import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.auth
 import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.db
+import com.example.classmanagerandroid.data.network.EventImplement.Companion.deleteEventById
 import com.example.classmanagerandroid.data.remote.Course
 import com.example.classmanagerandroid.data.remote.appUser
 import com.example.classmanagerandroid.data.remote.Class
@@ -20,7 +21,7 @@ import com.example.classmanagerandroid.data.remote.Class
 
 class MainViewModelCourse: ViewModel() {
 
-    var selectedCourse: Course = Course(arrayListOf(), arrayListOf(),"","","")
+    var selectedCourse: Course = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","")
     val selectedClasses: MutableList<Class> = mutableListOf()
     lateinit var addNewUser: appUser
     var rolOfSelectedUserInCurrentCourse: RolUser = RolUser(id = "", rol = "Sin asignar")
@@ -47,6 +48,7 @@ class MainViewModelCourse: ViewModel() {
                     Course(
                         name = it.get("name") as String,
                         classes = it.get("classes") as MutableList<String>,
+                        events = it.get("events") as MutableList<String>,
                         users = listOfRolUser,
                         description = it.get("description") as String,
                         id = it.id
@@ -68,11 +70,22 @@ class MainViewModelCourse: ViewModel() {
                 .document(idOfCourse)
                 .get()
                 .addOnSuccessListener {
+                    val users = it.get("users") as  MutableList<HashMap<String,String>>
+                    val listOfRolUser: MutableList<RolUser> = mutableListOf()
+                    users.forEach { rolUser ->
+                        listOfRolUser.add(
+                            RolUser(
+                                id = rolUser.get("id") as String,
+                                rol = rolUser.get("rol") as String
+                            )
+                        )
+                    }
+
                     selectedClasses.add(
                         Class(
                             name = it.get("name") as String,
                             idPractices = it.get("idPractices") as MutableList<String>,
-                            users = it.get("admins") as MutableList<RolUser>,
+                            users = listOfRolUser,
                             description = it.get("description") as String,
                             id = it.id,
                             idOfCourse = it.get("idOfCourse") as String
@@ -96,17 +109,24 @@ class MainViewModelCourse: ViewModel() {
                     deleteClass(it.id)
                 }
                 currentUser.courses.remove(selectedCourse.id)
-
                 selectedCourse.users.forEach {
                     deleteIfOfCourseByUserId(it.id)
                 }
-
+                selectedCourse.events.forEach{
+                    deleteEventById(
+                        idOfEvent = it,
+                        onFinished = {}
+                    )
+                }
                 CurrentUser.myCourses.remove(selectedCourse)
-                selectedCourse = Course(arrayListOf(), arrayListOf(),"","","")
+                selectedCourse = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","")
                 selectedClasses.clear()
 
-                CurrentUser.uploadCurrentUser()
-                navController.popBackStack()
+                CurrentUser.uploadCurrentUser(
+                    onFinished = {
+                        navController.popBackStack()
+                    }
+                )
                 Toast.makeText(context,"El curso se ha eliminado correctamente",Toast.LENGTH_SHORT).show()
             }
     }
@@ -160,15 +180,22 @@ class MainViewModelCourse: ViewModel() {
     ) {
         val document = db.collection("classes").document()
         val idOfDocument = document.id
-        document.set(
-            hashMapOf(
-                "admins" to  mutableListOf("${auth.currentUser?.uid}"),
-                "idPractices" to mutableListOf<String>(),
-                "description" to textDescription,
-                "name" to textNameOfClass,
-                "idOfCourse" to itemSelectedCurse.id
+        val newClass =Class(
+            name = textNameOfClass,
+            id = document.id,
+            idOfCourse = itemSelectedCurse.id,
+            description = textDescription,
+            idPractices = mutableListOf<String>(),
+            users =  mutableListOf(
+                RolUser(
+                    id = "${auth.currentUser?.uid}",
+                    rol = "admin"
+                )
             )
-        ).addOnSuccessListener {
+        )
+        document
+            .set(newClass)
+            .addOnSuccessListener {
             if(!itemSelectedCurse.name.equals("Sin asignar") ) {
                 itemSelectedCurse.classes.add(idOfDocument)
                 db.collection("course")
@@ -182,9 +209,12 @@ class MainViewModelCourse: ViewModel() {
                 .document(auth.currentUser?.uid.toString())
                 .set(currentUser)
                 .addOnSuccessListener {
-                    CurrentUser.updateDates()
-                    Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate("${Destinations.Class.route}/${idOfDocument}")
+                    CurrentUser.updateDates(
+                        onFinished = {
+                            Toast.makeText(context,"La calse ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                            navController.navigate("${Destinations.Class.route}/${idOfDocument}")
+                        }
+                    )
                 }
         }
     }
@@ -249,8 +279,11 @@ class MainViewModelCourse: ViewModel() {
                                     .document(selectedCourse.id)
                                     .set(selectedCourse)
                                     .addOnSuccessListener {
-                                        CurrentUser.updateDates()
-                                        Toast.makeText(context,"El usuario se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                        CurrentUser.updateDates(
+                                            onFinished = {
+                                                Toast.makeText(context,"El usuario se ha agregado correctamente", Toast.LENGTH_SHORT).show()
+                                            }
+                                        )
                                     }
                             }
                     }
@@ -269,7 +302,6 @@ class MainViewModelCourse: ViewModel() {
         selectedCourse.users.forEach {
             if (it.id.equals(idOfUser)) rolOfSelectedUserInCurrentCourse = it
         }
-
     }
 
     //Search Bar

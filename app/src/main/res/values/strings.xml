@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">classManagerAndroid</string>
+    <string name="app_name">Class Manager</string>
     <string name="title_activity_maps">MapsActivity</string>
 </resources>

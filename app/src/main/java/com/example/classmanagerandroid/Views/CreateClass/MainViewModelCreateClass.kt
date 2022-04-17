@@ -64,9 +64,12 @@ class MainViewModelCreateClass: ViewModel() {
                                     user = CurrentUser.currentUser,
                                     onFinished = {
                                         if (it) {
-                                            CurrentUser.updateDates()
-                                            Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                            navController.navigate(Destinations.MainAppView.route)
+                                            CurrentUser.updateDates(
+                                                onFinished = {
+                                                    Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                                                    navController.navigate(Destinations.MainAppView.route)
+                                                }
+                                            )
                                         }
                                     }
                                 )
@@ -80,9 +83,12 @@ class MainViewModelCreateClass: ViewModel() {
                             user = CurrentUser.currentUser,
                             onFinished = {
                                 if (it) {
-                                    CurrentUser.updateDates()
-                                    Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                    navController.navigate(Destinations.MainAppView.route)
+                                    CurrentUser.updateDates(
+                                        onFinished = {
+                                            Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                                            navController.navigate(Destinations.MainAppView.route)
+                                        }
+                                    )
                                 }
                             }
                         )
@@ -90,27 +96,6 @@ class MainViewModelCreateClass: ViewModel() {
                 }
             }
         )
-/*
-        document.set(newClass)
-            .addOnSuccessListener {
-            if(!itemSelectedCurse.name.equals("Sin asignar") ) {
-                itemSelectedCurse.classes.add(idOfDocument)
-                db.collection("course")
-                    .document(itemSelectedCurse.id)
-                    .set(itemSelectedCurse)
-            }
-
-            CurrentUser.currentUser.classes.add(idOfDocument)
-
-            db.collection("users")
-                .document(auth.currentUser?.uid.toString())
-                .set(CurrentUser.currentUser)
-                .addOnSuccessListener {
-                    CurrentUser.updateDates()
-                    Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate(Destinations.MainAppView.route)
-                }
-        }*/
     }
 
 }

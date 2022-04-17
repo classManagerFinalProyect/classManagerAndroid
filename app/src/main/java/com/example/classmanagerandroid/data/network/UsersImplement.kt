@@ -10,10 +10,10 @@ import com.google.firebase.storage.ktx.storage
 
 class UsersImplement {
     companion object {
-        var auth: FirebaseAuth = Firebase.auth
-        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        var storage = Firebase.storage
-        var storageReference: StorageReference = storage.reference
+        private var auth: FirebaseAuth = Firebase.auth
+        private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        private var storage = Firebase.storage
+        private var storageReference: StorageReference = storage.reference
 
         fun updateUser(
             idOfUser: String,
@@ -30,13 +30,22 @@ class UsersImplement {
 
         fun getUserById(
             idOfUser: String,
-            onFinished: (Boolean) -> Unit
+            onFinished: (Boolean, appUser) -> Unit
         ) {
             db.collection("users")
                 .document(idOfUser)
                 .get()
                 .addOnSuccessListener {
-                    onFinished(true)
+                   val user = appUser(
+                        id = it.get("id") as String,
+                        description = it.get("description") as String,
+                        name = it.get("name") as String,
+                        email = it.get("email") as String,
+                        imgPath = it.get("imgPath") as String,
+                        classes = it.get("classes") as MutableList<String>,
+                        courses = it.get("courses") as MutableList<String>
+                    )
+                    onFinished(true, user)
                 }
         }
     }

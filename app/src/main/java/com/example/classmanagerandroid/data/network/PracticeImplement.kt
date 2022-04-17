@@ -9,10 +9,10 @@ import com.google.firebase.storage.ktx.storage
 
 class PracticeImplement {
     companion object {
-        var auth: FirebaseAuth = Firebase.auth
-        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        var storage = Firebase.storage
-        var storageReference: StorageReference = storage.reference
+        private var auth: FirebaseAuth = Firebase.auth
+        private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        private var storage = Firebase.storage
+        private var storageReference: StorageReference = storage.reference
 
 
         fun deletePracticeById(

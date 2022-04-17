@@ -6,8 +6,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.auth
 import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.db
+import com.example.classmanagerandroid.data.network.UsersImplement.Companion.getUserById
+import com.example.classmanagerandroid.data.remote.appUser
 import java.util.regex.Pattern
 
 class MainViewModelRegister: ViewModel() {
@@ -54,11 +58,34 @@ class MainViewModelRegister: ViewModel() {
                 )
             )
             .addOnSuccessListener {
-                navController.popBackStack()
+                saveCurrentUser(
+                    onFinished = {
+                        navController.navigate(Destinations.MainAppView.route)
+                    }
+                )
             }
     }
 
-
+    fun saveCurrentUser(
+        onFinished: () -> Unit
+    ) {
+        getUserById(
+            idOfUser = auth.currentUser?.uid.toString(),
+            onFinished = { finish, user ->
+                if(finish) {
+                    CurrentUser.currentUser = user
+                    CurrentUser.updateDates(
+                        onFinished = {
+                            onFinished()
+                        }
+                    )
+                }
+                else {
+                    Log.d("Error tip get","No se ha podido obtener el usuario")
+                }
+            }
+        )
+    }
 
 
 

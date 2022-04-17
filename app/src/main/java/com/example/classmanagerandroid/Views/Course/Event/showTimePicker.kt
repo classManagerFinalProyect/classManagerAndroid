@@ -3,18 +3,27 @@ package com.example.classmanagerandroid.Views.Course.Event
 import android.app.TimePickerDialog
 import android.content.Context
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import java.util.*
 
 @Composable
-fun showTimePicker(context: Context){
+fun showTimePicker(
+    context: Context,
+    textTime: String,
+    onValueChangeTextTime: (String) -> Unit,
+    label: String,
+    placeholder: String
+){
 
     val calendar = Calendar.getInstance()
     val hour = calendar[Calendar.HOUR_OF_DAY]
@@ -24,23 +33,40 @@ fun showTimePicker(context: Context){
     val timePickerDialog = TimePickerDialog(
         context,
         {_, hour : Int, minute: Int ->
-            time.value = "$hour:$minute"
+            onValueChangeTextTime("$hour:$minute")
         }, hour, minute, false
     )
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(PaddingValues(start = 30.dp, end = 30.dp)),
         content = {
-            Text(text = "Selected Time: ${time.value}")
-            Spacer(modifier = Modifier.size(16.dp))
-            Button(
-                onClick = {
-                    timePickerDialog.show()
-                },
-                content =  {
-                    Text(text = "Open Time Picker")
+            OutlinedTextField(
+                value = textTime,
+                onValueChange = {},
+                placeholder = { placeholder },
+                label = { Text(text = "${label}") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Gray,
+                    unfocusedBorderColor = Color.LightGray
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = false,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            timePickerDialog.show()
+                        },
+                        content = {
+                            Icon(
+                                imageVector =  Icons.Default.Edit,
+                                contentDescription = "Hora",
+                            )
+                        }
+                    )
                 }
             )
         }

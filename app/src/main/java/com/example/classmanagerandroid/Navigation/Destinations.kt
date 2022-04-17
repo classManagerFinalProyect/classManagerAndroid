@@ -17,4 +17,6 @@ sealed class Destinations (
     object MyAccount: Destinations(route = "Views.Settings.MyAccount.MyAccount")
     object MyAccountOptions: Destinations(route = "Views.Settings.MyAccountOptions.MyAccountOptions")
     object Events: Destinations(route = "Views.Course.Events.Events")
+    object ViewMembers: Destinations(route = "Views.Course.ViewMembers.VieMembers")
+    object ViewMembersClass: Destinations(route = "Views.Class.ViewMembersClass.ViewMembersClass")
 }

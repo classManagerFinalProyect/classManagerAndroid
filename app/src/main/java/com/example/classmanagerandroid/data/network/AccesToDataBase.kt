@@ -15,10 +15,10 @@ import com.google.firebase.storage.ktx.storage
 
 class AccesToDataBase {
     companion object {
-        var auth: FirebaseAuth = Firebase.auth
-        var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        var storage = Firebase.storage
-        var storageReference: StorageReference = storage.reference
+         var auth: FirebaseAuth = Firebase.auth
+         var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+         var storage = Firebase.storage
+         var storageReference: StorageReference = storage.reference
 
 
 
@@ -43,8 +43,11 @@ class AccesToDataBase {
                             )
                         }
                     }
-                    CurrentUser.uploadCurrentUser()
-                    navController.popBackStack()
+                    CurrentUser.uploadCurrentUser(
+                        onFinished = {
+                            navController.popBackStack()
+                        }
+                    )
                     Toast.makeText(context,"La clase se ha eliminado correctamente", Toast.LENGTH_SHORT).show()
                 }
         }

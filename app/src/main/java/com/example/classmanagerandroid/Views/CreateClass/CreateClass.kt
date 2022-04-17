@@ -28,7 +28,7 @@ fun MainCreateClass(
     val (textNameOfClass,onValueChangeTextNameOfClass) = remember { mutableStateOf("") }
     val (textDescription,onValueChangeTextDescription) = remember { mutableStateOf("") }
     val (itemSelectedCurse,onValueChangeItemSelectedCurse) = remember { mutableStateOf<Course>(
-        Course(arrayListOf(), arrayListOf(),"Sin asignar","","Sin asignar")
+        Course(arrayListOf(), arrayListOf(), arrayListOf(),"Sin asignar","","Sin asignar")
     ) }
 
 

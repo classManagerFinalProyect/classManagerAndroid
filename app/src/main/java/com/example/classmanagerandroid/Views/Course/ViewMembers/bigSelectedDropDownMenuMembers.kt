@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Views.Course
+package com.example.classmanagerandroid.Views.Course.ViewMembers
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 
 @Composable
-fun bigSelectedDropDownMenu(
+fun bigSelectedDropDownMenuMembers(
     suggestions: List<String>,
     onValueChangeTextSelectedItem: (String) -> Unit,
-
+    textStartItem: String
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("Sin asignar") }
+    var selectedText by remember { mutableStateOf(textStartItem) }
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp

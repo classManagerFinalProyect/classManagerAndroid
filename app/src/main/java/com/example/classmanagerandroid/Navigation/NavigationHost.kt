@@ -11,10 +11,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.classmanagerandroid.Views.Class.MainClass
 import com.example.classmanagerandroid.Views.Class.MainViewModelClass
+import com.example.classmanagerandroid.Views.Class.ViewMembersClass.MainViewMembersClass
+import com.example.classmanagerandroid.Views.Class.ViewMembersClass.MainViewModelViewMembersClass
 import com.example.classmanagerandroid.Views.Course.Event.MainEvent
 import com.example.classmanagerandroid.Views.Course.Event.MainViewModelEvent
 import com.example.classmanagerandroid.Views.Course.MainCourse
 import com.example.classmanagerandroid.Views.Course.MainViewModelCourse
+import com.example.classmanagerandroid.Views.Course.ViewMembers.MainViewMembers
+import com.example.classmanagerandroid.Views.Course.ViewMembers.MainViewModelViewMembers
 import com.example.classmanagerandroid.Views.CreateClass.MainCreateClass
 import com.example.classmanagerandroid.Views.CreateClass.MainViewModelCreateClass
 import com.example.classmanagerandroid.Views.CreateCourse.MainCreateCourse
@@ -52,7 +56,9 @@ fun NavigationHost(
     mainViewModelPrivacyPolicies: MainViewModelPrivacyPolicies,
     mainViewModelForgotPassword: MainViewModelForgotPassword,
     mainViewModelPractice: MainViewModelPractice,
-    mainViewModelEvent: MainViewModelEvent
+    mainViewModelEvent: MainViewModelEvent,
+    mainViewModelViewMembers: MainViewModelViewMembers,
+    mainViewModelViewMembersClass: MainViewModelViewMembersClass
 ) {
 
 
@@ -63,18 +69,51 @@ fun NavigationHost(
         startDestination = startDestination
     ) {
 
+        composable(
+            route = "${Destinations.ViewMembers.route}/{idCourse}",
+            arguments = listOf(navArgument("idCourse"){type = NavType.StringType})
+        ) {
+            val idCourse = it.arguments?.getString("idCourse")
+            requireNotNull(idCourse)
+            MainViewMembers(
+                navController = navController,
+                mainViewModelViewMembers = mainViewModelViewMembers,
+                idCourse = idCourse
+            )
+        }
+        composable(
+            route = "${Destinations.ViewMembersClass.route}/{idClass}",
+            arguments = listOf(navArgument("idClass"){type = NavType.StringType})
+        ) {
+            val idClass = it.arguments?.getString("idClass")
+            requireNotNull(idClass)
+            MainViewMembersClass(
+                navController = navController,
+                mainViewModelViewMembersClass =  mainViewModelViewMembersClass,
+                idOfClass = idClass
+            )
+        }
+
+
         composable(route = Destinations.Login.route) {
             MainLogin(
                 navController = navController,
                 mainViewModelLogin = mainViewModelLogin
             )
         }
-        composable(route = Destinations.Events.route) {
+        composable(
+            route = "${Destinations.Events.route}/{idCourse}",
+            arguments = listOf(navArgument("idCourse"){type = NavType.StringType})
+        ) {
+            val idCourse = it.arguments?.getString("idCourse")
+            requireNotNull(idCourse)
             MainEvent(
                 navController = navController,
-                mainViewModelEvent = mainViewModelEvent
+                mainViewModelEvent = mainViewModelEvent,
+                idCourse = idCourse
             )
         }
+
         composable(route = Destinations.Register.route) {
             MainRegister(
                 navController = navController,

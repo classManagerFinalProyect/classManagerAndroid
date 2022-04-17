@@ -45,7 +45,6 @@ fun MainClass(
     val (IdOfUser,onValueChangeIdOfUser) = remember { mutableStateOf("") }
     val (textSelectedItem,onValueChangeTextSelectedItem) = remember { mutableStateOf("") }
     var isRefreshing by remember { mutableStateOf(false) }
-    var selectedRolUser by remember { mutableStateOf(mainViewModelClass.rolOfSelectedUserInCurrentClass.rol) }
     var startView by remember { mutableStateOf(true) }//false
 
 
@@ -73,7 +72,7 @@ fun MainClass(
                 mainViewModelClass.addNewUser(IdOfUser, context, textSelectedItem)
                 onValueChangeAddNewUser(false)
             },
-            rol = selectedRolUser
+            rol = mainViewModelClass.rolOfSelectedUserInCurrentClass.rol
         )
     }
 
@@ -155,7 +154,7 @@ fun MainClass(
                                                 }
                                             }
                                         }
-                                        if (selectedRolUser.equals("admin")) {
+                                        if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol.equals("admin")) {
                                             item {
                                                 var newActivity = remember{ mutableStateOf("") }
                                                 val newPractice = remember { mutableStateOf(false) }

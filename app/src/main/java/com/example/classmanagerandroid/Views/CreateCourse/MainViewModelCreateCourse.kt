@@ -33,6 +33,7 @@ class MainViewModelCreateCourse: ViewModel() {
         val newCourse = Course(
             name = textNameOfCourse,
             description = textOfDescription,
+            events = arrayListOf(),
             id = "",
             classes = mySelectedClasses,
             users = mutableListOf<RolUser>(
@@ -53,9 +54,12 @@ class MainViewModelCreateCourse: ViewModel() {
                         user = CurrentUser.currentUser,
                         onFinished = { success ->
                             if (success) {
-                                CurrentUser.updateDates()
-                                Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack()
+                                CurrentUser.updateDates(
+                                    onFinished = {
+                                        Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                                        navController.popBackStack()
+                                    }
+                                )
                             }
                         }
                     )

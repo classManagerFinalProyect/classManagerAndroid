@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Navigation.NavigationHost
 import com.example.classmanagerandroid.Views.Class.MainViewModelClass
+import com.example.classmanagerandroid.Views.Class.ViewMembersClass.MainViewModelViewMembersClass
 import com.example.classmanagerandroid.Views.Course.Event.MainViewModelEvent
 import com.example.classmanagerandroid.Views.Course.MainViewModelCourse
+import com.example.classmanagerandroid.Views.Course.ViewMembers.MainViewModelViewMembers
 import com.example.classmanagerandroid.Views.CreateClass.MainViewModelCreateClass
 import com.example.classmanagerandroid.Views.CreateCourse.MainViewModelCreateCourse
 import com.example.classmanagerandroid.Views.Login.ForgotPassword.MainViewModelForgotPassword
@@ -38,6 +40,8 @@ class MainActivity : ComponentActivity() {
     private val mainViewModelForgotPassword by viewModels<MainViewModelForgotPassword>()
     private val mainViewModelPractice by viewModels<MainViewModelPractice>()
     private val mainViewModelEvent by viewModels<MainViewModelEvent>()
+    private val mainViewModelViewMembers by viewModels<MainViewModelViewMembers>()
+    private val mainViewModelViewMembersClass by viewModels<MainViewModelViewMembersClass>()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -65,16 +69,12 @@ class MainActivity : ComponentActivity() {
             startDestination = Destinations.MainAppView.route
             mainViewModelLogin.saveCurrentUser {
                 setContent {
-
                     chargeScreen()
-
                 }
             }
         } else {
             setContent {
-
                 chargeScreen()
-
             }
         }
 
@@ -102,7 +102,9 @@ class MainActivity : ComponentActivity() {
             mainViewModelPrivacyPolicies = mainViewModelPrivacyPolicies,
             mainViewModelForgotPassword = mainViewModelForgotPassword,
             mainViewModelPractice = mainViewModelPractice,
-            mainViewModelEvent = mainViewModelEvent
+            mainViewModelEvent = mainViewModelEvent,
+            mainViewModelViewMembers = mainViewModelViewMembers,
+            mainViewModelViewMembersClass = mainViewModelViewMembersClass
         )
     }
 }

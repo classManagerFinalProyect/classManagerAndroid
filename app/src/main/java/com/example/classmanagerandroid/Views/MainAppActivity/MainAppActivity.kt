@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.delay
 import me.saine.android.Views.MainAppActivity.*
+import com.example.classmanagerandroid.R
 
 private lateinit var database: DatabaseReference
 
@@ -163,7 +165,11 @@ fun MainAppView(
                                                             modifier = Modifier
                                                                 .size(180.dp)
                                                                 .clip(CircleShape)
-                                                                .border(2.dp, Color.Gray, CircleShape)
+                                                                .border(
+                                                                    2.dp,
+                                                                    Color.Gray,
+                                                                    CircleShape
+                                                                )
                                                                 .align(Alignment.CenterVertically),
                                                             contentScale = ContentScale.Crop,
 
@@ -178,9 +184,17 @@ fun MainAppView(
                                                         .fillMaxWidth()
                                                         .height(30.dp)
                                                         .clickable {
-                                                            clipboardManager.setText(AnnotatedString("${auth.currentUser?.uid}"))
+                                                            clipboardManager.setText(
+                                                                AnnotatedString(
+                                                                    "${auth.currentUser?.uid}"
+                                                                )
+                                                            )
                                                             Toast
-                                                                .makeText(context, "Id del usuario copiada", Toast.LENGTH_SHORT)
+                                                                .makeText(
+                                                                    context,
+                                                                    "Id del usuario copiada",
+                                                                    Toast.LENGTH_SHORT
+                                                                )
                                                                 .show()
                                                         },
                                                     content = {
@@ -237,7 +251,6 @@ fun MainAppView(
                                                 )
                                             }
                                         )
-                                        //MyButton()
                                     }
                                     if(expanded) {
                                         itemsIndexed(CurrentUser.myCourses) { index, item ->
@@ -286,9 +299,7 @@ fun MainAppView(
                                                 },
                                             content = {
                                                 Icon(
-                                                    painter = rememberAsyncImagePainter(
-                                                        model = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Flogout_white.png?alt=media&token=888f2b85-0341-434f-9a7a-b7ddc8418c8b"
-                                                    ),
+                                                    painter = painterResource(id = R.drawable.logout_white),
                                                     contentDescription = "Cerrar sesión"
                                                 )
                                                 Spacer(modifier = Modifier.padding(3.dp))
@@ -321,7 +332,12 @@ fun MainAppView(
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .fillMaxHeight(if (valueOfViewAppActivityState.value.equals("DEFAULT")) 0.5f else 1f)
+                                        .fillMaxHeight(
+                                            if (valueOfViewAppActivityState.value.equals(
+                                                    "DEFAULT"
+                                                )
+                                            ) 0.5f else 1f
+                                        )
                                         .border(BorderStroke(2.dp, Color.LightGray)),
                                     content = {
                                         stickyHeader {
@@ -337,7 +353,10 @@ fun MainAppView(
                                                     .fillMaxWidth()
                                                     .clickable {
                                                         valueOfViewAppActivityState.value =
-                                                            if (valueOfViewAppActivityState.value.equals("DEFAULT")) "SELECTEDCURSE" else "DEFAULT"
+                                                            if (valueOfViewAppActivityState.value.equals(
+                                                                    "DEFAULT"
+                                                                )
+                                                            ) "SELECTEDCURSE" else "DEFAULT"
                                                     }
                                             )
                                         }
@@ -378,7 +397,10 @@ fun MainAppView(
 
 
                                                         valueOfViewAppActivityState.value =
-                                                            if (valueOfViewAppActivityState.value.equals("DEFAULT")) "SELECTEDCLASS" else "DEFAULT"
+                                                            if (valueOfViewAppActivityState.value.equals(
+                                                                    "DEFAULT"
+                                                                )
+                                                            ) "SELECTEDCLASS" else "DEFAULT"
 
                                                     }
                                             )

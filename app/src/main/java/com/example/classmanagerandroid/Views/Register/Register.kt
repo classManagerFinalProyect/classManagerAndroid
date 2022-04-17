@@ -157,9 +157,6 @@ fun MainRegister(
                                                 context = context,
                                                 navController = navController
                                             )
-                                            navController.navigate(Destinations.Login.route) {
-                                                popUpTo(0)
-                                            }
                                         }
                                         else {
                                             Toast.makeText(context,"Debes rellenar todos los campos correctamente",Toast.LENGTH_SHORT).show()

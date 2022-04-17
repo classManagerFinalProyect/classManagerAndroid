@@ -47,8 +47,11 @@ class MainViewModelLogin: ViewModel() {
                         description = document.get("description") as String
                     )
                     CurrentUser.currentUser = currentUser
-                    CurrentUser.updateDates()
-                    onFinished()
+                    CurrentUser.updateDates(
+                        onFinished = {
+                            onFinished()
+                        }
+                    )
                 }
             }
         }

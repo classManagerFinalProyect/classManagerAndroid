@@ -5,6 +5,7 @@ data class Event (
     val idOfCourse: String,
     val name: String,
     val nameOfClass: String,
-    val finalDate: String,
-    val initalDate: String
+    val finalTime: String,
+    val initialTime: String,
+    val date: String
 )

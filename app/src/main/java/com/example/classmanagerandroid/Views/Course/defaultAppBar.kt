@@ -25,7 +25,7 @@ fun defaultAppBar(
     mainViewModelCourse: MainViewModelCourse,
     onValueChangeDeleteItem: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
-    onValueChangeGetMoreInformation: (Boolean) -> Unit
+    onValueChangeGetInformation: (Boolean) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -67,7 +67,7 @@ fun defaultAppBar(
                             DropdownMenuItem(
                                 onClick = {
                                     expanded.value = false
-                                    onValueChangeGetMoreInformation(true)
+                                    onValueChangeGetInformation(true)
                                 },
                                 content = {
                                     Text(text = "Ver info")
@@ -76,15 +76,7 @@ fun defaultAppBar(
                             DropdownMenuItem(
                                 onClick = {
                                     expanded.value = false
-                                },
-                                content = {
-                                    Text(text = "Ver ayuda")
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded.value = false
-                                    navController.navigate(Destinations.Events.route)
+                                    navController.navigate("${Destinations.Events.route}/${mainViewModelCourse.selectedCourse.id}")
                                 },
                                 content = {
                                     Text(text = "Lista de eventos")
@@ -93,6 +85,7 @@ fun defaultAppBar(
                             DropdownMenuItem(
                                 onClick = {
                                     expanded.value = false
+                                    navController.navigate("${Destinations.ViewMembers.route}/${mainViewModelCourse.selectedCourse.id}")
                                 },
                                 content = {
                                     Text(text = "Ver miembros")

@@ -13,7 +13,6 @@ import com.example.classmanagerandroid.data.remote.Practice
 
 class MainViewModelMainAppView: ViewModel() {
 
-    //Firebase
 
     lateinit var chat: Chat
     lateinit var selectedPractice : Practice

@@ -72,6 +72,7 @@ fun addNewUser(
                                 singleLine = true,
                             )
                             Spacer(modifier = Modifier.padding(6.dp))
+
                             bigSelectedDropDownMenu (
                                 suggestions = suggestion,
                                 onValueChangeTextSelectedItem = onValueChangeTextSelectedItem

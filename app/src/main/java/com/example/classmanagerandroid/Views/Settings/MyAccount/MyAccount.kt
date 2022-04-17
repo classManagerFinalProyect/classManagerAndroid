@@ -61,7 +61,7 @@ fun MainMyAccount(
             onClickSave = {
                 CurrentUser.currentUser.name = userName
                 onValueChangeChangeName(false)
-                CurrentUser.uploadCurrentUser()
+                CurrentUser.uploadCurrentUser(onFinished = {})
             }
         )
     }
@@ -75,7 +75,7 @@ fun MainMyAccount(
             onClickSave = {
                 CurrentUser.currentUser.description = userDescription
                 onValueChangeChangeDescription(false)
-                CurrentUser.uploadCurrentUser()
+                CurrentUser.uploadCurrentUser(onFinished = {})
             }
         )
     }

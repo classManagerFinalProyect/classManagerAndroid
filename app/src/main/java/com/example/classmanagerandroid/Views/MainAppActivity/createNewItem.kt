@@ -10,11 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.Navigation.Destinations
-
+import com.example.classmanagerandroid.R
 @Composable
 fun createNewItem(
     navController: NavController,
@@ -37,11 +38,10 @@ fun createNewItem(
                 modifier = Modifier.size(miniFabSize),
                 content = {
                     Icon(
-                        painter = rememberAsyncImagePainter(
-                            model = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fschool_white.png?alt=media&token=e393aacc-eb7e-45f3-8e9a-6e1eaefb7411"
-                        ),
-                        contentDescription = "Search Icon",
-                        tint = Color.White
+                        painter = painterResource(id = R.drawable.school_white),
+                        contentDescription = "Class",
+                        tint = Color.White,
+                        modifier = Modifier.size(25.dp)
                     )
                 },
                 onClick = {
@@ -69,12 +69,13 @@ fun createNewItem(
                 modifier = Modifier.size(miniFabSize),
                 content = {
                     Icon(
-                        painter = rememberAsyncImagePainter(
-                            model = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fclass_white.png?alt=media&token=c3091fa8-b1b2-4969-90a8-1e2f09f3d856"
-                        ),
+                        painter = painterResource(id = R.drawable.class_white),
                         contentDescription = "Class",
-                        tint = Color.White
+                        tint = Color.White,
+                        modifier = Modifier.size(25.dp)
                     )
+
+
                 },
                 onClick = {
                     navController.navigate(Destinations.CreateClass.route)
