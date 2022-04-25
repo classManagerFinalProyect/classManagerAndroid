@@ -187,6 +187,7 @@ class MainViewModelEvent: ViewModel() {
         )
 
     }
+
     //Search Bar
     private val _searchWidgetState: MutableState<SearchWidgetState> = mutableStateOf(value = SearchWidgetState.CLOSED)
     val searchWidgetState: State<SearchWidgetState> = _searchWidgetState

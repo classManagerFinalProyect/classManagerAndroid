@@ -23,6 +23,7 @@ import com.example.classmanagerandroid.Views.Practice.MainViewModelPractice
 import com.example.classmanagerandroid.Views.Register.MainViewModelRegister
 import com.example.classmanagerandroid.Views.Register.PrivacyPolicies.MainViewModelPrivacyPolicies
 import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.auth
+import com.example.classmanagerandroid.ui.theme.ClassManagerAndroidTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -90,21 +91,23 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun chargeScreen() {
-        NavigationHost(
-            startDestination = startDestination,
-            mainViewModelLogin = mainViewModelLogin,
-            mainViewModelRegister = mainViewModelRegister,
-            mainViewModelMainAppView = mainViewModelMainAppView,
-            mainViewModelCreateCourse = mainViewModelCreateCourse,
-            mainViewModelCreateClass = mainViewModelCreateClass,
-            mainViewModelCourse = mainViewModelCourse,
-            mainViewModelClass = mainViewModelClass,
-            mainViewModelPrivacyPolicies = mainViewModelPrivacyPolicies,
-            mainViewModelForgotPassword = mainViewModelForgotPassword,
-            mainViewModelPractice = mainViewModelPractice,
-            mainViewModelEvent = mainViewModelEvent,
-            mainViewModelViewMembers = mainViewModelViewMembers,
-            mainViewModelViewMembersClass = mainViewModelViewMembersClass
-        )
+        ClassManagerAndroidTheme{
+            NavigationHost(
+                startDestination = startDestination,
+                mainViewModelLogin = mainViewModelLogin,
+                mainViewModelRegister = mainViewModelRegister,
+                mainViewModelMainAppView = mainViewModelMainAppView,
+                mainViewModelCreateCourse = mainViewModelCreateCourse,
+                mainViewModelCreateClass = mainViewModelCreateClass,
+                mainViewModelCourse = mainViewModelCourse,
+                mainViewModelClass = mainViewModelClass,
+                mainViewModelPrivacyPolicies = mainViewModelPrivacyPolicies,
+                mainViewModelForgotPassword = mainViewModelForgotPassword,
+                mainViewModelPractice = mainViewModelPractice,
+                mainViewModelEvent = mainViewModelEvent,
+                mainViewModelViewMembers = mainViewModelViewMembers,
+                mainViewModelViewMembersClass = mainViewModelViewMembersClass
+            )
+        }
     }
 }

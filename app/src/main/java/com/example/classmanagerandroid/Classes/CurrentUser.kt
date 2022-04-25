@@ -1,7 +1,5 @@
 package com.example.classmanagerandroid.Classes
 
-import android.content.IntentSender
-import androidx.compose.runtime.mutableStateOf
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.remote.Course
 import com.example.classmanagerandroid.data.remote.appUser
@@ -21,22 +19,35 @@ class CurrentUser {
         fun getMyCourses(
             onFinished:  () -> Unit
         ) {
+
             var firstAcces = true
             myCourses.clear()
-            if(currentUser.courses.size.equals(0)) onFinished()
+            if(currentUser.courses.size == 0) onFinished()
             currentUser.courses.forEach{ idOfCourse ->
 
                 db.collection("course")
                     .document(idOfCourse)
                     .get()
                     .addOnSuccessListener {
+                        val users = it.get("users") as  MutableList<HashMap<String,String>>
+                        val listOfRolUser: MutableList<RolUser> = mutableListOf()
+                        users.forEach { rolUser ->
+                            listOfRolUser.add(
+                                RolUser(
+                                    id = rolUser.get("id") as String,
+                                    rol = rolUser.get("rol") as String
+                                )
+                            )
+                        }
+
+
 
                         myCourses.add(
                             Course(
                                 name = it.get("name") as String,
                                 classes = it.get("classes") as MutableList<String>,
                                 events = it.get("events") as MutableList<String>,
-                                users = it.get("users") as MutableList<RolUser>,
+                                users = listOfRolUser,
                                 description = it.get("description") as String,
                                 id = it.id
                             )
@@ -52,7 +63,7 @@ class CurrentUser {
         fun getMyClasses(
             onFinished:  () -> Unit
         ) {
-            var firstAcces = true
+            var firstAccess = true
 
             myClasses.clear()
             if(currentUser.classes.size.equals(0)) onFinished()
@@ -83,8 +94,8 @@ class CurrentUser {
                                 idOfCourse = it.get("idOfCourse") as String
                             )
                         )
-                        if(firstAcces) {
-                            firstAcces = false
+                        if(firstAccess) {
+                            firstAccess = false
                             onFinished()
                         }
                     }

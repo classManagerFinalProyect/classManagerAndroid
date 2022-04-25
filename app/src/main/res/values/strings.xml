@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Class Manager</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="default_web_client_id2">878650794397-ii49a673ci7rtog55m917danuj4g76hb.apps.googleusercontent.com</string>
 </resources>

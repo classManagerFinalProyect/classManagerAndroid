@@ -1,5 +1,6 @@
 package com.example.classmanagerandroid.Views.Login
 
+
 import android.app.Activity
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -92,9 +94,7 @@ fun MainLogin(
 
                                     item {
                                         Image(
-                                            painter = rememberImagePainter(
-                                                data = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Flogo.png?alt=media&token=a9d234bf-a791-44cd-ad29-fd18b54f488e"
-                                            ),
+                                            painter = painterResource(id = R.drawable.logo_dani),
                                             contentDescription = "Logo",
                                             modifier = Modifier
                                                 .height(250.dp)
@@ -279,7 +279,7 @@ fun signInWithGoogle(
     activity: Activity
 ){
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(activity.getString(R.string.default_web_client_id))
+        .requestIdToken(activity.getString(R.string.default_web_client_id2))
         .requestEmail()
         .build()
 

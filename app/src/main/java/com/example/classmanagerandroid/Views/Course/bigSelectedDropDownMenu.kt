@@ -24,7 +24,7 @@ fun bigSelectedDropDownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("Sin asignar") }
-    var textfieldSize by remember { mutableStateOf(Size.Zero) }
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
     else
@@ -39,7 +39,7 @@ fun bigSelectedDropDownMenu(
                 modifier = Modifier
                     .padding(start = 20.dp, end = 20.dp)
                     .onGloballyPositioned { coordinates ->
-                        textfieldSize = coordinates.size.toSize()
+                        textFieldSize = coordinates.size.toSize()
                     },
                 trailingIcon = {
                     Icon(
@@ -54,7 +54,7 @@ fun bigSelectedDropDownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
-                    .width(with(LocalDensity.current) { textfieldSize.width.toDp() }),
+                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() }),
                 content = {
                     suggestions.forEach { label ->
                         DropdownMenuItem(

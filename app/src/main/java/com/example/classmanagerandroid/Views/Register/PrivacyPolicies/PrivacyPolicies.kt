@@ -51,6 +51,7 @@ fun MainPrivacyPolicies(
                     }
                     item {
                         textTitle(mainViewModelPrivacyPolicies.logDataTitle)
+
                     }
                     item {
                         textItem(mainViewModelPrivacyPolicies.logDataText)
