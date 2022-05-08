@@ -4,9 +4,10 @@ import com.example.classmanagerandroid.data.local.RolUser
 
 data class Class (
     var id: String,
-    val name: String,
-    val description: String,
+    var name: String,
+    var description: String,
     val idPractices: MutableList<String>,
     val users: MutableList<RolUser>,
-    val idOfCourse: String
+    val idOfCourse: String,
+    var img: String
 )

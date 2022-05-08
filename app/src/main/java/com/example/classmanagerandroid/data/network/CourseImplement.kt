@@ -31,7 +31,7 @@ class CourseImplement {
             newCourse: Course,
             onFinished: (Boolean, Course) -> Unit
         ) {
-            AccesToDataBase.db.collection("course")
+            AccessToDataBase.db.collection("course")
                 .document(newCourse.id)
                 .set(newCourse)
                 .addOnSuccessListener {

@@ -1,0 +1,179 @@
+package com.example.classmanagerandroid.Screens.Settings.MyAccountOptions
+
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.Navigation.Destinations
+import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
+
+@Composable
+fun MainMyAccountOptions(
+    navController: NavController,
+    viewModelSettings: ViewModelSettings
+) {
+    val context = LocalContext.current
+    var (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
+
+    if (deleteItem) {
+        confirmAlertDialog(
+            title = "¿Estas seguro que desea eliminar su cuenta?",
+            subtitle = "No podrás volver a recuperarla",
+            onValueChangeGoBack = onValueChangeDeleteItem,
+            onFinishAlertDialog = {
+                if (it) {
+                    viewModelSettings.deleteUser(
+                        context = context,
+                        onFinished = {
+                            navController.navigate(Destinations.Login.route) {
+                                popUpTo(0)
+                            }
+                        }
+                    )
+                }
+                onValueChangeDeleteItem(false)
+            } ,
+        )
+    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Cuenta")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        },
+                        content = {
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                contentDescription = "",
+                                tint = Color.White
+                            )
+                        }
+                    )
+                }
+            )
+        },
+        content = {
+            LazyColumn(
+                content ={
+                    item {
+                        Row(
+                            content = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start ,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(50.dp)
+                                        .clickable {
+                                            navController.navigate(Destinations.PrivacyPolicies.route)
+                                        },
+                                    content = {
+                                        Spacer(modifier = Modifier.padding(5.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = "Perfil"
+                                        )
+                                        Spacer(modifier = Modifier.padding(3.dp))
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth(0.9f),
+                                            content = {
+                                                Text(text = "Politicas de privacidad")
+                                            }
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        Row(
+                            content = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start ,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(50.dp)
+                                        .clickable {
+
+                                        },
+                                    content = {
+                                        Spacer(modifier = Modifier.padding(5.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = "Perfil"
+                                        )
+                                        Spacer(modifier = Modifier.padding(3.dp))
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth(0.9f),
+                                            content = {
+                                                Text(text = CurrentUser.currentUser.email)
+                                            }
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Edit user email",
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        Row(
+                            content = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start ,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(50.dp)
+                                        .clickable {
+                                            onValueChangeDeleteItem(true)
+
+                                        },
+                                    content = {
+                                        Spacer(modifier = Modifier.padding(5.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Descripción del perfil"
+                                        )
+                                        Spacer(modifier = Modifier.padding(3.dp))
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth(0.9f),
+                                            content = {
+                                                Text(
+                                                    text = "Delete my acount"
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    )
+}

@@ -1,9 +1,6 @@
 package com.example.classmanagerandroid.data.network
 
-import android.widget.Toast
-import com.example.classmanagerandroid.Classes.CurrentUser
 import com.example.classmanagerandroid.data.remote.Event
-import com.example.classmanagerandroid.data.remote.appUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,7 +34,7 @@ class EventImplement {
             idOfEvent: String,
             onFinished: (Boolean) -> Unit
         ) {
-            AccesToDataBase.db.collection("event")
+            AccessToDataBase.db.collection("event")
                 .document(idOfEvent)
                 .delete()
                 .addOnSuccessListener {

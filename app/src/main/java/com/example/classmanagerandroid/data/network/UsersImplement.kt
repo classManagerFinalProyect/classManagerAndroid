@@ -15,6 +15,19 @@ class UsersImplement {
         private var storage = Firebase.storage
         private var storageReference: StorageReference = storage.reference
 
+        fun deleteUserById(
+            idOfUser: String,
+            onFinished: (Boolean) -> Unit
+        ) {
+            db.collection("users")
+                .document(idOfUser)
+                .delete()
+                .addOnSuccessListener {
+                    onFinished(true)
+                }
+        }
+
+
         fun updateUser(
             idOfUser: String,
             user: appUser,

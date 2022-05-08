@@ -1,9 +1,10 @@
 package com.example.classmanagerandroid.data.remote
 
 data class Practice (
-    val id: String,
+    var id: String,
+    val deliveryDate: String,
     val description: String,
-    val idOfChat: String,
+    var idOfChat: String,
     val teacherAnnotation: String,
     val name: String,
     val idOfClass: String

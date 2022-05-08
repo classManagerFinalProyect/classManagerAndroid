@@ -9,34 +9,34 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.classmanagerandroid.Views.Class.MainClass
-import com.example.classmanagerandroid.Views.Class.MainViewModelClass
-import com.example.classmanagerandroid.Views.Class.ViewMembersClass.MainViewMembersClass
-import com.example.classmanagerandroid.Views.Class.ViewMembersClass.MainViewModelViewMembersClass
-import com.example.classmanagerandroid.Views.Course.Event.MainEvent
-import com.example.classmanagerandroid.Views.Course.Event.MainViewModelEvent
-import com.example.classmanagerandroid.Views.Course.MainCourse
-import com.example.classmanagerandroid.Views.Course.MainViewModelCourse
-import com.example.classmanagerandroid.Views.Course.ViewMembers.MainViewMembers
-import com.example.classmanagerandroid.Views.Course.ViewMembers.MainViewModelViewMembers
-import com.example.classmanagerandroid.Views.CreateClass.MainCreateClass
-import com.example.classmanagerandroid.Views.CreateClass.MainViewModelCreateClass
-import com.example.classmanagerandroid.Views.CreateCourse.MainCreateCourse
-import com.example.classmanagerandroid.Views.CreateCourse.MainViewModelCreateCourse
-import com.example.classmanagerandroid.Views.Login.ForgotPassword.MainForgotPassword
-import com.example.classmanagerandroid.Views.Login.ForgotPassword.MainViewModelForgotPassword
-import com.example.classmanagerandroid.Views.Login.MainLogin
-import com.example.classmanagerandroid.Views.Login.MainViewModelLogin
-import com.example.classmanagerandroid.Views.MainAppActivity.MainAppView
-import com.example.classmanagerandroid.Views.Practice.MainPractice
-import com.example.classmanagerandroid.Views.Practice.MainViewModelPractice
-import com.example.classmanagerandroid.Views.Register.MainRegister
-import com.example.classmanagerandroid.Views.Register.MainViewModelRegister
-import com.example.classmanagerandroid.Views.Register.PrivacyPolicies.MainPrivacyPolicies
-import com.example.classmanagerandroid.Views.Register.PrivacyPolicies.MainViewModelPrivacyPolicies
-import com.example.classmanagerandroid.Views.Settings.MainSettings
-import com.example.classmanagerandroid.Views.Settings.MyAccount.MainMyAccount
-import com.example.classmanagerandroid.Views.Settings.MyAccountOptions.MainMyAccountOptions
+import com.example.classmanagerandroid.Screens.Class.MainClass
+import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
+import com.example.classmanagerandroid.Screens.Class.ViewMembersClass.MainViewMembersClass
+import com.example.classmanagerandroid.Screens.Class.ViewMembersClass.MainViewModelViewMembersClass
+import com.example.classmanagerandroid.Screens.Course.Event.MainEvent
+import com.example.classmanagerandroid.Screens.Course.Event.MainViewModelEvent
+import com.example.classmanagerandroid.Screens.Course.MainCourse
+import com.example.classmanagerandroid.Screens.Course.MainViewModelCourse
+import com.example.classmanagerandroid.Screens.Course.ViewMembers.MainViewMembers
+import com.example.classmanagerandroid.Screens.Course.ViewMembers.MainViewModelViewMembers
+import com.example.classmanagerandroid.Screens.CreateClass.MainCreateClass
+import com.example.classmanagerandroid.Screens.CreateClass.MainViewModelCreateClass
+import com.example.classmanagerandroid.Screens.CreateCourse.MainCreateCourse
+import com.example.classmanagerandroid.Screens.CreateCourse.MainViewModelCreateCourse
+import com.example.classmanagerandroid.Screens.Login.ForgotPassword.MainForgotPassword
+import com.example.classmanagerandroid.Screens.Login.ForgotPassword.MainViewModelForgotPassword
+import com.example.classmanagerandroid.Screens.Login.MainLogin
+import com.example.classmanagerandroid.Screens.Login.MainViewModelLogin
+import com.example.classmanagerandroid.Screens.MainAppActivity.MainAppView
+import com.example.classmanagerandroid.Screens.Practice.MainPractice
+import com.example.classmanagerandroid.Screens.Practice.MainViewModelPractice
+import com.example.classmanagerandroid.Screens.Register.MainRegister
+import com.example.classmanagerandroid.Screens.Register.MainViewModelRegister
+import com.example.classmanagerandroid.Screens.Register.PrivacyPolicies.MainPrivacyPolicies
+import com.example.classmanagerandroid.Screens.Settings.MainSettings
+import com.example.classmanagerandroid.Screens.Settings.MyAccount.MainMyAccount
+import com.example.classmanagerandroid.Screens.Settings.MyAccountOptions.MainMyAccountOptions
+import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
 import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
 
 
@@ -53,12 +53,12 @@ fun NavigationHost(
     mainViewModelCreateClass: MainViewModelCreateClass,
     mainViewModelCourse: MainViewModelCourse,
     mainViewModelClass: MainViewModelClass,
-    mainViewModelPrivacyPolicies: MainViewModelPrivacyPolicies,
     mainViewModelForgotPassword: MainViewModelForgotPassword,
     mainViewModelPractice: MainViewModelPractice,
     mainViewModelEvent: MainViewModelEvent,
     mainViewModelViewMembers: MainViewModelViewMembers,
-    mainViewModelViewMembersClass: MainViewModelViewMembersClass
+    mainViewModelViewMembersClass: MainViewModelViewMembersClass,
+    viewModelSettings: ViewModelSettings
 ) {
 
 
@@ -129,16 +129,19 @@ fun NavigationHost(
         composable(route = Destinations.Settings.route) {
             MainSettings(
                 navController = navController,
+                viewModelSettings = viewModelSettings
             )
         }
         composable(route = Destinations.MyAccount.route) {
             MainMyAccount(
                 navController = navController,
+                viewModelSettings = viewModelSettings
             )
         }
         composable(route = Destinations.MyAccountOptions.route) {
             MainMyAccountOptions(
                 navController = navController,
+                viewModelSettings = viewModelSettings
             )
         }
 
@@ -205,7 +208,6 @@ fun NavigationHost(
             content = {
                 MainPrivacyPolicies(
                     navController= navController,
-                    mainViewModelPrivacyPolicies = mainViewModelPrivacyPolicies
                 )
             }
         )

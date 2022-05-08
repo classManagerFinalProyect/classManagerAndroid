@@ -1,19 +1,35 @@
 package com.example.classmanagerandroid.Classes
 
+import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.remote.Course
 import com.example.classmanagerandroid.data.remote.appUser
 import com.example.classmanagerandroid.data.remote.Class
-import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.db
-import com.example.classmanagerandroid.data.network.AccesToDataBase.Companion.auth
+import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.db
+import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
+import com.google.firebase.storage.FirebaseStorage
 
 class CurrentUser {
     companion object {
         val myCourses: MutableList<Course> = mutableListOf()
         val myClasses: MutableList<Class> = mutableListOf()
         var currentUser: appUser = appUser("","","", mutableListOf<String>(), arrayListOf<String>(),"","")
+        var myImg = mutableStateOf<Uri?>(null)
 
 
+        fun getCurrentImg(
+            onFinished: () -> Unit
+        ) {
+            val storage = FirebaseStorage.getInstance()
+            val gsReference = storage.getReferenceFromUrl(currentUser.imgPath)
+
+            gsReference.downloadUrl.addOnSuccessListener{
+                myImg.value = it
+            }
+            onFinished()
+        }
 
         //Varias consultas o una entera¿?
         fun getMyCourses(
@@ -49,7 +65,8 @@ class CurrentUser {
                                 events = it.get("events") as MutableList<String>,
                                 users = listOfRolUser,
                                 description = it.get("description") as String,
-                                id = it.id
+                                id = it.id,
+                                img = it.get("img") as String
                             )
                         )
                         if(firstAcces) {
@@ -66,7 +83,7 @@ class CurrentUser {
             var firstAccess = true
 
             myClasses.clear()
-            if(currentUser.classes.size.equals(0)) onFinished()
+            if(currentUser.classes.size == 0) onFinished()
             currentUser.classes.forEach{ idOfClass ->
 
                 db.collection("classes")
@@ -91,7 +108,8 @@ class CurrentUser {
                                 description = it.get("description") as String,
                                 idPractices = it.get("idPractices") as MutableList<String>,
                                 users = listOfRolUser,
-                                idOfCourse = it.get("idOfCourse") as String
+                                idOfCourse = it.get("idOfCourse") as String,
+                                img = it.get("img") as String
                             )
                         )
                         if(firstAccess) {
@@ -105,6 +123,7 @@ class CurrentUser {
         fun updateDates(
             onFinished:  () -> Unit
         ) {
+            getCurrentImg(onFinished = {})
             getMyClasses(
                 onFinished = {
                     getMyCourses(

@@ -78,6 +78,7 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-storage:7.2.0")
     implementation("com.google.android.gms:play-services-auth:20.1.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
+    implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
 
     //Navegación
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha09"

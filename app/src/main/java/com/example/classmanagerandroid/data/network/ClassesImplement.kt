@@ -57,7 +57,8 @@ class ClassesImplement {
                         users = listOfRolUser,
                         description = it.get("description") as String,
                         id = it.id,
-                        idOfCourse = it.get("idOfCourse") as String
+                        idOfCourse = it.get("idOfCourse") as String,
+                        img = it.get("img") as String
                     )
                     onFinished(true,newClass)
                 }
