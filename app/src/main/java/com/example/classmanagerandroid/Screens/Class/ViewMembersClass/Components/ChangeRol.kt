@@ -23,13 +23,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.Screens.Course.ViewMembers.bigSelectedDropDownMenuMembers
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 
 @Composable
 fun changeRolClass(
-    mainViewModelViewMembersClass: MainViewModelViewMembersClass ,
+    mainViewModelViewMembersClass: MainViewModelViewMembersClass,
     onValueChangeRol: (Boolean) -> Unit,
-    selectedUser: appUser,
+    selectedUser: AppUser,
     onValueChangeIsRefreshing: (Boolean) -> Unit
 ) {
     val selectedRolUser = mainViewModelViewMembersClass.getRolOfUserById(selectedUser.id)
@@ -99,7 +99,9 @@ fun changeRolClass(
                                     .padding(PaddingValues(start = 20.dp, end = 20.dp))
                             )
 
-                            if(mainViewModelViewMembersClass.currentdRolUser.rol.equals("admin")) {
+                            
+                            if(mainViewModelViewMembersClass.currentdRolUser.rol == "admin") {
+                                Spacer(modifier = Modifier.padding(10.dp))
                                 bigSelectedDropDownMenuMembers (
                                     suggestions = suggestion,
                                     onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,

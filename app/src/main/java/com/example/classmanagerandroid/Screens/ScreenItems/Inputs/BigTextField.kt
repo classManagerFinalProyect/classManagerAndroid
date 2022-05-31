@@ -34,8 +34,11 @@ fun bigTextField(
                 singleLine = false,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Gray,
-                    unfocusedBorderColor = Color.LightGray
+                    focusedBorderColor = MaterialTheme.colors.primary,
+                    unfocusedBorderColor = MaterialTheme.colors.onSurface,
+                    textColor = MaterialTheme.colors.secondary,
+                    placeholderColor = MaterialTheme.colors.secondary,
+                    unfocusedLabelColor = MaterialTheme.colors.secondary,
                 ),
                 modifier = Modifier.fillMaxWidth()
 

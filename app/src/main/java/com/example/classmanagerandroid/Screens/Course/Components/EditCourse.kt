@@ -5,37 +5,26 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.example.classmanagerandroid.Classes.CurrentUser
-import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
+import com.example.classmanagerandroid.Screens.Utils.isValidDescription
+import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -73,7 +62,8 @@ fun editCourse(
         content = {
             Column(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(MaterialTheme.colors.background)
+                    .border(BorderStroke(1.dp,MaterialTheme.colors.onSurface))
                     .fillMaxHeight(0.7f),
                 content = {
                     Spacer(modifier = Modifier.padding(10.dp))
@@ -100,12 +90,12 @@ fun editCourse(
                     )
                     Spacer(modifier = Modifier.padding(3.dp))
 
-                    bigTextFieldWithErrorMessage(
+                    bigOutlineTextFieldWithErrorMessage(
                         text = "Nombre del curso",
                         value = textName,
                         onValueChange = { textName = it },
-                        validateError = ::isAlphanumeric,
-                        errorMessage = messageNameClassError,
+                        validateError = { isValidName(it) },
+                        errorMessage = CommonErrors.notValidName,
                         changeError = { nameError = it},
                         error = nameError,
                         mandatory = false,
@@ -113,12 +103,12 @@ fun editCourse(
                         enabled = true
                     )
 
-                    bigTextFieldWithErrorMessage(
+                    bigOutlineTextFieldWithErrorMessage(
                         text = "Descipción del curso",
                         value = textDescription,
                         onValueChange = { textDescription = it },
-                        validateError = ::isAlphanumeric,
-                        errorMessage = messageDescriptionClassError,
+                        validateError = { isValidDescription(it) },
+                        errorMessage = CommonErrors.notValidDescription,
                         changeError = { descriptionError = it},
                         error = descriptionError,
                         mandatory = false,
@@ -141,23 +131,28 @@ fun editCourse(
                                     bottom = 6.dp
                                 ),
                                 onClick = {
-                                    mainViewModelCourse.selectedCourse.name = textName
-                                    mainViewModelCourse.selectedCourse.description = textDescription
+                                    if (isValidDescription(text = textDescription) && isValidName(text = textName)) {
+                                        mainViewModelCourse.selectedCourse.name = textName
+                                        mainViewModelCourse.selectedCourse.description = textDescription
 
-                                    if (editImg) {
-                                        updateImages(
-                                            context = context,
-                                            imageUri = mainViewModelCourse.courseImg.value,
-                                            mainViewModelCourse = mainViewModelCourse
-                                        )
-                                        editImg = false
-                                    }
-                                    mainViewModelCourse.updateCurrentCourse(
-                                        updateCourse = mainViewModelCourse.selectedCourse,
-                                        onFinishResult = {
-                                            onValueChangeGetInformation(false)
+                                        if (editImg) {
+                                            updateImages(
+                                                context = context,
+                                                imageUri = mainViewModelCourse.courseImg.value,
+                                                mainViewModelCourse = mainViewModelCourse
+                                            )
+                                            editImg = false
                                         }
-                                    )
+                                        mainViewModelCourse.updateCurrentCourse(
+                                            updateCourse = mainViewModelCourse.selectedCourse,
+                                            onFinishResult = {
+                                                onValueChangeGetInformation(false)
+                                            }
+                                        )
+                                    }
+                                    else
+                                        Toast.makeText(context,CommonErrors.incompleteFields,Toast.LENGTH_SHORT).show()
+
                                 },
                                 content = {
                                     Text(text = "Guardar cambios")
@@ -183,10 +178,10 @@ fun updateImages(
     if (imageUri != null) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.getReferenceFromUrl("gs://class-manager-58dbf.appspot.com/")
-        val folderRef : StorageReference = storageRef.child("classes/")
+        val folderRef : StorageReference = storageRef.child("courses/")
         val photoRef : StorageReference = folderRef.child(mainViewModelCourse.selectedCourse.id)
 
-        val desertRef = storageRef.child("classes/${mainViewModelCourse.selectedCourse.id}")
+        val desertRef = storageRef.child("courses/${mainViewModelCourse.selectedCourse.id}")
         desertRef.delete()
             .addOnCompleteListener {
 
@@ -195,12 +190,11 @@ fun updateImages(
                         .putFile(imageUri)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                mainViewModelCourse.selectedCourse.img =  "gs://class-manager-58dbf.appspot.com/classes/${mainViewModelCourse.selectedCourse.id}"
+                                mainViewModelCourse.selectedCourse.img =  "gs://class-manager-58dbf.appspot.com/courses/${mainViewModelCourse.selectedCourse.id}"
                                 mainViewModelCourse.updateCurrentCourse(
                                     updateCourse =  mainViewModelCourse.selectedCourse,
                                     onFinishResult = {
-                                        CurrentUser.getMyClasses( onFinished = {} )
-                                        Toast.makeText(context,"La clase se ha acualizado correctamente",
+                                        Toast.makeText(context,"El curso se ha acualizado correctamente",
                                             Toast.LENGTH_SHORT).show()
                                     }
                                 )

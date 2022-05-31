@@ -1,7 +1,9 @@
 package com.example.classmanagerandroid.Screens.Course
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -9,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -22,9 +25,10 @@ fun addNewUser(
     placeholder: String,
     onValueChangeTextSelectedItem: (String) -> Unit,
     onClickSave: () -> Unit,
-    rol: String
+    textSelectedItem: String
 ) {
     val suggestion: MutableList<String> = mutableListOf("admin","profesor","padre","alumno")
+    val context = LocalContext.current
 
     Dialog(
         onDismissRequest = {
@@ -38,13 +42,13 @@ fun addNewUser(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.6f)
-                    .background(Color.White),
+                    .fillMaxHeight(0.53f)
+                    .background(MaterialTheme.colors.background),
                 content = {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .fillMaxHeight(0.8f),
+                            .fillMaxSize(),
                         content = {
                             Spacer(modifier = Modifier.padding(10.dp))
                             TextField(
@@ -97,7 +101,10 @@ fun addNewUser(
                                     )
                                     TextButton(
                                         onClick = {
-                                            onClickSave()
+                                            if (textSelectedItem == "Sin asignar")
+                                                Toast.makeText(context,"Debes de asignarle un rol",Toast.LENGTH_SHORT).show()
+                                             else
+                                                onClickSave()
                                         },
                                         content = {
                                             Text(text = "Save")

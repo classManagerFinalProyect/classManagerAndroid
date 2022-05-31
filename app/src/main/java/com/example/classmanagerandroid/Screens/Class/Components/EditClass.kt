@@ -7,10 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -19,9 +17,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -31,12 +27,12 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.example.classmanagerandroid.Classes.CurrentUser
 import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
-import com.example.classmanagerandroid.Screens.Course.MainViewModelCourse
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
-import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
+import com.example.classmanagerandroid.Screens.Utils.isValidDescription
+import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -104,12 +100,12 @@ fun editClass(
                     )
                     Spacer(modifier = Modifier.padding(3.dp))
 
-                    bigTextFieldWithErrorMessage(
+                    bigOutlineTextFieldWithErrorMessage(
                         text = "Nombre de la clase",
                         value = textName,
                         onValueChange = { textName = it },
-                        validateError = ::isAlphanumeric,
-                        errorMessage = messageNameClassError,
+                        validateError = { isValidName(it) },
+                        errorMessage = CommonErrors.notValidName,
                         changeError = { nameError = it},
                         error = nameError,
                         mandatory = false,
@@ -117,12 +113,12 @@ fun editClass(
                         enabled = true
                     )
 
-                    bigTextFieldWithErrorMessage(
+                    bigOutlineTextFieldWithErrorMessage(
                         text = "Descipción de la clase",
                         value = textDescription,
                         onValueChange = { textDescription = it },
-                        validateError = ::isAlphanumeric,
-                        errorMessage = messageDescriptionClassError,
+                        validateError = { isValidDescription(it) },
+                        errorMessage = CommonErrors.notValidDescription,
                         changeError = { descriptionError = it},
                         error = descriptionError,
                         mandatory = false,
@@ -204,7 +200,6 @@ fun updateImages(
                                 mainViewModelClass.updateCurrentClass(
                                     updateClass = mainViewModelClass.selectedClass,
                                     onFinishResult = {
-                                        CurrentUser.getMyClasses( onFinished = {} )
                                         Toast.makeText(context,"La clase se ha acualizado correctamente",
                                             Toast.LENGTH_SHORT).show()
                                     }

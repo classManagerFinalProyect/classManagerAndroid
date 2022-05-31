@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +23,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.ScreenItems.Cards.longHorizontalCard
@@ -45,7 +44,7 @@ fun showClasses(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .border(BorderStroke(2.dp, Color.LightGray)),
+            .border(BorderStroke(2.dp, MaterialTheme.colors.onSurface)),
         content = {
             stickyHeader {
                 Row(
@@ -68,14 +67,13 @@ fun showClasses(
                                     )
                             }
                         }
-                        .background(Color.White)
+                        .background(MaterialTheme.colors.background)
                         .padding(16.dp),
                     content = {
                         Text(
                             text = "Mis Clases",
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
-                            color = Color.Black,
                             style = MaterialTheme.typography.caption,
                         )
                         Spacer(modifier = Modifier.padding(5.dp))

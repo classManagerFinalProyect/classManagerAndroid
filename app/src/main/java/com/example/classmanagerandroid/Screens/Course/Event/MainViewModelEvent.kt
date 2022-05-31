@@ -7,7 +7,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase
@@ -27,6 +27,11 @@ class MainViewModelEvent: ViewModel() {
     var rolOfSelectedUserInCurrentCourse: RolUser = RolUser(id = "", rol = "Sin asignar")
     val selectedEvents: MutableList<Event> = mutableListOf()
     val selectedClasses: MutableList<Class> = mutableListOf()
+
+    fun clearVariables() {
+        selectedEvents.clear()
+        selectedClasses.clear()
+    }
 
     fun getSelectedCourse(
         idCourse: String,
@@ -56,6 +61,7 @@ class MainViewModelEvent: ViewModel() {
                         id = it.id,
                         img = it.get("img") as String
                     )
+
                 getSelectedEvents(selectedCourse.events)
                 getSelectedClasses(selectedCourse.classes)
                 getRolOfUser(CurrentUser.currentUser.id)
@@ -66,6 +72,7 @@ class MainViewModelEvent: ViewModel() {
         classes: MutableList<String>
     ) {
         selectedEvents.clear()
+        selectedClasses.clear()
         classes.forEach{
             getClassById(
                 idOfClass = it,
@@ -112,7 +119,7 @@ class MainViewModelEvent: ViewModel() {
         initialTime: String,
         finalTime: String,
         nameOfClass: String,
-        context: Context
+        onFinished: () -> Unit
     ) {
 
         uploadEvent(
@@ -133,7 +140,7 @@ class MainViewModelEvent: ViewModel() {
                         onFinished = { finish , course ->
                             if(finish) {
                                 selectedEvents.add(newEvent)
-                                Toast.makeText(context,"El evento ha sido creado con exito",Toast.LENGTH_SHORT).show()
+                                onFinished()
                             }
                         }
                     )
@@ -160,19 +167,34 @@ class MainViewModelEvent: ViewModel() {
         )
     }
 
-    fun deleteAllEvents() {
-        selectedCourse.events.clear()
-        selectedCourse.events.forEach{
-            deleteEvent(it)
+    fun deleteAllEvents(
+        onFinished: () -> Unit
+    ) {
+        var count = 0
+        selectedCourse.events.forEach {
+            deleteEvent(
+                idOfEvent = it,
+                onFinished = {
+                    count++
+                    if(selectedCourse.events.size == 1) {
+                        selectedCourse.events.clear()
+                        selectedEvents.clear()
+                        onFinished()
+                    }
+                }
+            )
         }
+
     }
 
     fun deleteEvent(
-        idOfEvent: String
+        idOfEvent: String,
+        onFinished: () -> Unit
     ) {
         deleteEventById(
             idOfEvent = idOfEvent,
             onFinished = {
+                onFinished()
                 if (it) {
                     selectedCourse.events.remove(idOfEvent)
                     updateCourse(

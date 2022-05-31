@@ -37,7 +37,7 @@ fun longHorizontalCard(
             .fillMaxWidth()
             .height(90.dp)
             .clickable {
-                //Navegación
+
                 onClick()
             },
         shape = RoundedCornerShape(8.dp),

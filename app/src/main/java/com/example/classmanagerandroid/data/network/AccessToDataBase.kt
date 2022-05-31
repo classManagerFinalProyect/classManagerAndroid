@@ -3,7 +3,7 @@ package com.example.classmanagerandroid.data.network
 import android.content.Context
 import android.widget.Toast
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.data.remote.Practice
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -17,7 +17,7 @@ import com.google.firebase.storage.ktx.storage
 class AccessToDataBase {
     companion object {
          var auth: FirebaseAuth = Firebase.auth
-         var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
          var storage = Firebase.storage
          var storageReference: StorageReference = storage.reference
          val storageInstance = FirebaseStorage.getInstance()
@@ -37,7 +37,7 @@ class AccessToDataBase {
                     deletePracticeChatById(selectedPractice.idOfChat)
 
                     CurrentUser.myClasses.forEach {
-                        if(it.id.equals(selectedPractice.idOfClass)) {
+                        if(it.id == selectedPractice.idOfClass) {
                             it.idPractices.remove(selectedPractice.id)
                             deleteIdOfPracticeInTableClass(
                                 newValueOfPractices = it.idPractices,
@@ -50,7 +50,7 @@ class AccessToDataBase {
                             navController.popBackStack()
                         }
                     )
-                    Toast.makeText(context,"La clase se ha eliminado correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,"La práctica se ha eliminado correctamente", Toast.LENGTH_SHORT).show()
                 }
         }
 

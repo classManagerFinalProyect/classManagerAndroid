@@ -53,7 +53,8 @@ fun selectedDropDownMenuCurseItem(
                         Icon(
                             imageVector = icon,
                             contentDescription = "arrowExpanded",
-                            modifier = Modifier.clickable { expanded = !expanded }
+                            modifier = Modifier.clickable { expanded = !expanded },
+                            tint = MaterialTheme.colors.secondary
                         )
                     },
                     label = { Text(text = "Curso asignado")}

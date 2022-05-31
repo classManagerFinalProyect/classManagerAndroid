@@ -11,7 +11,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,8 +20,10 @@ import androidx.navigation.NavController
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.Register.bigPasswordInputWithErrorMessage
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
+import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 import com.example.classmanagerandroid.Screens.Utils.isValidPassword
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -91,10 +92,10 @@ fun MainLogin(
                 content = {
 
                     //Texts
-                    val emailText = remember{ mutableStateOf("test@gmail.com") }
-                    val (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("11111111") }
+                    val emailText = remember{ mutableStateOf("admin@gmail.com") }
+                    var emailError by remember{ mutableStateOf(false) }
+                    val (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("administrador") }
                     var passwordError by  remember { mutableStateOf(false) }
-                    val passwordTextErrorMessage by remember { mutableStateOf("La contraseña no puede ser inferior a 8 caracteres ni contener caracteres especiales") }
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,28 +113,21 @@ fun MainLogin(
                                                 .height(250.dp)
                                                 .width(450.dp)
                                                 .padding(30.dp)
-                                                .clickable {
-                                                    crateDynamicLink()
-                                                }
                                         )
                                     }
 
                                     item {
-                                        OutlinedTextField(
+                                        bigOutlineTextFieldWithErrorMessage(
+                                            text = "Email",
                                             value = emailText.value,
-                                            onValueChange = {
-                                                emailText.value = it
-                                            },
-                                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                                focusedBorderColor = Color.Gray,
-                                                unfocusedBorderColor = Color.LightGray
-                                            ),
-                                            placeholder = { Text("Email") },
-                                            singleLine = true,
-                                            label = { Text(text = "Email") },
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(PaddingValues(start = 40.dp, end = 40.dp))
+                                            onValueChange = { emailText.value = it },
+                                            validateError = ::isValidEmail,
+                                            errorMessage = CommonErrors.notValidEmail,
+                                            changeError = { emailError  = it},
+                                            error = emailError,
+                                            mandatory = true,
+                                            KeyboardType = KeyboardType.Text,
+                                            enabled = true
                                         )
                                     }
 
@@ -143,7 +137,7 @@ fun MainLogin(
                                             onValueChangeValue = onValueChangePasswordText,
                                             valueError = passwordError,
                                             onValueChangeError = { passwordError = it },
-                                            errorMessage = passwordTextErrorMessage,
+                                            errorMessage = CommonErrors.notValidPassword,
                                             validateError = ::isValidPassword,
                                             mandatory = false,
                                             keyboardType = KeyboardType.Text

@@ -1,5 +1,7 @@
 package com.example.classmanagerandroid.Screens.Class.ViewMembersClass
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -10,20 +12,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.Class.ViewMembersClass.Components.mainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
@@ -36,7 +37,7 @@ fun MainViewMembersClass(
     navController: NavController,
     idOfClass: String
 ) {
-    val (selectedUser, onValueChangeSelectedUser) = remember { mutableStateOf(appUser("","","", arrayListOf(), arrayListOf(),"",""))}
+    val (selectedUser, onValueChangeSelectedUser) = remember { mutableStateOf(AppUser("","","", arrayListOf(), arrayListOf(),"","",""))}
     var getClass by remember { mutableStateOf(true) }
     val (changeRol, onValueChangeRol) = remember { mutableStateOf(false)}
     var (isRefreshing, onValueChangeIsRefreshing) = remember { mutableStateOf(false) }
@@ -44,12 +45,20 @@ fun MainViewMembersClass(
     val searchTextState by mainViewModelViewMembersClass.searchTextState
     val aplicateFilter = remember { mutableStateOf(true) }
     var filter = ""
+    var sendEmail = remember { mutableStateOf(false) }
 
     LaunchedEffect(getClass) {
         if (getClass) {
             mainViewModelViewMembersClass.getSelectedClass(idOfClass)
             getClass = false
         }
+    }
+
+    if(sendEmail.value) {
+        sendEmail(
+            selectedUser = selectedUser
+        )
+        sendEmail.value = false
     }
 
     if(changeRol) {
@@ -103,7 +112,7 @@ fun MainViewMembersClass(
                         modifier = Modifier
                             .fillMaxWidth(),
                         content = {
-                            var allUserAppUser: MutableList<appUser> = arrayListOf()
+                            var allUserAppUser: MutableList<AppUser> = arrayListOf()
                             mainViewModelViewMembersClass.selectedUsers.forEach{
                                 allUserAppUser.add(it)
                             }
@@ -156,6 +165,18 @@ fun MainViewMembersClass(
                                                                     .wrapContentWidth(Alignment.End),
                                                                 style = MaterialTheme.typography.subtitle1
                                                             )
+                                                            IconButton(
+                                                                onClick = {
+                                                                    onValueChangeSelectedUser(item)
+                                                                    sendEmail.value = true
+                                                                },
+                                                                content = {
+                                                                    Icon(
+                                                                        imageVector = Icons.Default.Email,
+                                                                        contentDescription = "Send Email"
+                                                                    )
+                                                                }
+                                                            )
                                                         }
                                                     )
                                                 }
@@ -172,5 +193,22 @@ fun MainViewMembersClass(
         }
     )
 }
+
+@Composable
+private fun sendEmail(
+    selectedUser: AppUser
+) {
+    val context = LocalContext.current
+
+    var email: Intent = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
+    email.setData(Uri.parse(CurrentUser.currentUser.email))
+    email.setType("text/plain")
+    email.putExtra(Intent.EXTRA_EMAIL,"Email test")
+    email.putExtra(Intent.EXTRA_SUBJECT,"Question email")
+    email.putExtra(Intent.EXTRA_TEXT,"Write your email to ${selectedUser.email}")
+
+    context.startActivity(email)
+}
+
 
 

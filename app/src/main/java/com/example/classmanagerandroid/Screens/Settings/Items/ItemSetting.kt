@@ -42,13 +42,7 @@ fun itemSetting(
                     .fillMaxSize(),
             ) {
                 Image(
-                    painter = painter/* rememberImagePainter(
-                        data = urlImage,
-                        builder = {
-                            scale(Scale.FILL)
-                            transformations(CircleCropTransformation())
-                        },
-                    )*/,
+                    painter = painter,
                     contentDescription = "Imágen del usuario",
                     modifier = Modifier
                         .fillMaxHeight()

@@ -6,10 +6,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Navigation.navController
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.Screens.Utils.createSha256
+import com.example.classmanagerandroid.Screens.Utils.getSHA256
+import com.example.classmanagerandroid.data.remote.AppUser
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
@@ -18,7 +20,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import java.util.regex.Pattern
 
 
 class MainViewModelLogin: ViewModel() {
@@ -37,14 +38,15 @@ class MainViewModelLogin: ViewModel() {
         db.collection("users").get().addOnSuccessListener {
             for (document in it) {
                 if(document.id.equals(auth.currentUser?.uid.toString())) {
-                    val currentUser = appUser(
+                    val currentUser = AppUser(
                         id = document.id,
                         name = document.get("name") as String,
                         email = document.get("email") as String,
                         imgPath = document.get("imgPath") as String,
                         courses = document.get("courses") as MutableList<String>,
                         classes = document.get("classes") as MutableList<String>,
-                        description = document.get("description") as String
+                        description = document.get("description") as String,
+                        password = document.get("password") as String
                     )
                     CurrentUser.currentUser = currentUser
                     CurrentUser.updateDates(
@@ -96,19 +98,20 @@ class MainViewModelLogin: ViewModel() {
         account: GoogleSignInAccount
     ) {
 
+        val newUser = AppUser(
+            description = "myDescription",
+            name = account.displayName!!,
+            id = auth.currentUser?.uid.toString(),
+            email = account.email!!,
+            imgPath = "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
+            courses = mutableListOf(),
+            classes = mutableListOf(),
+            password = createSha256(base = account.email!!)!!
+        )
+
         db.collection("users")
             .document(auth.currentUser?.uid.toString())
-            .set(
-                hashMapOf(
-                    "courses" to  mutableListOf<String>(),
-                    "classes" to mutableListOf<String>(),
-                    "name" to account.displayName,
-                    "email" to account.email,
-                    "imgPath" to "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2FdefaultUserImg.png?alt=media&token=eb869349-7d2b-4b9a-b04a-b304c0366c78",
-                    "id" to auth.currentUser?.uid.toString(),
-                    "description" to "myDescription"
-                )
-            )
+            .set(newUser)
         saveCurrentUser() {
             navController.navigate(Destinations.MainAppView.route)
         }
@@ -122,24 +125,21 @@ class MainViewModelLogin: ViewModel() {
         navController: NavController,
         onFinished: () -> Unit
     ) {
-        mainViewModelLogin.auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("Inicio de sesión", "Se ha iniciado la sesión")
-                    Toast.makeText(context,"Usted se ha logeado correctamente", Toast.LENGTH_SHORT).show()
-                    mainViewModelLogin.saveCurrentUser() {
-                        navController.navigate(Destinations.MainAppView.route)
-                    }
 
-                } else {
-                    onFinished()
-                    Log.w("Inicio de sesión", "No se ha podido iniciar la sesión", task.exception)
-                    Toast.makeText(context, "El usuario o contraseña no son válidos.", Toast.LENGTH_LONG).show()
+         mainViewModelLogin.auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Inicio de sesión", "Se ha iniciado la sesión")
+                Toast.makeText(context,"Usted se ha logeado correctamente", Toast.LENGTH_SHORT).show()
+                mainViewModelLogin.saveCurrentUser() {
+                    navController.navigate(Destinations.MainAppView.route)
                 }
+
+            } else {
+                onFinished()
+                Log.w("Inicio de sesión", "No se ha podido iniciar la sesión", task.exception)
+                Toast.makeText(context, "El usuario o contraseña no son válidos.", Toast.LENGTH_LONG).show()
             }
+        }
     }
-
-
-
-
 }

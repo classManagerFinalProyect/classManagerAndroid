@@ -23,10 +23,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Screens.Course.Event.Components.createNewEvent
 import com.example.classmanagerandroid.Screens.Course.Event.Components.mainAppBar
+import com.example.classmanagerandroid.Screens.Course.Event.Components.seeEvent
 import com.example.classmanagerandroid.Screens.Practice.showDatePicker
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
 import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -54,6 +56,7 @@ fun MainEvent(
     var startView by remember { mutableStateOf(true) }//false
     var (createEvent, onValueChangeCreateEvent) = remember { mutableStateOf(false) }
     var (modifierItem,onValueChangeModifierItem) = remember { mutableStateOf(false) }
+    val loading = remember { mutableStateOf(false) }
 
     var (selectedEvent,onValueChangeSelectedEvent) = remember { mutableStateOf(Event("","","","","","",""))}
 
@@ -62,6 +65,7 @@ fun MainEvent(
 
     LaunchedEffect(getCourse) {
         if (getCourse) {
+            mainViewModelEvent.clearVariables()
             mainViewModelEvent.getSelectedCourse(idCourse)
             getCourse = false
         }
@@ -74,6 +78,12 @@ fun MainEvent(
         }
     }
 
+    if (loading.value){
+        loadingDialog(
+            loading = loading,
+            informativeText = "Creando evento..."
+        )
+    }
 
     if (deleteItems) {
         val title = "¿Seguro que desea eliminar todos los eventos?"
@@ -85,8 +95,11 @@ fun MainEvent(
             onValueChangeGoBack = onValueChangeDeleteItems,
             onFinishAlertDialog = {
                 if (it) {
-                    mainViewModelEvent.deleteAllEvents()
-                    onValueChangeIsRefreshing(true)
+                    mainViewModelEvent.deleteAllEvents(
+                        onFinished = {
+                            onValueChangeIsRefreshing(true)
+                        }
+                    )
                     Toast.makeText(context,"Se han eliminado todos los eventos",Toast.LENGTH_SHORT).show()
                 }
                 onValueChangeDeleteItems(false)
@@ -94,23 +107,32 @@ fun MainEvent(
         )
     }
     if(modifierItem) {
-        modifierEvent(
-            onValueChangeModifierEvent = onValueChangeModifierItem,
-            mainViewModelEvent = mainViewModelEvent,
-            navController = navController,
-            event = selectedEvent,
-            onValueChangeSelectedEvent = onValueChangeSelectedEvent,
-            onValueChangeIsRefreshing = onValueChangeIsRefreshing
-        )
-
+        if(mainViewModelEvent.rolOfSelectedUserInCurrentCourse.rol == "admin") {
+            modifierEvent(
+                onValueChangeModifierEvent = onValueChangeModifierItem,
+                mainViewModelEvent = mainViewModelEvent,
+                navController = navController,
+                event = selectedEvent,
+                onValueChangeSelectedEvent = onValueChangeSelectedEvent,
+                onValueChangeIsRefreshing = onValueChangeIsRefreshing,
+            )
+        }
+        else {
+            seeEvent(
+                onValueChangeModifierEvent = onValueChangeModifierItem,
+                event = selectedEvent,
+            )
+        }
     }
+
     if (createEvent) {
         createNewEvent(
             onValueChangeCreateEvent = onValueChangeCreateEvent,
             mainViewModelEvent = mainViewModelEvent,
-            onValueChangeIsRefreshing = onValueChangeIsRefreshing
+            loading = loading
         )
     }
+
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
         onRefresh = { onValueChangeIsRefreshing(true) },
@@ -144,15 +166,17 @@ fun MainEvent(
                     )
                 },
                 floatingActionButton = {
-                    FloatingActionButton(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        content = {
-                            Text(text = "+")
-                        },
-                        onClick = {
-                            onValueChangeCreateEvent(true)
-                        }
-                    )
+                    if(mainViewModelEvent.rolOfSelectedUserInCurrentCourse.rol == "admin" || mainViewModelEvent.rolOfSelectedUserInCurrentCourse.rol == "profesor") {
+                        FloatingActionButton(
+                            backgroundColor = MaterialTheme.colors.primary,
+                            content = {
+                                Text(text = "+")
+                            },
+                            onClick = {
+                                onValueChangeCreateEvent(true)
+                            }
+                        )
+                    }
                 },
                 content = {
                     Column(
@@ -164,15 +188,21 @@ fun MainEvent(
                                 cells = GridCells.Adaptive(minSize = 128.dp),
                                 contentPadding = PaddingValues(start = 30.dp, end = 30.dp)
                             ) {
-                                itemsIndexed(mainViewModelEvent.selectedEvents) { index: Int, item ->
-                                    longItemEvent(
-                                        event = item,
-                                        onClick = {
-                                            onValueChangeSelectedEvent(item)
-                                            onValueChangeModifierItem(true)
+                                if (aplicateFilter.value) {
+                                    if(!loading.value) {
+                                        itemsIndexed(mainViewModelEvent.selectedEvents) { index: Int, item ->
+                                            if (item.name.lowercase().contains(filter)) {
+                                                longItemEvent(
+                                                    event = item,
+                                                    onClick = {
+                                                        onValueChangeSelectedEvent(item)
+                                                        onValueChangeModifierItem(true)
 
+                                                    }
+                                                )
+                                            }
                                         }
-                                    )
+                                    }
                                 }
                             }
                         }

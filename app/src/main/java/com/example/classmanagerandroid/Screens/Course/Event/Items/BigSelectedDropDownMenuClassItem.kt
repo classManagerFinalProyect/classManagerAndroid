@@ -25,7 +25,6 @@ fun bigSelectedDropDownMenuClassItem(
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("Sin asignar")}
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
-    var editItem = remember{ mutableStateOf(false) }
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
@@ -39,7 +38,7 @@ fun bigSelectedDropDownMenuClassItem(
                     enabled = false,
                     label =  { Text(text = label)},
                     modifier = Modifier
-                        .padding(PaddingValues(start = 30.dp, end = 30.dp))
+                        .padding(PaddingValues(start = 40.dp, end = 40.dp))
                         .onGloballyPositioned { coordinates ->
                             textfieldSize = coordinates.size.toSize()
                         },
@@ -47,7 +46,8 @@ fun bigSelectedDropDownMenuClassItem(
                         Icon(
                             imageVector = icon,
                             contentDescription = "arrowExpanded",
-                            modifier = Modifier.clickable { expanded = !expanded }
+                            modifier = Modifier.clickable { expanded = !expanded },
+                            tint = MaterialTheme.colors.secondary
                         )
                     }
                 )

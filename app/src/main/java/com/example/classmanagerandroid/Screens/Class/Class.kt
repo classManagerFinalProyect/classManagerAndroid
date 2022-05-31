@@ -2,45 +2,31 @@ package com.example.classmanagerandroid.Screens.Class
 
 
 
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.example.classmanagerandroid.Classes.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.Class.Components.addNewPractice
 import com.example.classmanagerandroid.Screens.Class.Components.editClass
 import com.example.classmanagerandroid.Screens.Class.Components.mainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
 import com.example.classmanagerandroid.Screens.ScreenItems.Cards.longHorizontalCard
 import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
-import com.example.classmanagerandroid.data.network.AccessToDataBase
-import com.example.classmanagerandroid.data.remote.Practice
-import com.example.classmanagerandroid.ui.theme.blue
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.delay
 
 //Preguntar sobre como cargar los datos
 
@@ -65,6 +51,7 @@ fun MainClass(
     var startView by remember { mutableStateOf(true) }//false
     var showAddPractice by remember { mutableStateOf(false)}
     var editClass = remember { mutableStateOf(false)}
+    val loading = remember { mutableStateOf(true) }
 
     if(editClass.value) {
         editClass(
@@ -72,12 +59,14 @@ fun MainClass(
             mainViewModelClass = mainViewModelClass
         )
     }
+
     if (getClass.value) {
         isRefreshing = true
         mainViewModelClass.clearVariables()
         mainViewModelClass.getSelectedClass(
             idClass = classId,
             onValueFinish = {
+                loading.value = false
                 isRefreshing = false
                 if (mainViewModelClass.selectedClass.idPractices.size == 0) showAddPractice = true
             }
@@ -103,7 +92,7 @@ fun MainClass(
 
 
     if (deleteItem) {
-        var title = "¿Seguro que desea eliminar la clase seleccionado?"
+        var title = "¿Seguro que desea eliminar la clase seleccionada?"
         var subtitle = "Perderas todas las prácticas creadas. "
 
         confirmAlertDialog(
@@ -132,11 +121,11 @@ fun MainClass(
     }
 
     LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            delay(800L)
+        if (isRefreshing && !loading.value) {
             isRefreshing = false
         }
     }
+
     if (startView) {
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -157,6 +146,7 @@ fun MainClass(
                         }
                     },
                     topBar = {
+
                         mainAppBar(
                             searchWidgetState = searchWidgetState,
                             searchTextState = searchTextState,
@@ -179,7 +169,8 @@ fun MainClass(
                             mainViewModelClass = mainViewModelClass,
                             onValueChangeDeleteItem = onValueChangeDeleteItem,
                             onValueChangeAddNewUser = onValueChangeAddNewUser,
-                            editClass = editClass
+                            editClass = editClass,
+                            loading = loading
                         )
                     },
                     content = {
@@ -194,14 +185,19 @@ fun MainClass(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center,
                                         content = {
-                                            TextButton(
-                                                onClick = {
-                                                    addNewPractice = true
-                                                },
-                                                content = {
-                                                    Text(text = "Crear nueva páctica", fontSize = 18.sp)
-                                                }
-                                            )
+                                            if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "admin" || mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "profesor") {
+                                                TextButton(
+                                                    onClick = {
+                                                        addNewPractice = true
+                                                    },
+                                                    content = {
+                                                        Text(text = "Crear nueva páctica", fontSize = 18.sp)
+                                                    }
+                                                )
+                                            }
+                                            else {
+                                                 Text(text = "No Hay prácticas creadas")
+                                          }
                                         }
                                     )
                                 }

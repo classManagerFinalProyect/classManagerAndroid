@@ -54,7 +54,8 @@ fun bigDropDownMenuWithAction(
                             imageVector =  icon,
                             contentDescription = "arrowExpanded",
                             modifier = Modifier
-                                .clickable { expanded = !expanded }
+                                .clickable { expanded = !expanded },
+                            tint = MaterialTheme.colors.secondary
                         )
                     },
                     leadingIcon = {
@@ -65,7 +66,8 @@ fun bigDropDownMenuWithAction(
                                 .clickable {
                                     editItem.value = true
                                     onClick()
-                                }
+                                },
+                            tint = MaterialTheme.colors.secondary
                         )
                     }
                 )

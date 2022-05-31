@@ -72,7 +72,7 @@ class MainViewModelMainAppView: ViewModel() {
 
 
     //Content State
-    private val _contentState: MutableState<ContentState> = mutableStateOf(value = ContentState.ALL)
+    private val _contentState: MutableState<ContentState> = mutableStateOf(value = ContentState.COURSES)
     val contentState: State<ContentState> = _contentState
 
 

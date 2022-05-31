@@ -1,23 +1,14 @@
 package com.example.classmanagerandroid.data.network
 
 import com.example.classmanagerandroid.data.local.RolUser
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import com.example.classmanagerandroid.data.remote.Class
-import com.example.classmanagerandroid.data.remote.Course
-import com.example.classmanagerandroid.data.remote.Event
+
 
 class ClassesImplement {
 
     companion object {
-        private var auth: FirebaseAuth = Firebase.auth
         private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        private var storage = Firebase.storage
-        private var storageReference: StorageReference = storage.reference
 
         fun createNewClass(
             newClass: Class,

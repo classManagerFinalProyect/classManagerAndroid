@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,7 +32,8 @@ fun mainAppBar(
     mainViewModelCourse: MainViewModelCourse,
     onValueChangeDeleteItem: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
-    onValueChangeGetInformation: (Boolean) -> Unit
+    onValueChangeGetInformation: (Boolean) -> Unit,
+    leaveCourse: MutableState<Boolean>
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -83,15 +85,7 @@ fun mainAppBar(
                                 expanded = expanded.value,
                                 onDismissRequest = { expanded.value = false },
                                 content = {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                            onValueChangeGetInformation(true)
-                                        },
-                                        content = {
-                                            Text(text = "Editar curso")
-                                        }
-                                    )
+
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded.value = false
@@ -113,25 +107,49 @@ fun mainAppBar(
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded.value = false
-                                            onValueChangeAddNewUser(true)
+                                            leaveCourse.value = true
+                                        },
+                                        content = {
+                                            Text(text = "Abandonar curso")
+                                        }
+                                    )
+                                    if(mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol == "admin" || mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol == "profesor") {
 
-                                        },
-                                        content = {
-                                            Text(text = "Añadir usuario")
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                            onValueChangeDeleteItem(true)
-                                        },
-                                        content = {
-                                            Text(
-                                                text = "Eliminar curso",
-                                                color = Color.Red
-                                            )
-                                        }
-                                    )
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded.value = false
+                                                onValueChangeGetInformation(true)
+                                            },
+                                            content = {
+                                                Text(text = "Editar curso")
+                                            }
+                                        )
+                                    }
+                                    if(mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol == "admin") {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded.value = false
+                                                onValueChangeAddNewUser(true)
+
+                                            },
+                                            content = {
+                                                Text(text = "Añadir usuario")
+                                            }
+                                        )
+
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded.value = false
+                                                onValueChangeDeleteItem(true)
+                                            },
+                                            content = {
+                                                Text(
+                                                    text = "Eliminar curso",
+                                                    color = Color.Red
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             )
                         }

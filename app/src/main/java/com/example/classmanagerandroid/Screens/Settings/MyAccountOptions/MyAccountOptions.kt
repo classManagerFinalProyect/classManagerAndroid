@@ -1,25 +1,27 @@
 package com.example.classmanagerandroid.Screens.Settings.MyAccountOptions
 
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.Settings.MyAccount.changeUserValue
 import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
+import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 
 @Composable
 fun MainMyAccountOptions(
@@ -28,6 +30,30 @@ fun MainMyAccountOptions(
 ) {
     val context = LocalContext.current
     var (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
+    var changeEmail by remember { mutableStateOf(false) }
+    var newEmail = remember { mutableStateOf(CurrentUser.currentUser.email)}
+
+    if (changeEmail) {
+        changeUserValue(
+            onValueChangeChangeName = { changeEmail = false },
+            value = newEmail,
+            label = "Escribe tu nuevo correo",
+            errorMessage = CommonErrors.notValidEmail,
+            validateError = { isValidEmail(it) },
+            onClickSave = {
+                viewModelSettings.updateEmail(
+                    email = "${newEmail}",
+                    onFinished = {
+                        if (it)
+                            Toast.makeText(context,"Se ha actualizado el gmail correctamente",Toast.LENGTH_SHORT).show()
+                        else
+                            Toast.makeText(context,"No se ha podido actualizar el emaiL: debes haber iniciado sesión recientemente",Toast.LENGTH_SHORT).show()
+                        changeEmail = false
+                    }
+                )
+            }
+        )
+    }
 
     if (deleteItem) {
         confirmAlertDialog(
@@ -49,6 +75,7 @@ fun MainMyAccountOptions(
             } ,
         )
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,7 +90,7 @@ fun MainMyAccountOptions(
                         content = {
                             Icon(
                                 Icons.Filled.ArrowBack,
-                                contentDescription = "",
+                                contentDescription = "Back",
                                 tint = Color.White
                             )
                         }
@@ -115,7 +142,7 @@ fun MainMyAccountOptions(
                                         .fillMaxWidth()
                                         .height(50.dp)
                                         .clickable {
-
+                                            changeEmail = true
                                         },
                                     content = {
                                         Spacer(modifier = Modifier.padding(5.dp))

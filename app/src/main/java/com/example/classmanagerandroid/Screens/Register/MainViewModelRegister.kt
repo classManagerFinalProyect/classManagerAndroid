@@ -6,13 +6,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
+import com.example.classmanagerandroid.Screens.Utils.createSha256
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 import com.example.classmanagerandroid.Screens.Utils.isValidPassword
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.db
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.getUserById
+import com.example.classmanagerandroid.data.remote.AppUser
 
 class MainViewModelRegister: ViewModel() {
 
@@ -21,7 +23,7 @@ class MainViewModelRegister: ViewModel() {
         password: String,
         context: Context,
         navController: NavController,
-        onFinished: () -> Unit
+        onFinished: (Boolean) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener() { task ->
@@ -31,38 +33,50 @@ class MainViewModelRegister: ViewModel() {
                     Toast.makeText(context,"Has sido registrado correctamente", Toast.LENGTH_LONG).show()
                     setInformationUser(
                         email = email,
+                        password = password,
                         navController = navController,
                         onFinished = {
-                            onFinished()
+                            onFinished(true)
                         }
                     )
                 } else {
                     Log.w(ContentValues.TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(context,"El usuario no ha podido ser creado", Toast.LENGTH_LONG).show()
-                    onFinished()
+                    Toast.makeText(context,"", Toast.LENGTH_LONG).show()
+                    onFinished(false)
                 }
             }
     }
 
     private fun setInformationUser(
         email: String,
+        password: String,
         navController: NavController,
         onFinished: () -> Unit
     ) {
-
+        val newUser = AppUser(
+            description = "myDescription",
+            name = "userName",
+            id = auth.currentUser?.uid.toString(),
+            email = email,
+            imgPath = "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
+            courses = mutableListOf<String>(),
+            classes = mutableListOf<String>(),
+            password = createSha256(base = password)!!
+        )
+        /*
+         hashMapOf(
+                "courses" to  mutableListOf<String>(),
+                "classes" to mutableListOf<String>(),
+                "name" to "userName",
+                "email" to email,
+                "imgPath" to "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
+                "id" to auth.currentUser?.uid.toString(),
+                "description" to "myDescription",
+            )
+        */
         db.collection("users")
             .document(auth.currentUser?.uid.toString())
-            .set(
-                hashMapOf(
-                    "courses" to  mutableListOf<String>(),
-                    "classes" to mutableListOf<String>(),
-                    "name" to "userName",
-                    "email" to email,
-                    "imgPath" to "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
-                    "id" to auth.currentUser?.uid.toString(),
-                    "description" to "myDescription"
-                )
-            )
+            .set(newUser)
             .addOnCompleteListener {
                 if(it.isSuccessful){
                     saveCurrentUser(

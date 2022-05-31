@@ -3,13 +3,32 @@ package com.example.classmanagerandroid.Screens.Settings
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.deleteUserById
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.updateUser
 
 class ViewModelSettings: ViewModel() {
 
+    fun updateEmail(
+        email: String,
+        onFinished: (Boolean) -> Unit
+    ) {
+        AccessToDataBase.auth.currentUser!!
+            .updateEmail(email)
+            .addOnCompleteListener {
+                if(it.isSuccessful){
+                    CurrentUser.currentUser.email = email
+                    CurrentUser.uploadCurrentUser {
+                        onFinished(true)
+                    }
+                }
+                else {
+                    onFinished(false)
+                }
+            }
+
+    }
     fun updateCurrentUser(
         onFinished: () -> Unit
     ){
@@ -17,6 +36,7 @@ class ViewModelSettings: ViewModel() {
             idOfUser = CurrentUser.currentUser.id,
             user = CurrentUser.currentUser,
             onFinished = {
+                CurrentUser.getCurrentImg(onFinished =  {})
                 onFinished()
             }
         )

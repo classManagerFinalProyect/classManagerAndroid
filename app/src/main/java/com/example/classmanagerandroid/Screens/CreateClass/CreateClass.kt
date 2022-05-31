@@ -1,6 +1,7 @@
 package com.example.classmanagerandroid.Screens.CreateClass
 
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -14,10 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.data.local.CurrentUser
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
-import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
+import com.example.classmanagerandroid.Screens.Utils.isValidDescription
+import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.example.classmanagerandroid.data.remote.Course
 
 @Composable
@@ -39,11 +41,8 @@ fun MainCreateClass(
     ) }
 
 
-
-
     //Variables de ayuda
     val context = LocalContext.current
-
 
 
     Scaffold(
@@ -84,12 +83,12 @@ fun MainCreateClass(
                                 Spacer(modifier = Modifier.padding(5.dp))
                             }
                             item {
-                                bigTextFieldWithErrorMessage(
+                                bigOutlineTextFieldWithErrorMessage(
                                     text = "Nombre",
                                     value = textNameOfClass,
                                     onValueChange = { textNameOfClass = it },
-                                    validateError = ::isAlphanumeric,
-                                    errorMessage = CommonErrors.notAlphanumericText,
+                                    validateError = ::isValidName,
+                                    errorMessage = CommonErrors.notValidName,
                                     changeError = { nameError = it},
                                     error = nameError,
                                     mandatory = true,
@@ -98,12 +97,12 @@ fun MainCreateClass(
                                 )
                             }
                             item {
-                                bigTextFieldWithErrorMessage(
+                                bigOutlineTextFieldWithErrorMessage(
                                     text = "Descripción",
                                     value = textDescription,
                                     onValueChange = { textDescription = it },
-                                    validateError = ::isAlphanumeric,
-                                    errorMessage = CommonErrors.notAlphanumericText,
+                                    validateError = ::isValidDescription,
+                                    errorMessage = CommonErrors.notValidDescription,
                                     changeError = { descriptionError = it},
                                     error = descriptionError,
                                     mandatory = true,
@@ -153,13 +152,17 @@ fun MainCreateClass(
                                 modifier = Modifier
                                     .fillMaxWidth(0.4f),
                                 onClick = {
-                                    mainViewModelCreateClass.createClass(
-                                        navController = navController,
-                                        context = context,
-                                        textDescription = textDescription,
-                                        textNameOfClass = textNameOfClass,
-                                        itemSelectedCurse = itemSelectedCurse
-                                    )
+                                    if(isValidName(text = textNameOfClass) && isValidDescription(text = textDescription)) {
+                                        mainViewModelCreateClass.createClass(
+                                            navController = navController,
+                                            context = context,
+                                            textDescription = textDescription,
+                                            textNameOfClass = textNameOfClass,
+                                            itemSelectedCurse = itemSelectedCurse
+                                        )
+                                    }
+                                    else
+                                        Toast.makeText(context,CommonErrors.incompleteFields,Toast.LENGTH_SHORT).show()
                                 },
                                 content = {
                                     Text(text = "Crear clase")

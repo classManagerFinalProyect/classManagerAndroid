@@ -8,18 +8,21 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
-import com.example.classmanagerandroid.Classes.CurrentUser.Companion.currentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser.Companion.currentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.db
+import com.example.classmanagerandroid.data.network.ClassesImplement.Companion.updateClass
 import com.example.classmanagerandroid.data.network.CourseImplement.Companion.updateCourse
 import com.example.classmanagerandroid.data.network.EventImplement.Companion.deleteEventById
+import com.example.classmanagerandroid.data.network.UsersImplement
+import com.example.classmanagerandroid.data.network.UsersImplement.Companion.getUserById
 import com.example.classmanagerandroid.data.remote.Course
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 import com.example.classmanagerandroid.data.remote.Class
 
 
@@ -27,10 +30,35 @@ class MainViewModelCourse: ViewModel() {
 
     var selectedCourse: Course = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","","")
     var selectedClasses: MutableList<Class> = mutableListOf()
-    lateinit var addNewUser: appUser
+    lateinit var addNewUser: AppUser
     var rolOfSelectedUserInCurrentCourse: RolUser = RolUser(id = "", rol = "Sin asignar")
     val courseImg =  mutableStateOf<Uri?>(null)
 
+    fun leaveCourse(
+        onFinishResult: () -> Unit
+    ) {
+        selectedClasses.forEach {
+            it.users.remove(rolOfSelectedUserInCurrentCourse)
+            currentUser.classes.remove(it.id)
+
+            updateClass(
+                newClass = it,
+                onFinished = { b , updateClass ->
+                    selectedCourse.users.remove(rolOfSelectedUserInCurrentCourse)
+                    currentUser.courses.remove(selectedCourse.id)
+                    updateCurrentCourse(
+                        updateCourse = selectedCourse,
+                        onFinishResult = {
+                                CurrentUser.uploadCurrentUser(onFinished = {
+                                    onFinishResult()
+                                }
+                            )
+                        }
+                    )
+                }
+            )
+        }
+    }
 
     fun getCourseImg() {
         val gsReference = AccessToDataBase.storageInstance.getReferenceFromUrl(selectedCourse.img)
@@ -40,7 +68,7 @@ class MainViewModelCourse: ViewModel() {
     fun clearVariables() {
          selectedCourse = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","","")
          selectedClasses = mutableListOf()
-         addNewUser = appUser("","","", arrayListOf(), arrayListOf(),"","")
+         addNewUser = AppUser("","","", arrayListOf(), arrayListOf(),"","","")
          rolOfSelectedUserInCurrentCourse =  RolUser(id = "", rol = "Sin asignar")
     }
 
@@ -75,52 +103,67 @@ class MainViewModelCourse: ViewModel() {
                             img = it.result.get("img") as String
 
                         )
-                    getSelectedClasses(selectedCourse.classes)
                     getRolOfUser(currentUser.id)
                     getCourseImg()
-                    onFinishResult()
+
+                    getSelectedClasses(
+                        allSelectedClasses = selectedCourse.classes,
+                        onFinishResult = {
+                            onFinishResult()
+                        }
+                    )
                 }
                 else {
                     onFinishResult()
                 }
-
             }
     }
 
 
 
     fun getSelectedClasses(
-        allSelectedClasses: MutableList<String>
+        allSelectedClasses: MutableList<String>,
+        onFinishResult: () -> Unit
     ) {
         selectedClasses.clear()
+        var count = 0
+        if(allSelectedClasses.size == 0) onFinishResult()
         allSelectedClasses.forEach{ idOfCourse ->
 
             db.collection("classes")
                 .document(idOfCourse)
                 .get()
-                .addOnSuccessListener {
-                    val users = it.get("users") as  MutableList<HashMap<String,String>>
-                    val listOfRolUser: MutableList<RolUser> = mutableListOf()
-                    users.forEach { rolUser ->
-                        listOfRolUser.add(
-                            RolUser(
-                                id = rolUser.get("id") as String,
-                                rol = rolUser.get("rol") as String
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+
+                        val users = it.result.get("users") as  MutableList<HashMap<String,String>>
+                        val listOfRolUser: MutableList<RolUser> = mutableListOf()
+                        users.forEach { rolUser ->
+                            listOfRolUser.add(
+                                RolUser(
+                                    id = rolUser.get("id") as String,
+                                    rol = rolUser.get("rol") as String
+                                )
+                            )
+                        }
+
+                        selectedClasses.add(
+                            Class(
+                                name = it.result.get("name") as String,
+                                idPractices = it.result.get("idPractices") as MutableList<String>,
+                                users = listOfRolUser,
+                                description = it.result.get("description") as String,
+                                id = it.result.id,
+                                idOfCourse = it.result.get("idOfCourse") as String,
+                                img = it.result.get("img") as String
                             )
                         )
+                        count++
                     }
-
-                    selectedClasses.add(
-                        Class(
-                            name = it.get("name") as String,
-                            idPractices = it.get("idPractices") as MutableList<String>,
-                            users = listOfRolUser,
-                            description = it.get("description") as String,
-                            id = it.id,
-                            idOfCourse = it.get("idOfCourse") as String,
-                            img = it.get("img") as String
-                        )
-                    )
+                    else {
+                        count++
+                    }
+                    if (count == allSelectedClasses.size) onFinishResult()
                 }
         }
     }
@@ -170,14 +213,15 @@ class MainViewModelCourse: ViewModel() {
 
                 if (it.exists()) {
 
-                    val entity = appUser(
+                    val entity = AppUser(
                         id = it.get("id") as String,
                         classes = it.get("classes") as MutableList<String>,
                         description = it.get("description") as String,
                         name =  it.get("name") as String,
                         courses = it.get("courses") as MutableList<String>,
                         imgPath = it.get("imgPath") as String,
-                        email = it.get("email") as String
+                        email = it.get("email") as String,
+                        password = it.get("password") as String
                     )
                     entity.classes.remove(selectedCourse.id)
                     uploadUser(entity)
@@ -186,11 +230,11 @@ class MainViewModelCourse: ViewModel() {
     }
 
     fun uploadUser(
-        appUser: appUser
+        AppUser: AppUser
     ) {
         db.collection("users")
-            .document(appUser.id)
-            .set(appUser)
+            .document(AppUser.id)
+            .set(AppUser)
     }
 
     fun deleteClass(idOfClass: String) {
@@ -199,6 +243,28 @@ class MainViewModelCourse: ViewModel() {
             .delete()
             .addOnSuccessListener {
             }
+    }
+
+    fun updateUserById(
+        id: String,
+        newClassId: String
+    ) {
+        getUserById(
+            idOfUser = id,
+            onFinished = { b, appUser ->
+                appUser.classes.add(newClassId)
+
+                if(b) {
+                    UsersImplement.updateUser(
+                        idOfUser = id,
+                        user = appUser,
+                        onFinished = {
+
+                        }
+                    )
+                }
+            }
+        )
     }
 
     fun createNewClass(
@@ -210,20 +276,34 @@ class MainViewModelCourse: ViewModel() {
     ) {
         val document = db.collection("classes").document()
         val idOfDocument = document.id
+        val allRolUser: MutableList<RolUser> = arrayListOf()
+
+        selectedCourse.users.forEach {
+            allRolUser.add(it)
+            updateUserById(
+                it.id,
+                idOfDocument
+            )
+        }
+
+
+        allRolUser.add(
+            RolUser(
+                id = "${auth.currentUser?.uid}",
+                rol = "admin"
+            )
+        )
+
         val newClass = Class(
             name = textNameOfClass,
             id = document.id,
             idOfCourse = itemSelectedCurse.id,
             description = textDescription,
             idPractices = mutableListOf<String>(),
-            users =  mutableListOf(
-                RolUser(
-                    id = "${auth.currentUser?.uid}",
-                    rol = "admin"
-                )
-            ),
-            img = "gs://class-manager-58dbf.appspot.com/appImages/books.jpg"
+            users = allRolUser,
+            img = selectedCourse.img
         )
+
         document
             .set(newClass)
             .addOnSuccessListener {
@@ -242,7 +322,7 @@ class MainViewModelCourse: ViewModel() {
                 .addOnSuccessListener {
                     CurrentUser.updateDates(
                         onFinished = {
-                            Toast.makeText(context,"La calse ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"La clase ha sido creado correctamente", Toast.LENGTH_SHORT).show()
                             navController.navigate("${Destinations.Class.route}/${idOfDocument}")
                         }
                     )
@@ -259,14 +339,15 @@ class MainViewModelCourse: ViewModel() {
             .addOnCompleteListener {
 
                 if (it.result.exists()) {
-                    addNewUser = appUser(
+                    addNewUser = AppUser(
                         id = it.result.get("id") as String,
                         classes = it.result.get("classes") as MutableList<String>,
                         description = it.result.get("description") as String,
                         name =  it.result.get("name") as String,
                         courses = it.result.get("courses") as MutableList<String>,
                         imgPath = it.result.get("imgPath") as String,
-                        email = it.result.get("email") as String
+                        email = it.result.get("email") as String,
+                        password = it.result.get("password") as String
                     )
                     onFinishResult(true)
                 }
@@ -295,13 +376,24 @@ class MainViewModelCourse: ViewModel() {
             onFinishResult = {
                 if (it) {
                     if (!checkIfUserIsInscribedInCourse(idOfUser)) {
-                        selectedCourse.users.add(
-                            RolUser(
-                                id = idOfUser,
-                                rol = textSelectedItem
-                            )
+                        val newRolUser = RolUser(
+                            id = idOfUser,
+                            rol = textSelectedItem
                         )
+
+                        selectedCourse.users.add(newRolUser)
                         addNewUser.courses.add(selectedCourse.id)
+
+                        selectedClasses.forEach{ newClass ->
+                            addNewUser.classes.add(newClass.id)
+                        }
+
+                        addNewMemberInCLasses(
+                            rolUser = newRolUser,
+                            onFinished = {
+
+                            }
+                        )
                         db.collection("users")
                             .document("${idOfUser}")
                             .set(addNewUser)
@@ -325,6 +417,23 @@ class MainViewModelCourse: ViewModel() {
                     Toast.makeText(context,"La id del usuario no existe", Toast.LENGTH_SHORT).show()
             }
         )
+    }
+
+    fun addNewMemberInCLasses(
+        onFinished: () -> Unit,
+        rolUser: RolUser
+    ){
+        selectedClasses.forEach{
+            it.users.add(rolUser)
+
+            updateClass(
+                newClass = it,
+                onFinished = { b, classes ->
+                    onFinished()
+                }
+            )
+        }
+
     }
 
     fun updateCurrentCourse(

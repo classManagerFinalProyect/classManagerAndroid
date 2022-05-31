@@ -29,9 +29,9 @@ fun mainAppBar(
     mainViewModelClass: MainViewModelClass,
     onValueChangeDeleteItem: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
-    editClass: MutableState<Boolean>
+    editClass: MutableState<Boolean>,
+    loading: MutableState<Boolean>
 ) {
-    var selectedRolUser by remember { mutableStateOf(mainViewModelClass.rolOfSelectedUserInCurrentClass.rol) }
     val expanded = remember { mutableStateOf(false) }
 
     when (searchWidgetState) {
@@ -77,66 +77,61 @@ fun mainAppBar(
                                     )
                                 }
                             )
+                            if(!loading.value) {
+                                DropdownMenu(
+                                    expanded = expanded.value,
+                                    onDismissRequest = { expanded.value = false },
+                                    content = {
 
-                            DropdownMenu(
-                                expanded = expanded.value,
-                                onDismissRequest = { expanded.value = false },
-                                content = {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                            editClass.value = true
-                                        },
-                                        content = {
-                                            Text(text = "Editar clase")
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                        },
-                                        content = {
-                                            Text(text = "Ver ayuda")
-                                        }
-                                    )
-                                    if (selectedRolUser.equals("admin") || selectedRolUser.equals("profesor")) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onValueChangeAddNewUser(true)
-                                                expanded.value = false
-                                            },
-                                            content = {
-                                                Text(text = "Añadir usuario")
-                                            }
-                                        )
-                                    }
+                                        if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "admin" || mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "profesor") {
+                                            DropdownMenuItem(
+                                                onClick = {
+                                                    expanded.value = false
+                                                    editClass.value = true
+                                                },
+                                                content = {
+                                                    Text(text = "Editar clase")
+                                                }
+                                            )
 
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                            navController.navigate("${Destinations.ViewMembersClass.route}/${mainViewModelClass.selectedClass.id}")
-
-                                        },
-                                        content = {
-                                            Text(text = "Ver miembros")
+                                            DropdownMenuItem(
+                                                onClick = {
+                                                    onValueChangeAddNewUser(true)
+                                                    expanded.value = false
+                                                },
+                                                content = {
+                                                    Text(text = "Añadir usuario")
+                                                }
+                                            )
                                         }
-                                    )
-                                    if (selectedRolUser.equals("admin")) {
+
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded.value = false
-                                                onValueChangeDeleteItem(true)
+                                                navController.navigate("${Destinations.ViewMembersClass.route}/${mainViewModelClass.selectedClass.id}")
+
                                             },
                                             content = {
-                                                Text(
-                                                    text = "Eliminar clase",
-                                                    color = Color.Red
-                                                )
+                                                Text(text = "Ver miembros")
                                             }
                                         )
+                                        if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "admin") {
+                                            DropdownMenuItem(
+                                                onClick = {
+                                                    expanded.value = false
+                                                    onValueChangeDeleteItem(true)
+                                                },
+                                                content = {
+                                                    Text(
+                                                        text = "Eliminar clase",
+                                                        color = Color.Red
+                                                    )
+                                                }
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     )
                 }

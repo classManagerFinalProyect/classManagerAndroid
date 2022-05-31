@@ -1,6 +1,7 @@
 package com.example.classmanagerandroid.Screens.CreateCourse
 
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -9,17 +10,19 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Screens.CreateCourse.Components.addCourse
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
 import com.example.classmanagerandroid.Screens.ScreenItems.bigDropDownMenuWithAction
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
+import com.example.classmanagerandroid.Screens.Utils.isValidDescription
+import com.example.classmanagerandroid.Screens.Utils.isValidName
 
 @Composable
 fun MainCreateCourse(
@@ -39,8 +42,15 @@ fun MainCreateCourse(
 
     //Help variables
     val context = LocalContext.current
+    val loading = remember { mutableStateOf(false) }
 
 
+    if (loading.value){
+        loadingDialog(
+            loading = loading,
+            informativeText = "Creando nuevo curso"
+        )
+    }
     if (addCourse) {
         addCourse(
             mainViewModelCreateCourse = mainViewModelCreateCourse,
@@ -87,12 +97,12 @@ fun MainCreateCourse(
                             }
 
                             item {
-                                bigTextFieldWithErrorMessage(
+                                bigOutlineTextFieldWithErrorMessage(
                                     text = "Nombre",
                                     value = textNameOfCourse,
                                     onValueChange = { textNameOfCourse = it },
-                                    validateError = ::isAlphanumeric,
-                                    errorMessage = CommonErrors.notAlphanumericText,
+                                    validateError = ::isValidName,
+                                    errorMessage = CommonErrors.notValidName,
                                     changeError = { nameError = it},
                                     error = nameError,
                                     mandatory = true,
@@ -102,12 +112,12 @@ fun MainCreateCourse(
 
                             }
                             item {
-                                bigTextFieldWithErrorMessage(
+                                bigOutlineTextFieldWithErrorMessage(
                                     text = "Descripción",
                                     value = textOfDescription,
                                     onValueChange = { textOfDescription = it },
-                                    validateError = ::isAlphanumeric,
-                                    errorMessage = CommonErrors.notAlphanumericText,
+                                    validateError = ::isValidDescription,
+                                    errorMessage = CommonErrors.notValidDescription,
                                     changeError = { descriptionError = it},
                                     error = descriptionError,
                                     mandatory = true,
@@ -157,12 +167,22 @@ fun MainCreateCourse(
                                 modifier = Modifier
                                     .fillMaxWidth(0.4f),
                                 onClick = {
-                                    mainViewModelCreateCourse.createCourse(
-                                        textOfDescription = textOfDescription,
-                                        textNameOfCourse = textNameOfCourse,
-                                        navController = navController,
-                                        context = context
-                                    )
+                                    loading.value = true
+
+                                    if(isValidName(text = textNameOfCourse) && isValidDescription(text = textOfDescription)) {
+                                        mainViewModelCreateCourse.createCourse(
+                                            textOfDescription = textOfDescription,
+                                            textNameOfCourse = textNameOfCourse,
+                                            onFinished = {
+                                                loading.value = false
+                                                Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                                                navController.popBackStack()
+                                            }
+                                        )
+                                    }
+                                    else
+                                        Toast.makeText(context,CommonErrors.incompleteFields,Toast.LENGTH_SHORT).show()
+
                                 },
                                 content = {
                                     Text(text = "Crear curso")

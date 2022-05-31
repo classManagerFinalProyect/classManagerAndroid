@@ -1,7 +1,6 @@
 package com.example.classmanagerandroid.Screens.Practice
 
 
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
@@ -25,7 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.Practice.Components.bottomAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
 import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
@@ -33,7 +32,6 @@ import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.a
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
-import java.time.LocalDate.now
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -123,44 +121,45 @@ fun MainPractice(
                             )
                         },
                         actionsContent = {
-                            Box (
-                                modifier = Modifier
-                                    .wrapContentSize(),
-                                content = {
-                                    IconButton(
-                                        onClick = { expanded.value = true },
-                                        content = {
-                                            Icon(
-                                                Icons.Filled.MoreVert,
-                                                contentDescription = "Localized description",
-                                                tint = Color.White
-                                            )
-                                        }
-                                    )
-                                    DropdownMenu(
-                                        expanded = expanded.value,
-                                        onDismissRequest = { expanded.value = false },
-                                        content = {
-                                            DropdownMenuItem(
-                                                onClick = {
-                                                    expanded.value = false
-                                                    onValueChangeDeleteItem(true)
-                                                },
-                                                content = {
-                                                    Text(
-                                                        text = "Eliminar actividad",
-                                                        color = Color.Red
-                                                    )
-                                                }
-                                            )
-                                        }
-                                    )
-                                }
-                            )
+                            if(mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "admin" || mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "profesor") {
+                                Box (
+                                    modifier = Modifier
+                                        .wrapContentSize(),
+                                    content = {
+                                        IconButton(
+                                            onClick = { expanded.value = true },
+                                            content = {
+                                                Icon(
+                                                    Icons.Filled.MoreVert,
+                                                    contentDescription = "Localized description",
+                                                    tint = Color.White
+                                                )
+                                            }
+                                        )
+                                        DropdownMenu(
+                                            expanded = expanded.value,
+                                            onDismissRequest = { expanded.value = false },
+                                            content = {
+                                                DropdownMenuItem(
+                                                    onClick = {
+                                                        expanded.value = false
+                                                        onValueChangeDeleteItem(true)
+                                                    },
+                                                    content = {
+                                                        Text(
+                                                            text = "Eliminar actividad",
+                                                            color = Color.Red
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     )
                 },
-                backgroundColor = Color.White,
                 bottomBar = {
                     if(mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol != "padre") {
                         bottomAppBar(
@@ -183,7 +182,8 @@ fun MainPractice(
                                         onValueChangeTextDate = onValueChangeTextDate,
                                         label = "Fecha de entrega",
                                         placeholder = "Fecha de entrega",
-                                        enabled = false
+                                        enabled = false,
+                                        icon = Icons.Default.DateRange
                                     )
                                 }
                                 item {
@@ -255,21 +255,27 @@ fun MainPractice(
                                                             .padding(4.dp)
                                                             .fillMaxSize(),
                                                         content = {
-                                                            Image(
-                                                                painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
-                                                                contentDescription = "avatar",
-                                                                modifier = Modifier
-                                                                    .size(40.dp)
-                                                                    .clip(CircleShape)
-                                                                    .border(
-                                                                        1.dp,
-                                                                        Color.Gray,
-                                                                        CircleShape
+                                                            Column(
+                                                                verticalArrangement = Arrangement.Top,
+                                                                content = {
+                                                                    Image(
+                                                                        painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
+                                                                        contentDescription = "avatar",
+                                                                        modifier = Modifier
+                                                                            .size(40.dp)
+                                                                            .clip(CircleShape)
+                                                                            .border(
+                                                                                1.dp,
+                                                                                Color.Gray,
+                                                                                CircleShape
+                                                                            ),
+                                                                        contentScale = ContentScale.Crop
                                                                     )
-                                                                    .align(Alignment.CenterVertically),
-                                                                contentScale = ContentScale.Crop,
+                                                                }
+                                                            )
 
-                                                                )
+
+
                                                             Spacer(modifier = Modifier.padding(5.dp))
                                                             Column(
                                                                 modifier = Modifier
@@ -286,7 +292,7 @@ fun MainPractice(
                                                                 }
                                                             )
                                                             Text(
-                                                                text = "${now()}",
+                                                                text = "${item.sentOn}",
                                                                 style = MaterialTheme.typography.caption,
                                                                 modifier = Modifier
                                                                     .padding(4.dp),

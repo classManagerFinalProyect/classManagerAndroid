@@ -3,6 +3,7 @@ package com.example.classmanagerandroid.Screens.Login.ForgotPassword
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Screens.Register.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.R
+import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 
@@ -64,6 +67,15 @@ fun MainForgotPassword(
                     .fillMaxSize()
                     .border(BorderStroke(1.dp, Color.LightGray)),
                 content = {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo_dani),
+                        contentDescription = "Logo",
+                        modifier = Modifier
+                            .height(250.dp)
+                            .width(450.dp)
+                            .padding(30.dp)
+                    )
+
                     Text(
                         text = "Introduce tu correo electrónico para buscar tu cuenta",
                         fontSize = 16.sp,
@@ -78,7 +90,7 @@ fun MainForgotPassword(
                                 )
                             )
                     )
-                    bigTextFieldWithErrorMessage(
+                    bigOutlineTextFieldWithErrorMessage(
                         text = "Email",
                         value = emailText,
                         onValueChange = onValueChangeEmailText,
@@ -92,25 +104,32 @@ fun MainForgotPassword(
                     )
 
                     Spacer(modifier = Modifier.padding(6.dp))
-                    Button(
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom,
                         content = {
-                            Text(text = "Enviar correo de verificación")
-                        },
-                        onClick = {
-                            isValidEmail(emailText)
-                            if(emailError || emailText == ""){
-                                Toast.makeText(context,"El email debe ser válido",Toast.LENGTH_SHORT).show()
-                            }
-                            else {
-                                mainViewModelForgotPassword.sendEmailToChangePassword(
-                                    context = context,
-                                    emailText = emailText
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(PaddingValues(start = 40.dp, end = 40.dp))
+                            Button(
+                                content = {
+                                    Text(text = "Enviar correo de verificación")
+                                },
+                                onClick = {
+                                    isValidEmail(emailText)
+                                    if(emailError || emailText == ""){
+                                        Toast.makeText(context,"El email debe ser válido",Toast.LENGTH_SHORT).show()
+                                    }
+                                    else {
+                                        mainViewModelForgotPassword.sendEmailToChangePassword(
+                                            context = context,
+                                            emailText = emailText
+                                        )
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(PaddingValues(start = 40.dp, end = 40.dp))
+                            )
+                            Spacer(modifier = Modifier.fillMaxSize(0.1f))
+                        }
                     )
                 }
             )

@@ -62,41 +62,43 @@ fun mainAppBar(
                             )
                         }
                     )
-                    Box (
-                        modifier = Modifier
-                            .wrapContentSize(),
-                        content = {
-                            IconButton(
-                                onClick = { expanded.value = true },
-                                content = {
-                                    Icon(
-                                        Icons.Filled.MoreVert,
-                                        contentDescription = "Localized description",
-                                        tint = Color.White
-                                    )
-                                }
-                            )
+                    if(mainViewModelEvent.rolOfSelectedUserInCurrentCourse.rol == "admin") {
+                        Box (
+                            modifier = Modifier
+                                .wrapContentSize(),
+                            content = {
+                                IconButton(
+                                    onClick = { expanded.value = true },
+                                    content = {
+                                        Icon(
+                                            Icons.Filled.MoreVert,
+                                            contentDescription = "Localized description",
+                                            tint = Color.White
+                                        )
+                                    }
+                                )
 
-                            DropdownMenu(
-                                expanded = expanded.value,
-                                onDismissRequest = { expanded.value = false },
-                                content = {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded.value = false
-                                            onValueChangeDeleteItems(true)
-                                        },
-                                        content = {
-                                            Text(
-                                                text = "Eliminar todos los eventos",
-                                                color = Color.Red
-                                            )
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                    )
+                                DropdownMenu(
+                                    expanded = expanded.value,
+                                    onDismissRequest = { expanded.value = false },
+                                    content = {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded.value = false
+                                                onValueChangeDeleteItems(true)
+                                            },
+                                            content = {
+                                                Text(
+                                                    text = "Eliminar todos los eventos",
+                                                    color = Color.Red
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
             )
         }

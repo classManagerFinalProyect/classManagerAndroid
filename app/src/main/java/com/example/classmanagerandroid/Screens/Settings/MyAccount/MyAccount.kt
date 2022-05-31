@@ -2,11 +2,7 @@ package com.example.classmanagerandroid.Screens.Settings.MyAccount
 
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,18 +23,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
-import com.example.classmanagerandroid.data.network.AccessToDataBase
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
+import com.example.classmanagerandroid.Screens.Utils.isValidDescription
+import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import java.util.*
 
 
 @Composable
@@ -47,22 +43,26 @@ fun MainMyAccount(
     viewModelSettings: ViewModelSettings
 ) {
     var context = LocalContext.current
-    var (imageUri,onValueChangeImageUri) = remember { mutableStateOf<Uri?>(null) }
+    var (imageUri,onValueChangeImageUri) = remember { mutableStateOf(CurrentUser.myImg.value) }
 
-    val (userName,onValueChangeUserName) = remember { mutableStateOf(CurrentUser.currentUser.name) }
+    val getImg = remember { mutableStateOf(false) }
+
+
+    val userName = remember { mutableStateOf(CurrentUser.currentUser.name) }
     val (changeName,onValueChangeChangeName) = remember { mutableStateOf(false) }
 
-    val (userDescription,onValueChangeUserDescription) = remember { mutableStateOf(CurrentUser.currentUser.description) }
+    val userDescription = remember { mutableStateOf(CurrentUser.currentUser.description) }
     val (changeDescription,onValueChangeChangeDescription) = remember { mutableStateOf(false) }
 
     if (changeName) {
         changeUserValue(
             onValueChangeChangeName = onValueChangeChangeName,
             value = userName,
-            onValueChangeUserName = onValueChangeUserName,
             label = "Escribe tu nuevo nombre",
+            validateError = { isValidName(it) },
+            errorMessage = CommonErrors.notValidName,
             onClickSave = {
-                CurrentUser.currentUser.name = userName
+                CurrentUser.currentUser.name = userName.value
                 onValueChangeChangeName(false)
                 CurrentUser.uploadCurrentUser(onFinished = {})
             }
@@ -73,10 +73,11 @@ fun MainMyAccount(
         changeUserValue(
             onValueChangeChangeName = onValueChangeChangeDescription,
             value = userDescription,
-            onValueChangeUserName = onValueChangeUserDescription,
             label = "Escribe tu descripción",
+            validateError = { isValidDescription(it) },
+            errorMessage = CommonErrors.notValidDescription,
             onClickSave = {
-                CurrentUser.currentUser.description = userDescription
+                CurrentUser.currentUser.description = userDescription.value
                 onValueChangeChangeDescription(false)
                 CurrentUser.uploadCurrentUser(onFinished = {})
             }
@@ -123,7 +124,8 @@ fun MainMyAccount(
                             content = {
                                 getImage(
                                     imageUri = imageUri,
-                                    onValueChangeImageUri = onValueChangeImageUri
+                                    onValueChangeImageUri = onValueChangeImageUri,
+                                    getImg = getImg
                                 )
                             }
                         )
@@ -199,7 +201,7 @@ fun MainMyAccount(
                         )
                     }
 
-                    if(imageUri != null) {
+                    if(getImg.value) {
                         item {
                             Button(
                                 modifier = Modifier
@@ -216,6 +218,7 @@ fun MainMyAccount(
                                         context = context,
                                         viewModelSettings = viewModelSettings
                                     )
+                                    getImg.value = false
                                 },
                                 content = {
                                     Text(text = "Guardar nueva imágen")
@@ -233,9 +236,10 @@ fun MainMyAccount(
 
 
 @Composable
-fun getImage(
+private fun getImage(
     imageUri: Uri?,
-    onValueChangeImageUri: (Uri?) -> Unit
+    onValueChangeImageUri: (Uri?) -> Unit,
+    getImg: MutableState<Boolean>
 ) {
 
     val launcher = rememberLauncherForActivityResult(
@@ -243,6 +247,7 @@ fun getImage(
             .GetContent()) { uri: Uri? ->
         onValueChangeImageUri(uri)
         CurrentUser.myImg.value = uri
+        getImg.value = true
     }
 
     Box(
@@ -257,7 +262,7 @@ fun getImage(
         contentAlignment = Alignment.Center,
         content = {
             Image(
-                painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
+                painter = rememberAsyncImagePainter(model = imageUri),
                 contentDescription = "avatar",
                 modifier = Modifier
                     .size(180.dp)
@@ -280,28 +285,26 @@ fun updateImages(
 ){
 
 
-    if (imageUri != null) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.getReferenceFromUrl("gs://class-manager-58dbf.appspot.com/")
-        val folderRef : StorageReference  = storageRef.child("user/")
-        val photoRef : StorageReference  = folderRef.child(CurrentUser.currentUser.id)
 
-        val desertRef = storageRef.child("user/${CurrentUser.currentUser.id}")
+    val storage = FirebaseStorage.getInstance()
+    val storageRef = storage.getReferenceFromUrl("gs://class-manager-58dbf.appspot.com/")
+    val folderRef : StorageReference  = storageRef.child("user/")
+    val photoRef : StorageReference  = folderRef.child(CurrentUser.currentUser.id)
+
+    val desertRef = storageRef.child("user/${CurrentUser.currentUser.id}")
+    if(imageUri != null) {
         desertRef.delete()
             .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Toast.makeText(context,"Se ha eliminado la imágen", Toast.LENGTH_SHORT).show()
-                }
 
                 if(it.isComplete){
                     photoRef
-                        .putFile(imageUri)
+                        .putFile(imageUri!!)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 CurrentUser.currentUser.imgPath =  "gs://class-manager-58dbf.appspot.com/user/${CurrentUser.currentUser.id}"
                                 viewModelSettings.updateCurrentUser(
                                     onFinished = {
-                                        Toast.makeText(context,"El usuario se ha acualizado correctamente",Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context,"La imagen se ha acualizado correctamente",Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }
@@ -312,5 +315,7 @@ fun updateImages(
                 }
             }
     }
-
+    else {
+        Toast.makeText(context, "Debes seleccionar una imágen", Toast.LENGTH_SHORT).show()
+    }
 }

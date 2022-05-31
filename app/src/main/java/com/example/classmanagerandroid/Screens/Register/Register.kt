@@ -3,6 +3,7 @@ package com.example.classmanagerandroid.Screens.Register
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -23,6 +24,7 @@ import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
 import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
+import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 import com.example.classmanagerandroid.Screens.Utils.isValidPassword
 
@@ -34,20 +36,17 @@ fun MainRegister(
     //Texts
     var (emailText,onValueChangeEmailText) = remember{ mutableStateOf("test@gmail.com") }
     var (emailError,emailErrorChange) = remember { mutableStateOf(false) }
-    val nameOfEmailError = remember { mutableStateOf("El email no es válido: ejemplo@ejemplo.eje") }
 
     var (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("11111111") }
     var (passwordError,passwordErrorChange) = remember { mutableStateOf(false) }
-    val passwordTextErrorMessage = remember { mutableStateOf("La contraseña no puede ser inferior a 8 caracteres ni contener caracteres especiales") }
 
     var (repeatPasswordText,onValueChangeRepeatPasswordText) = remember{ mutableStateOf("11111111") }
     var (repeatPasswordError,repeatPasswordErrorChange) = remember { mutableStateOf(false) }
-    val repeatPasswordTextErrorMesaje = remember { mutableStateOf("La contraseña no puede ser inferior a 8 caracteres ni contener caracteres especiales") }
 
 
     //Help variables
     var context = LocalContext.current
-    val (checkedStatePrivacyPolicies,onValueChangeCheckedStatePrivacyPolicies) = remember { mutableStateOf(false) }
+    val (checkedStatePrivacyPolicies,onValueChangeCheckedStatePrivacyPolicies) = remember { mutableStateOf(true) }
 
     val loading = remember { mutableStateOf(false) }
 
@@ -97,12 +96,12 @@ fun MainRegister(
                             )
                         }
                         item {
-                            bigTextFieldWithErrorMessage(
+                            bigOutlineTextFieldWithErrorMessage(
                                 text = "Email",
                                 value = emailText,
                                 onValueChange = onValueChangeEmailText,
                                 validateError = ::isValidEmail,
-                                errorMessage = nameOfEmailError.value,
+                                errorMessage = CommonErrors.notValidEmail,
                                 changeError = emailErrorChange,
                                 error = emailError,
                                 mandatory = true,
@@ -117,7 +116,7 @@ fun MainRegister(
                                 onValueChangeValue = onValueChangePasswordText,
                                 valueError = passwordError,
                                 onValueChangeError = passwordErrorChange,
-                                errorMessage = passwordTextErrorMessage.value,
+                                errorMessage = CommonErrors.notValidPassword,
                                 validateError = ::isValidPassword,
                                 mandatory = true,
                                 keyboardType = KeyboardType.Text
@@ -129,7 +128,7 @@ fun MainRegister(
                                 onValueChangeValue = onValueChangeRepeatPasswordText,
                                 valueError = repeatPasswordError,
                                 onValueChangeError = repeatPasswordErrorChange,
-                                errorMessage = repeatPasswordTextErrorMesaje.value,
+                                errorMessage = CommonErrors.notValidPassword,
                                 validateError = ::isValidPassword,
                                 mandatory = true,
                                 keyboardType = KeyboardType.Text

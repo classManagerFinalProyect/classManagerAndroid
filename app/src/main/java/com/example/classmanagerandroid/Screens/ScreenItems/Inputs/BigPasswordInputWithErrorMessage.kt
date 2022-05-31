@@ -9,11 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.example.classmanagerandroid.R
 
 @Composable
 fun bigPasswordInputWithErrorMessage(
@@ -48,15 +50,13 @@ fun bigPasswordInputWithErrorMessage(
               isError = false,
               visualTransformation = if (hidden) PasswordVisualTransformation() else VisualTransformation.None,
               trailingIcon = {
-                  IconButton(onClick = { hidden = !hidden }) {
-                      val vector =
-                          rememberImagePainter(
-                              data =
-                              if (hidden) "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fic_visibility_off.png?alt=media&token=0806f411-e1a8-4fd9-b803-ec53c4a7b4ac"
-                              else "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fic_visibility.png?alt=media&token=93177a8c-40c9-4368-b6bc-6223a3fdb98b"
-                          )
+                  IconButton(
+                      onClick = { hidden = !hidden }
+                  ) {
+                      val vector = if (hidden) painterResource(id = R.drawable.ic_visibility_off) else painterResource(id = R.drawable.ic_visibility)
+
                       val description = if (hidden) "Ocultar contraseña" else "Revelar contraseña"
-                      Icon(painter = vector, contentDescription = description)
+                      Icon(painter = vector, contentDescription = description, tint =  MaterialTheme.colors.secondary)
                   }
               },
               singleLine = true,

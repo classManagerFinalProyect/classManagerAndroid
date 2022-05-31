@@ -1,18 +1,15 @@
 package com.example.classmanagerandroid.Screens.CreateCourse
 
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.db
 import com.example.classmanagerandroid.data.network.CourseImplement.Companion.createNewCourse
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.updateUser
 import com.example.classmanagerandroid.data.remote.Course
-import com.example.classmanagerandroid.data.remote.ListItem
+import com.example.classmanagerandroid.data.local.ListItem
 
 class MainViewModelCreateCourse: ViewModel() {
 
@@ -22,8 +19,7 @@ class MainViewModelCreateCourse: ViewModel() {
     fun createCourse(
         textNameOfCourse: String,
         textOfDescription: String,
-        navController: NavController,
-        context: Context
+        onFinished: () -> Unit
     ) {
         var mySelectedClasses = mutableListOf<String>()
         allListItems.forEach {
@@ -57,8 +53,7 @@ class MainViewModelCreateCourse: ViewModel() {
                             if (success) {
                                 CurrentUser.updateDates(
                                     onFinished = {
-                                        Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                        navController.popBackStack()
+                                        onFinished()
                                     }
                                 )
                             }

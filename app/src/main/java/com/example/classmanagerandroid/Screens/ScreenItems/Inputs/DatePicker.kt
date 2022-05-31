@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import java.util.*
 
@@ -21,7 +22,8 @@ fun showDatePicker(
     onValueChangeTextDate: (String) -> Unit,
     label: String,
     placeholder: String,
-    enabled: Boolean
+    enabled: Boolean,
+    icon: ImageVector
 ){
 
     val calendar = Calendar.getInstance()
@@ -51,8 +53,11 @@ fun showDatePicker(
                 label = { Text(text = "${label}") },
                 singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Gray,
-                    unfocusedBorderColor = Color.LightGray
+                    focusedBorderColor = MaterialTheme.colors.primary,
+                    unfocusedBorderColor = MaterialTheme.colors.onSurface,
+                    textColor = MaterialTheme.colors.secondary,
+                    placeholderColor = MaterialTheme.colors.secondary,
+                    unfocusedLabelColor = MaterialTheme.colors.secondary,
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false,
@@ -64,8 +69,9 @@ fun showDatePicker(
                             },
                             content = {
                                 Icon(
-                                    imageVector =  Icons.Default.DateRange,
+                                    imageVector = icon,
                                     contentDescription = "Fecha de entrega",
+                                    tint = MaterialTheme.colors.secondary
                                 )
                             }
                         )

@@ -1,6 +1,5 @@
 package com.example.classmanagerandroid.Screens.Course.ViewMembers
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,13 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.local.CurrentUser
+import com.example.classmanagerandroid.data.remote.AppUser
 
 @Composable
 fun changeRol(
     mainViewModelViewMembers: MainViewModelViewMembers,
     onValueChangeRol: (Boolean) -> Unit,
-    selectedUser: appUser,
+    selectedUser: AppUser,
     onValueChangeIsRefreshing: (Boolean) -> Unit
 ) {
     val selectedRolUser = mainViewModelViewMembers.getRolOfUserById(selectedUser.id)
@@ -48,7 +48,7 @@ fun changeRol(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.70f)
+                    .fillMaxHeight(0.67f)
                     .background(Color.White),
                 shape = RoundedCornerShape(16.dp),
                 content = {
@@ -69,9 +69,8 @@ fun changeRol(
                                     ),
                                 content = {
                                     Image(
-                                        painter = rememberAsyncImagePainter(
-                                            model = Uri.parse(selectedUser.imgPath)
-                                        ),
+                                        painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
+
                                         contentDescription = "avatar",
                                         modifier = Modifier
                                             .size(150.dp)
@@ -125,20 +124,23 @@ fun changeRol(
                                         )
                                     ),
                                 content = {
-                                    TextButton(
-                                        onClick = {
-                                            onValueChangeRol(false)
-                                           mainViewModelViewMembers.deleteRolUser(
-                                               selectedUser = selectedUser,
-                                               onFinish = {
-                                                   onValueChangeIsRefreshing(true)
-                                               }
-                                           )
-                                        },
-                                        content = {
-                                            Text(text = "Eliminar", color = Color.Red)
-                                        }
-                                    )
+                                    if(mainViewModelViewMembers.currentdRolUser.rol == "admin") {
+                                        TextButton(
+                                            onClick = {
+                                                onValueChangeRol(false)
+                                                mainViewModelViewMembers.deleteRolUser(
+                                                    selectedUser = selectedUser,
+                                                    onFinish = {
+                                                        onValueChangeIsRefreshing(true)
+                                                    }
+                                                )
+                                            },
+                                            content = {
+                                                Text(text = "Eliminar", color = Color.Red)
+                                            }
+                                        )
+                                    }
+
                                     TextButton(
                                         onClick = {
                                               mainViewModelViewMembers.updateRol(

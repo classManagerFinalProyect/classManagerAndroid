@@ -5,18 +5,18 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase
 import com.example.classmanagerandroid.data.network.CourseImplement.Companion.updateCourse
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.getUserById
 import com.example.classmanagerandroid.data.remote.Course
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 
 class MainViewModelViewMembers: ViewModel() {
     var selectedCourse: Course = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","","")
-    var selectedusers: MutableList<appUser> = arrayListOf()
+    var selectedusers: MutableList<AppUser> = arrayListOf()
     var currentdRolUser: RolUser = RolUser("","")
 
     fun getSelectedCourse(
@@ -86,7 +86,7 @@ class MainViewModelViewMembers: ViewModel() {
     }
 
     fun deleteRolUser(
-        selectedUser: appUser,
+        selectedUser: AppUser,
         onFinish: () -> Unit
     ) {
         var deleteuser = RolUser("","")

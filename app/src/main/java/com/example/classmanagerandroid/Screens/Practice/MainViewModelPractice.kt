@@ -3,7 +3,7 @@ package com.example.classmanagerandroid.Screens.Practice
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.data.local.Message
 import com.example.classmanagerandroid.data.local.RolUser
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.db
@@ -11,7 +11,7 @@ import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.d
 import com.example.classmanagerandroid.data.network.ClassesImplement.Companion.getClassById
 import com.example.classmanagerandroid.data.remote.Chat
 import com.example.classmanagerandroid.data.remote.Practice
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 import com.example.classmanagerandroid.data.remote.Class
 
 class MainViewModelPractice: ViewModel() {
@@ -26,7 +26,7 @@ class MainViewModelPractice: ViewModel() {
         navController: NavController
     ) {
         deletePracticeByPractice(
-            context =context,
+            context = context,
             navController = navController,
             selectedPractice = selectedPractice
         )
@@ -77,7 +77,8 @@ class MainViewModelPractice: ViewModel() {
 
         db.collection("practicesChats")
             .document(chat.id)
-            .update("conversation",chat.conversation).addOnCompleteListener{
+            .update("conversation",chat.conversation)
+            .addOnCompleteListener{
                 onFinished()
             }
     }
@@ -94,14 +95,15 @@ class MainViewModelPractice: ViewModel() {
                 messagesHasMap.forEach { message ->
                     val myUserHasMap = message.get("sentBy") as HashMap<String,Any>
 
-                    val myUser = appUser(
+                    val myUser = AppUser(
                         description = myUserHasMap.get("description") as String,
                         name = myUserHasMap.get("name") as String,
                         id = myUserHasMap.get("id") as String,
                         email = myUserHasMap.get("email") as String,
                         imgPath = myUserHasMap.get("imgPath") as String,
                         courses = myUserHasMap.get("courses") as MutableList<String>,
-                        classes = myUserHasMap.get("classes") as MutableList<String>
+                        classes = myUserHasMap.get("classes") as MutableList<String>,
+                        password = myUserHasMap.get("password") as String
                     )
 
                     messages.add(

@@ -30,22 +30,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
-import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.firebase.database.DatabaseReference
-import kotlinx.coroutines.delay
-import me.saine.android.Views.MainAppActivity.*
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.mainAppBar
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ContentState
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.showClasses
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.showCourses
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.bottomBar
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.mainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
+import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
+import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
+import me.saine.android.Views.MainAppActivity.createNewItem
 
-private lateinit var database: DatabaseReference
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -53,6 +53,7 @@ fun MainAppView(
     navController: NavController,
     mainViewModelMainAppView: MainViewModelMainAppView
 ) {
+
     //Help variables
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val searchWidgetState by mainViewModelMainAppView.searchWidgetState
@@ -64,9 +65,15 @@ fun MainAppView(
     var expanded by remember { mutableStateOf(false) }
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val contentState by mainViewModelMainAppView.contentState
-
-
+    var sendId = remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
+
+    if(sendId.value) {
+        sendId(
+            id = auth.currentUser?.uid!!
+        )
+        sendId.value = false
+    }
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
@@ -107,12 +114,15 @@ fun MainAppView(
                     )
                 },
                 bottomBar = {
-                    //BottomNavigation(navController = bottomNavController)
+                    bottomBar(navController = navController, mainAppView = mainViewModelMainAppView)
                 },
+                floatingActionButtonPosition = FabPosition.End,
+                isFloatingActionButtonDocked = !createItem.value,
                 floatingActionButton = {
                     Column(
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.Center,
+                        //modifier = Modifier.background(Color.Black),
                         content = {
                             if (createItem.value) {
                                 createNewItem(
@@ -181,36 +191,53 @@ fun MainAppView(
                                                 Text(text = "${CurrentUser.currentUser.name.uppercase()}")
                                                 Text(text = CurrentUser.currentUser.email)
                                                 Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .height(30.dp)
-                                                        .clickable {
-                                                            clipboardManager.setText(
-                                                                AnnotatedString(
-                                                                    "${auth.currentUser?.uid}"
-                                                                )
-                                                            )
-                                                            Toast
-                                                                .makeText(
-                                                                    context,
-                                                                    "Id del usuario copiada",
-                                                                    Toast.LENGTH_SHORT
-                                                                )
-                                                                .show()
-                                                        },
+                                                        .height(30.dp),
                                                     content = {
-                                                        Text(text = "#${auth.currentUser?.uid}")
-                                                        Spacer(modifier = Modifier.padding(4.dp))
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            modifier = Modifier
+                                                                .clickable {
+                                                                    clipboardManager.setText(
+                                                                        AnnotatedString(
+                                                                            "${auth.currentUser?.uid}"
+                                                                        )
+                                                                    )
+                                                                    Toast
+                                                                        .makeText(
+                                                                            context,
+                                                                            "Id del usuario copiado",
+                                                                            Toast.LENGTH_SHORT
+                                                                        )
+                                                                        .show()
+                                                                },
+                                                            content = {
+                                                                Text(text = "#${auth.currentUser?.uid}")
+                                                                Spacer(modifier = Modifier.padding(4.dp))
 
-                                                        Icon(
-                                                            painter = rememberAsyncImagePainter(
-                                                                model = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fcontent_copy_black.png?alt=media&token=bb9aba8d-74a7-4279-a59f-7adee22142ae"
-                                                            ),
-                                                            contentDescription = "Copiar"
+                                                                Icon(
+                                                                    painter = rememberAsyncImagePainter(
+                                                                        model = "https://firebasestorage.googleapis.com/v0/b/class-manager-58dbf.appspot.com/o/appImages%2Fcontent_copy_black.png?alt=media&token=bb9aba8d-74a7-4279-a59f-7adee22142ae"
+                                                                    ),
+                                                                    contentDescription = "Copiar"
+                                                                )
+                                                            }
+                                                        )
+                                                        IconButton(
+                                                            onClick = {
+                                                                sendId.value = true
+                                                            },
+                                                            content = {
+                                                                Icon(
+                                                                    imageVector = Icons.Default.Share,
+                                                                    contentDescription = "Send Email"
+                                                                )
+                                                            }
                                                         )
                                                     }
                                                 )
+
 
                                             }
                                         )
@@ -399,7 +426,7 @@ private fun MainContent(
 
 
 @Composable
-fun BottomNavigation(navController: NavController) {
+private fun BottomNavigation(navController: NavController) {
     val items = listOf(
         "Home",
         "Classes",
@@ -427,6 +454,19 @@ fun BottomNavigation(navController: NavController) {
     )
 }
 
+@Composable
+private fun sendId(
+    id: String
+) {
+    val context = LocalContext.current
+
+    var email: Intent  = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
+    email.setData(Uri.parse(CurrentUser.currentUser.email))
+    email.setType("text/plain")
+    email.putExtra(Intent.EXTRA_TEXT,"${id}")
+
+    context.startActivity(email)
+}
 
 @Composable
 fun MyButton() {

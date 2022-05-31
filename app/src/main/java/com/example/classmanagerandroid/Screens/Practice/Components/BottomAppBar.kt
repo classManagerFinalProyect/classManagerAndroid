@@ -19,8 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.Practice.MainViewModelPractice
 import com.example.classmanagerandroid.data.local.Message
 import java.time.LocalDate
@@ -93,7 +92,7 @@ fun bottomAppBar(
                                 Message(
                                     message = value.value,
                                     sentBy = CurrentUser.currentUser,
-                                    sentOn = "${LocalDate.now().dayOfMonth}/${LocalDate.now().dayOfWeek}/${LocalDate.now().dayOfYear}"
+                                    sentOn = "${LocalDate.now().monthValue}-${LocalDate.now().dayOfMonth}-${LocalDate.now().year}"
                                 )
 
                             )

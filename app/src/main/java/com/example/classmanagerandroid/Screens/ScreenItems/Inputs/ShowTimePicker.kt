@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import java.util.*
 
@@ -20,7 +22,9 @@ fun showTimePicker(
     textTime: String,
     onValueChangeTextTime: (String) -> Unit,
     label: String,
-    placeholder: String
+    placeholder: String,
+    icon: ImageVector,
+    enabled: Boolean
 ){
 
     val calendar = Calendar.getInstance()
@@ -39,7 +43,7 @@ fun showTimePicker(
         verticalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(PaddingValues(start = 30.dp, end = 30.dp)),
+            .padding(PaddingValues(start = 40.dp, end = 40.dp)),
         content = {
             OutlinedTextField(
                 value = textTime,
@@ -48,23 +52,30 @@ fun showTimePicker(
                 label = { Text(text = "${label}") },
                 singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Gray,
-                    unfocusedBorderColor = Color.LightGray
+                    focusedBorderColor = MaterialTheme.colors.primary,
+                    unfocusedBorderColor = MaterialTheme.colors.onSurface,
+                    textColor = MaterialTheme.colors.secondary,
+                    placeholderColor = MaterialTheme.colors.secondary,
+                    unfocusedLabelColor = MaterialTheme.colors.secondary,
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false,
                 trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            timePickerDialog.show()
-                        },
-                        content = {
-                            Icon(
-                                imageVector =  Icons.Default.Edit,
-                                contentDescription = "Hora",
-                            )
-                        }
-                    )
+                    if(enabled) {
+                        IconButton(
+                            onClick = {
+                                timePickerDialog.show()
+                            },
+                            content = {
+                                Icon(
+                                    imageVector =  icon,
+                                    contentDescription = "Hora",
+                                    tint =  MaterialTheme.colors.secondary
+                                )
+                            }
+                        )
+                    }
+
                 }
             )
         }

@@ -6,10 +6,9 @@ import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Classes.CurrentUser
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.local.Message
@@ -21,7 +20,7 @@ import com.example.classmanagerandroid.data.network.ClassesImplement.Companion.u
 import com.example.classmanagerandroid.data.network.PracticeImplement.Companion.deletePracticeById
 import com.example.classmanagerandroid.data.network.UsersImplement.Companion.updateUser
 import com.example.classmanagerandroid.data.remote.Chat
-import com.example.classmanagerandroid.data.remote.appUser
+import com.example.classmanagerandroid.data.remote.AppUser
 import com.example.classmanagerandroid.data.remote.Class
 import com.example.classmanagerandroid.data.remote.Practice
 import com.google.android.gms.tasks.Task
@@ -32,14 +31,14 @@ class MainViewModelClass:ViewModel() {
     var selectedClass: Class = Class("","","", arrayListOf(), arrayListOf(),"","")
     var selectedPractices = arrayListOf<Practice>()
     var rolOfSelectedUserInCurrentClass: RolUser = RolUser(id = "", rol = "Sin asignar")
-    lateinit var addNewUser: appUser
+    lateinit var addNewUser: AppUser
     val classImg =  mutableStateOf<Uri?>(null)
 
     fun clearVariables() {
         selectedClass= Class("","","", arrayListOf(), arrayListOf(),"","")
         selectedPractices = arrayListOf()
         rolOfSelectedUserInCurrentClass = RolUser(id = "", rol = "Sin asignar")
-        addNewUser = appUser("","","", arrayListOf(), arrayListOf(),"","")
+        addNewUser = AppUser("","","", arrayListOf(), arrayListOf(),"","","")
         classImg.value = null
     }
 
@@ -77,8 +76,8 @@ class MainViewModelClass:ViewModel() {
                        idOfCourse = it.get("idOfCourse") as String,
                        img = it.get("img") as String
                    )
-                getAllPractices(selectedClass.idPractices)
                 getRolOfClass(CurrentUser.currentUser.id)
+                getAllPractices(selectedClass.idPractices)
                 getClassImg()
                 onValueFinish()
             }
@@ -124,6 +123,7 @@ class MainViewModelClass:ViewModel() {
             document
                 .set(practice)
                 .addOnSuccessListener {
+
                 selectedClass.idPractices.add(idOfDocument)
                 db.collection("classes")
                     .document(selectedClass.id)
@@ -177,11 +177,12 @@ class MainViewModelClass:ViewModel() {
         val document = db.collection("practicesChats").document()
         val idOfDocument = document.id
 
-        val newChat = Chat("", arrayListOf(Message("", CurrentUser.currentUser,"")))
+        val newChat = Chat(idOfDocument, arrayListOf(Message("", CurrentUser.currentUser,"")))
         document.set(
-                hashMapOf(
-                    "conversation" to  mutableListOf<Message>(),
-                )
+            hashMapOf(
+                "conversation" to  mutableListOf<Message>(),
+                "id" to idOfDocument
+            )
             ).addOnSuccessListener{
                 onValueFinish(idOfDocument)
             }
@@ -241,14 +242,15 @@ class MainViewModelClass:ViewModel() {
 
                 if (it.exists()) {
 
-                    val entity = appUser(
+                    val entity = AppUser(
                         id = it.get("id") as String,
                         classes = it.get("classes") as MutableList<String>,
                         description = it.get("description") as String,
                         name =  it.get("name") as String,
                         courses = it.get("courses") as MutableList<String>,
                         imgPath = it.get("imgPath") as String,
-                        email = it.get("email") as String
+                        email = it.get("email") as String,
+                        password = it.get("password") as String
                     )
                     entity.classes.remove(selectedClass.id)
                     updateUser(
@@ -334,14 +336,15 @@ class MainViewModelClass:ViewModel() {
             .addOnCompleteListener {
 
                 if (it.result.exists()) {
-                    addNewUser = appUser(
+                    addNewUser = AppUser(
                         id = it.result.get("id") as String,
                         classes = it.result.get("classes") as MutableList<String>,
                         description = it.result.get("description") as String,
                         name =  it.result.get("name") as String,
                         courses = it.result.get("courses") as MutableList<String>,
                         imgPath = it.result.get("imgPath") as String,
-                        email = it.result.get("email") as String
+                        email = it.result.get("email") as String,
+                        password = it.result.get("password") as String
                     )
                     onFinishResult(true)
                 }
@@ -354,7 +357,9 @@ class MainViewModelClass:ViewModel() {
         idOfUser: String
     ) {
         selectedClass.users.forEach {
-            if (it.id.equals(idOfUser)) rolOfSelectedUserInCurrentClass = it
+            if (it.id == idOfUser){
+                rolOfSelectedUserInCurrentClass = it
+            }
         }
     }
 
@@ -365,6 +370,7 @@ class MainViewModelClass:ViewModel() {
         updateClass(
             newClass = updateClass,
             onFinished = { b: Boolean, updateClass: Class ->
+                CurrentUser.getMyClasses( onFinished = {} )
                 onFinishResult()
             }
         )
