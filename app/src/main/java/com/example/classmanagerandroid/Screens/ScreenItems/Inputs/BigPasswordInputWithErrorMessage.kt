@@ -1,6 +1,5 @@
-package com.example.classmanagerandroid.Screens.Register
+package com.example.classmanagerandroid.Screens.ScreenItems.Inputs
 
-import android.view.textclassifier.ConversationActions
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -14,11 +13,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.example.classmanagerandroid.R
 
 @Composable
-fun bigPasswordInputWithErrorMessage(
+fun BigPasswordInputWithErrorMessage(
     value: String,
     onValueChangeValue: (String) -> Unit,
     valueError: Boolean,
@@ -61,8 +59,11 @@ fun bigPasswordInputWithErrorMessage(
               },
               singleLine = true,
               colors = TextFieldDefaults.outlinedTextFieldColors(
-                  focusedBorderColor = Color.Gray,
-                  unfocusedBorderColor = Color.LightGray
+                  focusedBorderColor = MaterialTheme.colors.primary,
+                  unfocusedBorderColor = MaterialTheme.colors.onSurface,
+                  textColor = MaterialTheme.colors.secondary,
+                  placeholderColor = MaterialTheme.colors.secondary.copy(0.6f),
+                  unfocusedLabelColor = MaterialTheme.colors.secondary.copy(0.4f),
               ),
               modifier = Modifier
                   .fillMaxWidth()

@@ -21,7 +21,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.classmanagerandroid.Screens.CreateCourse.MainViewModelCreateCourse
 
 @Composable
-fun addCourse(
+fun AddCourse(
     mainViewModelCreateCourse: MainViewModelCreateCourse,
     onValueChangeAddClasses: (Boolean) -> Unit
 ) {
@@ -36,7 +36,7 @@ fun addCourse(
                     .fillMaxHeight(0.8f)
                     .background(Color.White),
                 content = {
-                    itemsIndexed(mainViewModelCreateCourse.allListItems) { index, item ->
+                    itemsIndexed(mainViewModelCreateCourse.allListItems) { _, item ->
                         val isSelectedItem = remember { mutableStateOf(item.isSelected) }
 
                         Row(

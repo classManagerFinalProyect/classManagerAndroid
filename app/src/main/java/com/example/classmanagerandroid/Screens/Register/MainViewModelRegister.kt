@@ -26,7 +26,7 @@ class MainViewModelRegister: ViewModel() {
         onFinished: (Boolean) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(ContentValues.TAG, "createUserWithEmail:success")
 
@@ -59,21 +59,11 @@ class MainViewModelRegister: ViewModel() {
             id = auth.currentUser?.uid.toString(),
             email = email,
             imgPath = "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
-            courses = mutableListOf<String>(),
-            classes = mutableListOf<String>(),
+            courses = mutableListOf(),
+            classes = mutableListOf(),
             password = createSha256(base = password)!!
         )
-        /*
-         hashMapOf(
-                "courses" to  mutableListOf<String>(),
-                "classes" to mutableListOf<String>(),
-                "name" to "userName",
-                "email" to email,
-                "imgPath" to "gs://class-manager-58dbf.appspot.com/user/defaultUserImg.png",
-                "id" to auth.currentUser?.uid.toString(),
-                "description" to "myDescription",
-            )
-        */
+
         db.collection("users")
             .document(auth.currentUser?.uid.toString())
             .set(newUser)
@@ -94,7 +84,7 @@ class MainViewModelRegister: ViewModel() {
             }
     }
 
-    fun saveCurrentUser(
+    private fun saveCurrentUser(
         onFinished: () -> Unit
     ) {
         getUserById(

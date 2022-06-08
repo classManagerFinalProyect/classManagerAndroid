@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.Register.PrivacyPolicies
+package com.example.classmanagerandroid.Screens.Register.PrivacyPolicies.Items
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun textTitle(
+fun TextTitle(
     text: String
 ) {
     Text(

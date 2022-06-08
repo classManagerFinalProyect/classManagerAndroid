@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.ScreenItems
+package com.example.classmanagerandroid.Screens.ScreenItems.Dialogs
 
 
 import androidx.compose.foundation.layout.Column
@@ -6,7 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 
 @Composable
-fun confirmAlertDialog(
+fun ConfirmAlertDialog(
     title: String,
     subtitle: String,
     onValueChangeGoBack: (Boolean) -> Unit,

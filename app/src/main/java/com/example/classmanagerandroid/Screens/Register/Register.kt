@@ -3,7 +3,6 @@ package com.example.classmanagerandroid.Screens.Register
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -22,8 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
+import com.example.classmanagerandroid.Screens.Register.Items.LabelledCheckbox
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.LoadingDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigPasswordInputWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 import com.example.classmanagerandroid.Screens.Utils.isValidPassword
@@ -34,24 +36,24 @@ fun MainRegister(
     mainViewModelRegister: MainViewModelRegister
 ) {
     //Texts
-    var (emailText,onValueChangeEmailText) = remember{ mutableStateOf("test@gmail.com") }
-    var (emailError,emailErrorChange) = remember { mutableStateOf(false) }
+    val (emailText,onValueChangeEmailText) = remember{ mutableStateOf("") }
+    val (emailError,emailErrorChange) = remember { mutableStateOf(false) }
 
-    var (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("11111111") }
-    var (passwordError,passwordErrorChange) = remember { mutableStateOf(false) }
+    val (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("") }
+    val (passwordError,passwordErrorChange) = remember { mutableStateOf(false) }
 
-    var (repeatPasswordText,onValueChangeRepeatPasswordText) = remember{ mutableStateOf("11111111") }
-    var (repeatPasswordError,repeatPasswordErrorChange) = remember { mutableStateOf(false) }
+    val (repeatPasswordText,onValueChangeRepeatPasswordText) = remember{ mutableStateOf("") }
+    val (repeatPasswordError,repeatPasswordErrorChange) = remember { mutableStateOf(false) }
 
 
     //Help variables
-    var context = LocalContext.current
+    val context = LocalContext.current
     val (checkedStatePrivacyPolicies,onValueChangeCheckedStatePrivacyPolicies) = remember { mutableStateOf(true) }
 
     val loading = remember { mutableStateOf(false) }
 
     if (loading.value){
-        loadingDialog(
+        LoadingDialog(
             loading = loading,
             informativeText = "Creando usuario"
         )
@@ -59,7 +61,7 @@ fun MainRegister(
 
     Scaffold(
         topBar = {
-            defaultTopBar(
+            DefaultTopBar(
                 title = "Crear cuenta",
                 navigationContent = {
                     IconButton(
@@ -96,7 +98,7 @@ fun MainRegister(
                             )
                         }
                         item {
-                            bigOutlineTextFieldWithErrorMessage(
+                            BigOutlineTextFieldWithErrorMessage(
                                 text = "Email",
                                 value = emailText,
                                 onValueChange = onValueChangeEmailText,
@@ -111,7 +113,7 @@ fun MainRegister(
                         }
 
                         item {
-                            bigPasswordInputWithErrorMessage(
+                            BigPasswordInputWithErrorMessage(
                                 value = passwordText,
                                 onValueChangeValue = onValueChangePasswordText,
                                 valueError = passwordError,
@@ -123,7 +125,7 @@ fun MainRegister(
                             )
                         }
                         item {
-                            bigPasswordInputWithErrorMessage(
+                            BigPasswordInputWithErrorMessage(
                                 value = repeatPasswordText,
                                 onValueChangeValue = onValueChangeRepeatPasswordText,
                                 valueError = repeatPasswordError,
@@ -138,7 +140,7 @@ fun MainRegister(
                         item {
                             Row (
                                 content = {
-                                    labelledCheckbox(
+                                    LabelledCheckbox(
                                         labelText = "Politicas de Privacidad",
                                         isCheckedValue = checkedStatePrivacyPolicies,
                                         onValueChangeChecked = onValueChangeCheckedStatePrivacyPolicies,
@@ -169,6 +171,9 @@ fun MainRegister(
                                                 context = context,
                                                 navController = navController,
                                                 onFinished = {
+                                                    if(!it) {
+                                                        Toast.makeText(context,"No se ha podido crear el usuario, pruebe con otra cuenta",Toast.LENGTH_SHORT).show()
+                                                    }
                                                     loading.value = false
                                                 }
                                             )

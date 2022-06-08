@@ -1,14 +1,8 @@
 package com.example.classmanagerandroid.Screens.MainAppActivity.Components.BottomBar
 
-import android.widget.ImageView
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import coil.compose.rememberAsyncImagePainter
-import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ContentState
 
 

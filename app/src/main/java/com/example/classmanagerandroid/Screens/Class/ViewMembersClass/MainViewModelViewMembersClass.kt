@@ -17,7 +17,7 @@ import com.example.classmanagerandroid.data.remote.AppUser
 class MainViewModelViewMembersClass: ViewModel() {
     var selectedClass = Class("","","", arrayListOf(), arrayListOf(),"","")
     var selectedUsers: MutableList<AppUser> = arrayListOf()
-    var currentdRolUser: RolUser = RolUser("","")
+    var currentRolUser: RolUser = RolUser("","")
 
     fun getSelectedClass(
         idOfClass: String,
@@ -31,20 +31,20 @@ class MainViewModelViewMembersClass: ViewModel() {
                     getCurrentRolUser()
                 }
                 else {
-                    Log.d("ERROR: getselectedClass","class not found")
+                    Log.d("ERROR: getSelectedClass","class not found")
                 }
             }
         )
     }
 
-    fun getCurrentRolUser() {
+    private fun getCurrentRolUser() {
         selectedClass.users.forEach{
-            if(it.id.equals(CurrentUser.currentUser.id))
-                currentdRolUser = it
+            if(it.id == CurrentUser.currentUser.id)
+                currentRolUser = it
         }
     }
 
-    fun getAllUser(
+    private fun getAllUser(
         allUsers: MutableList<RolUser>
     ){
         selectedUsers.clear()
@@ -61,10 +61,10 @@ class MainViewModelViewMembersClass: ViewModel() {
     }
 
     fun getRolOfUserById(
-        idOfuser: String
+        idUser: String
     ) : RolUser{
         selectedClass.users.forEach {
-            if(it.id.equals(idOfuser)) {
+            if(it.id == idUser) {
                 return it
             }
         }
@@ -77,7 +77,7 @@ class MainViewModelViewMembersClass: ViewModel() {
     ) {
         var deleteuser = RolUser("","")
         selectedClass.users.forEach {
-            if(it.id.equals(selectedUser.id)) {
+            if(it.id == selectedUser.id) {
                 deleteuser = it
                 selectedUsers.remove(selectedUser)
                 return@forEach
@@ -97,12 +97,12 @@ class MainViewModelViewMembersClass: ViewModel() {
     }
 
     fun updateRol(
-        idOfuser: String,
+        idUser: String,
         newRol: String,
         onFinish: () -> Unit
     ) {
         selectedClass.users.forEach {
-            if(it.id.equals(idOfuser)) {
+            if(it.id == idUser) {
                 it.rol = newRol
                 updateClass(
                     newClass = selectedClass,

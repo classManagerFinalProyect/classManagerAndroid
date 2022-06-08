@@ -13,8 +13,6 @@ import androidx.navigation.NavController
 fun defaultAppBar(
     onSearchClicked: () -> Unit,
     navController: NavController,
-    mainViewModelViewMembers: MainViewModelViewMembers,
-
 ) {
     TopAppBar(
         title = {

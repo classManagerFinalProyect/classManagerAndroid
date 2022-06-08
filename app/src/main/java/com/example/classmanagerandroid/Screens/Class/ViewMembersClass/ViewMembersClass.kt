@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.data.local.CurrentUser
-import com.example.classmanagerandroid.Screens.Class.ViewMembersClass.Components.mainAppBar
+import com.example.classmanagerandroid.Screens.Class.ViewMembersClass.Components.MainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.remote.AppUser
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -43,9 +43,9 @@ fun MainViewMembersClass(
     var (isRefreshing, onValueChangeIsRefreshing) = remember { mutableStateOf(false) }
     val searchWidgetState by mainViewModelViewMembersClass.searchWidgetState
     val searchTextState by mainViewModelViewMembersClass.searchTextState
-    val aplicateFilter = remember { mutableStateOf(true) }
+    val applicativeFilter = remember { mutableStateOf(true) }
     var filter = ""
-    var sendEmail = remember { mutableStateOf(false) }
+    val sendEmail = remember { mutableStateOf(false) }
 
     LaunchedEffect(getClass) {
         if (getClass) {
@@ -55,14 +55,14 @@ fun MainViewMembersClass(
     }
 
     if(sendEmail.value) {
-        sendEmail(
+        SendEmail(
             selectedUser = selectedUser
         )
         sendEmail.value = false
     }
 
     if(changeRol) {
-        changeRolClass(
+        ChangeRolClass(
             mainViewModelViewMembersClass = mainViewModelViewMembersClass,
             onValueChangeRol = onValueChangeRol,
             selectedUser = selectedUser,
@@ -84,22 +84,20 @@ fun MainViewMembersClass(
         content =  {
             Scaffold(
                 topBar = {
-                    mainAppBar(
+                    MainAppBar(
                         searchWidgetState = searchWidgetState,
                         searchTextState = searchTextState,
                         onTextChange = {
                             mainViewModelViewMembersClass.updateSearchTextState(newValue = it)
-                            aplicateFilter.value = false
+                            applicativeFilter.value = false
                             filter = it.lowercase()
-                            aplicateFilter.value = true
+                            applicativeFilter.value = true
                         },
                         onCloseClicked = {
                             mainViewModelViewMembersClass.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
                         onSearchClicked = {
-                            /*aplicateFilter.value = false
-                            filter = it.lowercase()
-                            aplicateFilter.value = true*/
+                           
                         },
                         onSearchTriggered = {
                             mainViewModelViewMembersClass.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
@@ -112,14 +110,14 @@ fun MainViewMembersClass(
                         modifier = Modifier
                             .fillMaxWidth(),
                         content = {
-                            var allUserAppUser: MutableList<AppUser> = arrayListOf()
+                            val allUserAppUser: MutableList<AppUser> = arrayListOf()
                             mainViewModelViewMembersClass.selectedUsers.forEach{
                                 allUserAppUser.add(it)
                             }
-                            var grouped = allUserAppUser.groupBy { it.name.substring(0, 1) }.toSortedMap()
+                            val grouped = allUserAppUser.groupBy { it.name.substring(0, 1) }.toSortedMap()
 
-                            if(aplicateFilter.value) {
-                                grouped.forEach { header, items ->
+                            if(applicativeFilter.value) {
+                                grouped.forEach { (header, items) ->
                                     var writeHeader = true
                                     items.forEach {
 
@@ -195,14 +193,12 @@ fun MainViewMembersClass(
 }
 
 @Composable
-private fun sendEmail(
+private fun SendEmail(
     selectedUser: AppUser
 ) {
     val context = LocalContext.current
 
-    var email: Intent = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
-    email.setData(Uri.parse(CurrentUser.currentUser.email))
-    email.setType("text/plain")
+    val email = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
     email.putExtra(Intent.EXTRA_EMAIL,"Email test")
     email.putExtra(Intent.EXTRA_SUBJECT,"Question email")
     email.putExtra(Intent.EXTRA_TEXT,"Write your email to ${selectedUser.email}")

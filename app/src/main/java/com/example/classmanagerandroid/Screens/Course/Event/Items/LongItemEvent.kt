@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.example.classmanagerandroid.data.remote.Event
 
 @Composable
-fun longItemEvent(
+fun LongItemEvent(
     event: Event,
     onClick: () -> Unit
 ) {
@@ -45,7 +45,7 @@ fun longItemEvent(
                         verticalArrangement = Arrangement.SpaceBetween,
                         content = {
                             Box(
-                                modifier = Modifier.height(25.dp),
+                                modifier = Modifier.height(30.dp),
                                 content = {
                                     Text(
                                         text = event.name,

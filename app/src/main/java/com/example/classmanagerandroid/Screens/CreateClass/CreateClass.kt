@@ -15,8 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.classmanagerandroid.Navigation.Destinations
+import com.example.classmanagerandroid.Screens.CreateClass.Item.SelectedDropDownMenuCurseItem
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.LoadingDialog
 import com.example.classmanagerandroid.data.local.CurrentUser
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidDescription
 import com.example.classmanagerandroid.Screens.Utils.isValidName
@@ -36,14 +39,22 @@ fun MainCreateClass(
     var descriptionError by remember { mutableStateOf(false) }
 
 
-    val (itemSelectedCurse,onValueChangeItemSelectedCurse) = remember { mutableStateOf<Course>(
+    val (itemSelectedCurse,onValueChangeItemSelectedCurse) = remember { mutableStateOf(
         Course(arrayListOf(), arrayListOf(), arrayListOf(),"Sin asignar","","Sin asignar","")
     ) }
 
 
     //Variables de ayuda
     val context = LocalContext.current
+    val loading = remember { mutableStateOf(false) }
 
+
+    if (loading.value){
+        LoadingDialog(
+            loading = loading,
+            informativeText = "Creando nueva clase"
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -83,7 +94,7 @@ fun MainCreateClass(
                                 Spacer(modifier = Modifier.padding(5.dp))
                             }
                             item {
-                                bigOutlineTextFieldWithErrorMessage(
+                                BigOutlineTextFieldWithErrorMessage(
                                     text = "Nombre",
                                     value = textNameOfClass,
                                     onValueChange = { textNameOfClass = it },
@@ -97,7 +108,7 @@ fun MainCreateClass(
                                 )
                             }
                             item {
-                                bigOutlineTextFieldWithErrorMessage(
+                                BigOutlineTextFieldWithErrorMessage(
                                     text = "Descripción",
                                     value = textDescription,
                                     onValueChange = { textDescription = it },
@@ -105,14 +116,13 @@ fun MainCreateClass(
                                     errorMessage = CommonErrors.notValidDescription,
                                     changeError = { descriptionError = it},
                                     error = descriptionError,
-                                    mandatory = true,
+                                    mandatory = false,
                                     KeyboardType = KeyboardType.Text,
                                     enabled = true
                                 )
                             }
                             item {
-                                selectedDropDownMenuCurseItem(
-                                    textOfRow = "Curso",
+                                SelectedDropDownMenuCurseItem(
                                     suggestions = CurrentUser.myCourses,
                                     onValueChangeTextSelectedItem = onValueChangeItemSelectedCurse
                                 )
@@ -153,12 +163,17 @@ fun MainCreateClass(
                                     .fillMaxWidth(0.4f),
                                 onClick = {
                                     if(isValidName(text = textNameOfClass) && isValidDescription(text = textDescription)) {
+                                        loading.value = true
+
                                         mainViewModelCreateClass.createClass(
-                                            navController = navController,
-                                            context = context,
                                             textDescription = textDescription,
                                             textNameOfClass = textNameOfClass,
-                                            itemSelectedCurse = itemSelectedCurse
+                                            itemSelectedCurse = itemSelectedCurse,
+                                            onFinished = {
+                                                Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
+                                                navController.navigate(Destinations.MainAppView.route)
+                                                loading.value = false
+                                            }
                                         )
                                     }
                                     else

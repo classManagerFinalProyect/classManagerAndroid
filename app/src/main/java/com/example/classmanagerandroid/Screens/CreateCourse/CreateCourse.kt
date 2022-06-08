@@ -15,12 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Screens.CreateCourse.Components.addCourse
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
-import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
-import com.example.classmanagerandroid.Screens.ScreenItems.bigDropDownMenuWithAction
+import com.example.classmanagerandroid.Screens.CreateCourse.Components.AddCourse
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.LoadingDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.DropDownMenu.BigDropDownMenuWithAction
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
-import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
 import com.example.classmanagerandroid.Screens.Utils.isValidDescription
 import com.example.classmanagerandroid.Screens.Utils.isValidName
 
@@ -37,7 +36,7 @@ fun MainCreateCourse(
     var descriptionError by remember { mutableStateOf(false) }
 
 
-    var (addCourse,onValueChangeAddCourse) = remember { mutableStateOf(false) }
+    val (addCourse,onValueChangeAddCourse) = remember { mutableStateOf(false) }
 
 
     //Help variables
@@ -46,13 +45,13 @@ fun MainCreateCourse(
 
 
     if (loading.value){
-        loadingDialog(
+        LoadingDialog(
             loading = loading,
             informativeText = "Creando nuevo curso"
         )
     }
     if (addCourse) {
-        addCourse(
+        AddCourse(
             mainViewModelCreateCourse = mainViewModelCreateCourse,
             onValueChangeAddClasses = onValueChangeAddCourse
         )
@@ -97,7 +96,7 @@ fun MainCreateCourse(
                             }
 
                             item {
-                                bigOutlineTextFieldWithErrorMessage(
+                                BigOutlineTextFieldWithErrorMessage(
                                     text = "Nombre",
                                     value = textNameOfCourse,
                                     onValueChange = { textNameOfCourse = it },
@@ -112,7 +111,7 @@ fun MainCreateCourse(
 
                             }
                             item {
-                                bigOutlineTextFieldWithErrorMessage(
+                                BigOutlineTextFieldWithErrorMessage(
                                     text = "Descripción",
                                     value = textOfDescription,
                                     onValueChange = { textOfDescription = it },
@@ -126,7 +125,7 @@ fun MainCreateCourse(
                                 )
                             }
                             item {
-                                bigDropDownMenuWithAction(
+                                BigDropDownMenuWithAction(
                                     initialValue = "Clases",
                                     suggestions=  mainViewModelCreateCourse.getOfListTitle(),
                                     onClick = { onValueChangeAddCourse(true) }
@@ -167,9 +166,10 @@ fun MainCreateCourse(
                                 modifier = Modifier
                                     .fillMaxWidth(0.4f),
                                 onClick = {
-                                    loading.value = true
 
                                     if(isValidName(text = textNameOfCourse) && isValidDescription(text = textOfDescription)) {
+                                        loading.value = true
+
                                         mainViewModelCreateCourse.createCourse(
                                             textOfDescription = textOfDescription,
                                             textNameOfCourse = textNameOfCourse,

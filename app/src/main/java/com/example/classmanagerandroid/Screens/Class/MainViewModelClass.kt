@@ -31,7 +31,7 @@ class MainViewModelClass:ViewModel() {
     var selectedClass: Class = Class("","","", arrayListOf(), arrayListOf(),"","")
     var selectedPractices = arrayListOf<Practice>()
     var rolOfSelectedUserInCurrentClass: RolUser = RolUser(id = "", rol = "Sin asignar")
-    lateinit var addNewUser: AppUser
+    private lateinit var addNewUser: AppUser
     val classImg =  mutableStateOf<Uri?>(null)
 
     fun clearVariables() {
@@ -42,7 +42,7 @@ class MainViewModelClass:ViewModel() {
         classImg.value = null
     }
 
-    fun getClassImg() {
+    private fun getClassImg() {
         val gsReference = AccessToDataBase.storageInstance.getReferenceFromUrl(selectedClass.img)
         gsReference.downloadUrl.addOnSuccessListener { classImg.value = it }
     }
@@ -55,13 +55,13 @@ class MainViewModelClass:ViewModel() {
             .document(idClass)
             .get()
             .addOnSuccessListener {
-                val users = it.get("users") as  MutableList<HashMap<String,String>> //Any
+                val users = it.get("users") as  MutableList<HashMap<String,String>>
                 val listOfRolUser: MutableList<RolUser> = mutableListOf()
-                users.forEach {
+                users.forEach { user ->
                     listOfRolUser.add(
                         RolUser(
-                            id = it.get("id") as String,
-                            rol = it.get("rol") as String
+                            id = user.get("id") as String,
+                            rol = user.get("rol") as String
                         )
                     )
                 }
@@ -83,7 +83,7 @@ class MainViewModelClass:ViewModel() {
             }
     }
 
-    fun getAllPractices(
+    private fun getAllPractices(
         idPractices: MutableList<String>
     ) {
         selectedPractices.clear()
@@ -139,45 +139,10 @@ class MainViewModelClass:ViewModel() {
 
     }
 
-    fun createNewPracticeByName(
-        name:String,
-        navController: NavController
-    ) {
-
-        createPracticeChat { idOfChat ->
-            val document = db.collection("practices").document()
-            val idOfDocument = document.id
-
-            document.set(
-                hashMapOf(
-                    "deliveryDate" to "",
-                    "description" to "",
-                    "idOfChat" to idOfChat,
-                    "name" to name,
-                    "teacherAnnotation" to "",
-                    "idOfClass" to selectedClass.id
-                )
-            ).addOnSuccessListener {
-                selectedClass.idPractices.add(idOfDocument)
-                db.collection("classes")
-                    .document(selectedClass.id)
-                    .set(selectedClass).addOnSuccessListener {
-                        CurrentUser.updateDates(
-                            onFinished = {
-                                navController.navigate("${Destinations.Practice.route}/${idOfDocument}")
-                            }
-                        )
-                    }
-            }
-        }
-
-    }
-
-    fun createPracticeChat(onValueFinish: (String) -> Task<Void>) {
+    private fun createPracticeChat(onValueFinish: (String) -> Task<Void>) {
         val document = db.collection("practicesChats").document()
         val idOfDocument = document.id
 
-        val newChat = Chat(idOfDocument, arrayListOf(Message("", CurrentUser.currentUser,"")))
         document.set(
             hashMapOf(
                 "conversation" to  mutableListOf<Message>(),
@@ -209,7 +174,7 @@ class MainViewModelClass:ViewModel() {
 
 
                 CurrentUser.myCourses.forEach{
-                    if(it.id.equals(selectedClass.idOfCourse)) {
+                    if(it.id == selectedClass.idOfCourse) {
                         it.classes.remove(selectedClass.id)
                         deleteIdOfCourse(it.classes)
                     }
@@ -232,7 +197,7 @@ class MainViewModelClass:ViewModel() {
             }
     }
 
-    fun deleteIfOfClassByUserId(
+    private fun deleteIfOfClassByUserId(
         idOfUser: String
     ) {
         db.collection("users")
@@ -264,7 +229,7 @@ class MainViewModelClass:ViewModel() {
 
     }
 
-    fun deleteIdOfCourse(
+    private fun deleteIdOfCourse(
         newValueOfClasses: MutableList<String>
     ) {
         db.collection("course")
@@ -279,7 +244,6 @@ class MainViewModelClass:ViewModel() {
     ) {
         checkIfUserExist (
             idOfUser = idOfUser,
-            context = context,
             onFinishResult = {
                 if (it) {
                     if (!checkIfUserIsInscribedInClass(idOfUser)) {
@@ -291,7 +255,7 @@ class MainViewModelClass:ViewModel() {
                         )
                         addNewUser.classes.add(selectedClass.id)
                         db.collection("users")
-                            .document("${idOfUser}")
+                            .document(idOfUser)
                             .set(addNewUser)
                             .addOnSuccessListener {
                                 db.collection("classes")
@@ -315,19 +279,18 @@ class MainViewModelClass:ViewModel() {
         )
     }
 
-    fun checkIfUserIsInscribedInClass(
+    private fun checkIfUserIsInscribedInClass(
         idOfUser: String
     ):Boolean {
         selectedClass.users.forEach {
-            if (it.id.equals(idOfUser))
+            if (it.id == idOfUser)
                 return true
         }
         return false
     }
 
-    fun checkIfUserExist(
+    private fun checkIfUserExist(
         idOfUser: String,
-        context: Context,
         onFinishResult: (Boolean) -> Unit
     ) {
         db.collection("users")
@@ -353,7 +316,7 @@ class MainViewModelClass:ViewModel() {
             }
     }
 
-    fun getRolOfClass(
+    private fun getRolOfClass(
         idOfUser: String
     ) {
         selectedClass.users.forEach {

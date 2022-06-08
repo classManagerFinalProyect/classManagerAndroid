@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -26,13 +27,13 @@ import coil.transform.CircleCropTransformation
 import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.ScreenItems.Cards.longHorizontalCard
+import com.example.classmanagerandroid.Screens.ScreenItems.Cards.LongHorizontalCard
 import com.example.classmanagerandroid.data.network.AccessToDataBase
-import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
+import com.example.classmanagerandroid.Screens.MainAppActivity.MainViewModelMainAppView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun showClasses(
+fun ShowClasses(
     mainViewModelMainAppView: MainViewModelMainAppView,
     applyFilter: Boolean,
     filter: String,
@@ -83,16 +84,35 @@ fun showClasses(
                             Text(text = "-", fontSize = 18.sp, color = MaterialTheme.colors.primary)
                     }
                 )
-
             }
-            itemsIndexed(CurrentUser.myClasses) { index, item ->
+
+            item {
+                if(CurrentUser.myClasses.size == 0) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        content = {
+                            TextButton(
+                                onClick = {
+                                    navController.navigate(Destinations.CreateClass.route)
+                                },
+                                content = {
+                                    Text(text = "Agregar nueva clase", fontSize = 20.sp)
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+            itemsIndexed(CurrentUser.myClasses) { _, item ->
                 val gsReference = AccessToDataBase.storageInstance.getReferenceFromUrl(item.img)
                 val classImg = remember { mutableStateOf<Uri?>(null) }
                 gsReference.downloadUrl.addOnSuccessListener { classImg.value = it }
 
                 if (applyFilter) {
                     if (item.name.lowercase().contains(filter)) {
-                        longHorizontalCard(
+                        LongHorizontalCard(
                             title = item.name,
                             subtitle = "${item.idPractices.size}",
                             onClick = {

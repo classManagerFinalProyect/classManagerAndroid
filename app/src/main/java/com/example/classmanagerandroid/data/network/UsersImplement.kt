@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class UsersImplement {
     companion object {
-        private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
         fun deleteUserById(
             idOfUser: String,

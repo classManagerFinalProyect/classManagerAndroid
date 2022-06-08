@@ -5,14 +5,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.BottomBar.BottomBarNavigation
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ContentState
-import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
+import com.example.classmanagerandroid.Screens.MainAppActivity.MainViewModelMainAppView
 
 @Composable
-fun bottomBar(
-    navController: NavController,
+fun BottomBar(
     mainAppView: MainViewModelMainAppView
 ) {
     val items = listOf(

@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 
 
@@ -33,14 +33,14 @@ fun MainForgotPassword(
     navController: NavController,
     mainViewModelForgotPassword: MainViewModelForgotPassword
 ) {
-    var (emailText,onValueChangeEmailText) = remember{ mutableStateOf("") }
-    var (emailError,emailErrorChange) = remember { mutableStateOf(false) }
+    val (emailText,onValueChangeEmailText) = remember{ mutableStateOf("") }
+    val (emailError,emailErrorChange) = remember { mutableStateOf(false) }
     val nameOfEmailError = remember { mutableStateOf("El email no es válido: ejemplo@ejemplo.eje") }
     val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            defaultTopBar(
+            DefaultTopBar(
                 title = "Recuperar tu cuenta",
                 navigationContent = {
                     IconButton(
@@ -90,7 +90,7 @@ fun MainForgotPassword(
                                 )
                             )
                     )
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Email",
                         value = emailText,
                         onValueChange = onValueChangeEmailText,

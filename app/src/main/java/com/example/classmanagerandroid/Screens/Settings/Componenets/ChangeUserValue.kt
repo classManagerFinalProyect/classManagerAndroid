@@ -1,23 +1,17 @@
 package com.example.classmanagerandroid.Screens.Settings.MyAccount
 
-import android.os.Message
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.bigTextFieldWithErrorMessage
-import com.example.classmanagerandroid.Screens.Utils.CommonErrors
-import com.example.classmanagerandroid.Screens.Utils.isValidName
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigTextFieldWithErrorMessage
 
 @Composable
 fun changeUserValue(
@@ -53,7 +47,7 @@ fun changeUserValue(
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxHeight(0.7f),
                                 content = {
-                                    bigTextFieldWithErrorMessage(
+                                    BigTextFieldWithErrorMessage(
                                         enabled = true,
                                         text = "${label}",
                                         error = errorValue,

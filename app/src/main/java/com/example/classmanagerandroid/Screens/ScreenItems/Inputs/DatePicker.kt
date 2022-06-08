@@ -1,22 +1,19 @@
-package com.example.classmanagerandroid.Screens.Practice
+package com.example.classmanagerandroid.Screens.ScreenItems.Inputs
 
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import java.util.*
 
 
 @Composable
-fun showDatePicker(
+fun ShowDatePicker(
     context: Context,
     textDate: String,
     onValueChangeTextDate: (String) -> Unit,
@@ -49,8 +46,8 @@ fun showDatePicker(
             OutlinedTextField(
                 value = textDate,
                 onValueChange = {},
-                placeholder = { placeholder },
-                label = { Text(text = "${label}") },
+                placeholder = { Text(text = placeholder) },
+                label = { Text(text = label) },
                 singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = MaterialTheme.colors.primary,

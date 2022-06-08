@@ -19,16 +19,15 @@ import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.Class.Components.addNewPractice
-import com.example.classmanagerandroid.Screens.Class.Components.editClass
-import com.example.classmanagerandroid.Screens.Class.Components.mainAppBar
+import com.example.classmanagerandroid.Screens.Class.Components.AddNewPractice
+import com.example.classmanagerandroid.Screens.Class.Components.EditClass
+import com.example.classmanagerandroid.Screens.Class.Components.MainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenItems.Cards.longHorizontalCard
-import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Cards.LongHorizontalCard
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.ConfirmAlertDialog
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-
-//Preguntar sobre como cargar los datos
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainClass(
@@ -39,35 +38,35 @@ fun MainClass(
     val context = LocalContext.current
     val searchWidgetState by mainViewModelClass.searchWidgetState
     val searchTextState by mainViewModelClass.searchTextState
-    val aplicateFilter = remember { mutableStateOf(true) }
-    var filter: String = ""
-    var (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
+    val applicativeFilter = remember { mutableStateOf(true) }
+    var filter = ""
+    val (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
     val getClass = remember { mutableStateOf(true) }
     var addNewPractice by remember { mutableStateOf(false) }
     val (addNewUser,onValueChangeAddNewUser) = remember { mutableStateOf(false) }
     val (IdOfUser,onValueChangeIdOfUser) = remember { mutableStateOf("") }
     val (textSelectedItem,onValueChangeTextSelectedItem) = remember { mutableStateOf("") }
-    var isRefreshing by remember { mutableStateOf(false) }
-    var startView by remember { mutableStateOf(true) }//false
+    var isRefreshing = remember { mutableStateOf(false) }
+    val startView by remember { mutableStateOf(true) }//false
     var showAddPractice by remember { mutableStateOf(false)}
-    var editClass = remember { mutableStateOf(false)}
+    val editClass = remember { mutableStateOf(false)}
     val loading = remember { mutableStateOf(true) }
 
     if(editClass.value) {
-        editClass(
+        EditClass(
             editClass = editClass,
             mainViewModelClass = mainViewModelClass
         )
     }
 
     if (getClass.value) {
-        isRefreshing = true
+        isRefreshing.value = true
         mainViewModelClass.clearVariables()
         mainViewModelClass.getSelectedClass(
             idClass = classId,
             onValueFinish = {
                 loading.value = false
-                isRefreshing = false
+                isRefreshing.value = false
                 if (mainViewModelClass.selectedClass.idPractices.size == 0) showAddPractice = true
             }
         )
@@ -75,7 +74,7 @@ fun MainClass(
     }
 
     if (addNewUser) {
-        addNewUser(
+        AddNewUser(
             onValueCloseDialog = onValueChangeAddNewUser,
             onValueChangeIdOfUser = onValueChangeIdOfUser,
             onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,
@@ -92,10 +91,10 @@ fun MainClass(
 
 
     if (deleteItem) {
-        var title = "¿Seguro que desea eliminar la clase seleccionada?"
-        var subtitle = "Perderas todas las prácticas creadas. "
+        val title = "¿Seguro que desea eliminar la clase seleccionada?"
+        val subtitle = "Perderas todas las prácticas creadas. "
 
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = title,
             subtitle = subtitle,
             onValueChangeGoBack = onValueChangeDeleteItem,
@@ -112,7 +111,7 @@ fun MainClass(
     }
 
     if(addNewPractice) {
-        addNewPractice(
+        AddNewPractice(
             onValueCloseDialog = { addNewPractice = it },
             mainViewModelClass = mainViewModelClass,
             navController = navController
@@ -120,20 +119,22 @@ fun MainClass(
 
     }
 
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing && !loading.value) {
-            isRefreshing = false
+
+    LaunchedEffect(isRefreshing.value) {
+        if (isRefreshing.value) {
+            delay(800L)
+            isRefreshing.value = false
         }
     }
 
     if (startView) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { isRefreshing = true },
+            state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
+            onRefresh = { isRefreshing.value = true },
             content =  {
                 Scaffold(
                     floatingActionButton = {
-                        if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol.equals("admin")) {
+                        if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "admin" || mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "profesor") {
                             FloatingActionButton(
                                 backgroundColor = MaterialTheme.colors.primary,
                                 onClick = {
@@ -147,14 +148,14 @@ fun MainClass(
                     },
                     topBar = {
 
-                        mainAppBar(
+                        MainAppBar(
                             searchWidgetState = searchWidgetState,
                             searchTextState = searchTextState,
                             onTextChange = {
                                 mainViewModelClass.updateSearchTextState(newValue = it)
-                                aplicateFilter.value = false
+                                applicativeFilter.value = false
                                 filter = it.lowercase()
-                                aplicateFilter.value = true
+                                applicativeFilter.value = true
                             },
                             onCloseClicked = {
                                 mainViewModelClass.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
@@ -191,7 +192,7 @@ fun MainClass(
                                                         addNewPractice = true
                                                     },
                                                     content = {
-                                                        Text(text = "Crear nueva páctica", fontSize = 18.sp)
+                                                        Text(text = "Crear nueva práctica", fontSize = 18.sp)
                                                     }
                                                 )
                                             }
@@ -203,14 +204,14 @@ fun MainClass(
                                 }
                                 LazyColumn(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxSize(),
                                     content = {
-                                        if (aplicateFilter.value) {
+                                        if (applicativeFilter.value) {
                                             itemsIndexed(mainViewModelClass.selectedPractices) { index: Int, item ->
 
 
                                                 if (item.name.lowercase().contains(filter)) {
-                                                    longHorizontalCard(
+                                                    LongHorizontalCard(
                                                         title = item.name,
                                                         subtitle = item.deliveryDate,
                                                         onClick = {

@@ -1,16 +1,15 @@
-package com.example.classmanagerandroid.Screens.Register
+package com.example.classmanagerandroid.Screens.ScreenItems.Inputs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun bigOutlineTextFieldWithErrorMessage(
+fun BigOutlineTextFieldWithErrorMessage(
     text: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -44,8 +43,8 @@ fun bigOutlineTextFieldWithErrorMessage(
                     focusedBorderColor = MaterialTheme.colors.primary,
                     unfocusedBorderColor = MaterialTheme.colors.onSurface,
                     textColor = MaterialTheme.colors.secondary,
-                    placeholderColor = MaterialTheme.colors.secondary,
-                    unfocusedLabelColor = MaterialTheme.colors.secondary,
+                    placeholderColor = MaterialTheme.colors.secondary.copy(0.6f),
+                    unfocusedLabelColor = MaterialTheme.colors.secondary.copy(0.4f),
                 ),
                 modifier = Modifier.fillMaxWidth()
             )

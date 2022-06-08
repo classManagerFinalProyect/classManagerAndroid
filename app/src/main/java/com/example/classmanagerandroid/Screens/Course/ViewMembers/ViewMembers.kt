@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchAppBar
 import com.example.classmanagerandroid.data.remote.AppUser
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -42,10 +42,11 @@ fun MainViewMembers(
     val searchWidgetState by mainViewModelViewMembers.searchWidgetState
     val searchTextState by mainViewModelViewMembers.searchTextState
     var getCourse by remember { mutableStateOf(true) }
-    val aplicateFilter = remember { mutableStateOf(true) }
+    val applicativeFilter = remember { mutableStateOf(true) }
     var filter = ""
     var (isRefreshing, onValueChangeIsRefreshing) = remember { mutableStateOf(false) }
-    var sendEmail = remember { mutableStateOf(false) }
+    val sendEmail = remember { mutableStateOf(false) }
+    var showContent by remember { mutableStateOf(false) }
 
     if(sendEmail.value) {
         sendEmail(
@@ -56,7 +57,12 @@ fun MainViewMembers(
 
     LaunchedEffect(getCourse) {
         if (getCourse) {
-            mainViewModelViewMembers.getSelectedCourse(idCourse)
+            mainViewModelViewMembers.getSelectedCourse(
+                idCourse = idCourse,
+                onFinish = {
+                    showContent = true
+                }
+            )
             getCourse = false
         }
     }
@@ -89,106 +95,105 @@ fun MainViewMembers(
                         searchTextState = searchTextState,
                         onTextChange = {
                             mainViewModelViewMembers.updateSearchTextState(newValue = it)
-                            aplicateFilter.value = false
+                            applicativeFilter.value = false
                             filter = it.lowercase()
-                            aplicateFilter.value = true
+                            applicativeFilter.value = true
                         },
                         onCloseClicked = {
                             mainViewModelViewMembers.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
                         onSearchClicked = {
-                            /*aplicateFilter.value = false
-                            filter = it.lowercase()
-                            aplicateFilter.value = true*/
+
                         },
                         onSearchTriggered = {
                             mainViewModelViewMembers.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
                         },
                         navController = navController,
-                        mainViewModelViewMembers = mainViewModelViewMembers,
                     )
                 },
                 content = {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        content = {
-                            var allUserAppUser: MutableList<AppUser> = arrayListOf()
-                            mainViewModelViewMembers.selectedusers.forEach{
-                                allUserAppUser.add(it)
-                            }
-                            var grouped = allUserAppUser.groupBy { it.name.substring(0, 1) }.toSortedMap()
+                    if(showContent) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            content = {
+                                val allUserAppUser: MutableList<AppUser> = arrayListOf()
+                                mainViewModelViewMembers.selectedUsers.forEach{
+                                    allUserAppUser.add(it)
+                                }
+                                val grouped = allUserAppUser.groupBy { it.name.substring(0, 1) }.toSortedMap()
 
-                            if(aplicateFilter.value) {
-                                grouped.forEach { header, items ->
-                                    var writeHeader = true
-                                    items.forEach {
+                                if(applicativeFilter.value) {
+                                    grouped.forEach { (header, items) ->
+                                        var writeHeader = true
+                                        items.forEach {
 
-                                        if (it.name.lowercase().contains(filter)) {
-                                            if(writeHeader) {
-                                                stickyHeader(
-                                                    content = {
-                                                        Text(
-                                                            text = header,
-                                                            style = MaterialTheme.typography.caption,
-                                                            modifier = Modifier
-                                                                .background(Color.LightGray)
-                                                                .padding(16.dp)
-                                                                .fillMaxWidth()
-                                                        )
-                                                    }
-                                                )
-                                                itemsIndexed(items) { index: Int, item ->
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.Start,
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .clickable {
-                                                                onValueChangeSelectedUser(item)
-                                                                onValueChangeRol(true)
-                                                            },
+                                            if (it.name.lowercase().contains(filter)) {
+                                                if(writeHeader) {
+                                                    stickyHeader(
                                                         content = {
                                                             Text(
-                                                                text = item.name,
+                                                                text = header,
+                                                                style = MaterialTheme.typography.caption,
                                                                 modifier = Modifier
-                                                                    .weight(1.5f)
+                                                                    .background(Color.LightGray)
                                                                     .padding(16.dp)
-                                                                    .wrapContentWidth(Alignment.Start),
-                                                                style = MaterialTheme.typography.subtitle1
-                                                            )
-                                                            Text(
-                                                                text = mainViewModelViewMembers.getRolOfUserById(item.id).rol,
-                                                                fontSize = 12.sp,
-                                                                modifier = Modifier
-                                                                    .weight(0.5f)
-                                                                    .padding(16.dp)
-                                                                    .wrapContentWidth(Alignment.End),
-                                                                style = MaterialTheme.typography.subtitle1
-                                                            )
-                                                            IconButton(
-                                                                onClick = {
-                                                                    onValueChangeSelectedUser(item)
-                                                                    sendEmail.value = true
-                                                                },
-                                                                content = {
-                                                                    Icon(
-                                                                        imageVector = Icons.Default.Email,
-                                                                        contentDescription = "Send Email"
-                                                                    )
-                                                                }
+                                                                    .fillMaxWidth()
                                                             )
                                                         }
                                                     )
+                                                    itemsIndexed(items) { index: Int, item ->
+                                                        Row(
+                                                            horizontalArrangement = Arrangement.Start,
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .clickable {
+                                                                    onValueChangeSelectedUser(item)
+                                                                    onValueChangeRol(true)
+                                                                },
+                                                            content = {
+                                                                Text(
+                                                                    text = item.name,
+                                                                    modifier = Modifier
+                                                                        .weight(1.5f)
+                                                                        .padding(16.dp)
+                                                                        .wrapContentWidth(Alignment.Start),
+                                                                    style = MaterialTheme.typography.subtitle1
+                                                                )
+                                                                Text(
+                                                                    text = mainViewModelViewMembers.getRolOfUserById(item.id).rol,
+                                                                    fontSize = 12.sp,
+                                                                    modifier = Modifier
+                                                                        .weight(0.5f)
+                                                                        .padding(16.dp)
+                                                                        .wrapContentWidth(Alignment.End),
+                                                                    style = MaterialTheme.typography.subtitle1
+                                                                )
+                                                                IconButton(
+                                                                    onClick = {
+                                                                        onValueChangeSelectedUser(item)
+                                                                        sendEmail.value = true
+                                                                    },
+                                                                    content = {
+                                                                        Icon(
+                                                                            imageVector = Icons.Default.Email,
+                                                                            contentDescription = "Send Email"
+                                                                        )
+                                                                    }
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                    writeHeader = false
                                                 }
-                                                writeHeader = false
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             )
         }
@@ -204,19 +209,16 @@ private fun MainAppBar(
     onSearchClicked: (String) -> Unit,
     onSearchTriggered: () -> Unit,
     navController: NavController,
-    mainViewModelViewMembers: MainViewModelViewMembers,
-
 ) {
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
             defaultAppBar(
                 onSearchClicked = onSearchTriggered,
                 navController = navController,
-                mainViewModelViewMembers = mainViewModelViewMembers,
             )
         }
         SearchWidgetState.OPENED -> {
-            searchAppBar(
+            SearchAppBar(
                 text = searchTextState,
                 onTextChange = onTextChange,
                 onCloseClicked = onCloseClicked,
@@ -232,7 +234,7 @@ private fun sendEmail(
 ) {
     val context = LocalContext.current
 
-    var email: Intent  = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
+    val email = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
     email.setData(Uri.parse(CurrentUser.currentUser.email))
     email.setType("text/plain")
     email.putExtra(Intent.EXTRA_EMAIL,"Email test")

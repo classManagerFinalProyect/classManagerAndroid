@@ -7,7 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Navigation.NavigationHost
 import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
@@ -27,7 +29,7 @@ import com.example.classmanagerandroid.ui.theme.ClassManagerAndroidTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
-import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
+import com.example.classmanagerandroid.Screens.MainAppActivity.MainViewModelMainAppView
 
 class MainActivity : ComponentActivity() {
     private val mainViewModelLogin by viewModels<MainViewModelLogin>()
@@ -57,29 +59,15 @@ class MainActivity : ComponentActivity() {
 
 
 
-    var startDestination: String = Destinations.Login.route
+    var startDestination: String = Destinations.SplashScreen.route
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
     override fun onStart() {
         super.onStart()
-
-        //auth.signOut()
-        val user = auth.currentUser
-        if (user != null) {
-            startDestination = Destinations.MainAppView.route
-            mainViewModelLogin.saveCurrentUser {
-                setContent {
-                    chargeScreen()
-                }
-            }
-        } else {
-            setContent {
-                chargeScreen()
-            }
+        setContent {
+            chargeScreen()
         }
-
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -88,6 +76,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun chargeScreen() {

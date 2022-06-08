@@ -10,14 +10,14 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.classmanagerandroid.Screens.ScreenItems.DropDownMenu.BigSelectedDropDownMenu
 
 @Composable
-fun addNewUser(
+fun AddNewUser(
     onValueCloseDialog: (Boolean) -> Unit,
     onValueChangeIdOfUser: (String) -> Unit,
     value: String,
@@ -74,7 +74,7 @@ fun addNewUser(
                             )
                             Spacer(modifier = Modifier.padding(6.dp))
 
-                            bigSelectedDropDownMenu (
+                            BigSelectedDropDownMenu (
                                 suggestions = suggestion,
                                 onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,
                                 initialValue = "Sin asignar"

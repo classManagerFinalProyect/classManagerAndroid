@@ -14,7 +14,7 @@ import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
 
 
 @Composable
@@ -24,7 +24,7 @@ fun MainSettings(
 ) {
     Scaffold(
         topBar = {
-            defaultTopBar(
+            DefaultTopBar(
                 title = "Ajustes",
                 navigationContent = {
                     IconButton(

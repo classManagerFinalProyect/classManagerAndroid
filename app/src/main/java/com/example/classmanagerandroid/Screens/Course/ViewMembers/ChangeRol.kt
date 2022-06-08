@@ -69,7 +69,7 @@ fun changeRol(
                                     ),
                                 content = {
                                     Image(
-                                        painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
+                                        painter = rememberAsyncImagePainter(model = selectedUser.imgPath),
 
                                         contentDescription = "avatar",
                                         modifier = Modifier
@@ -87,7 +87,7 @@ fun changeRol(
                                 }
                             )
                             Text(
-                                text = "${selectedUser.name.uppercase()}",
+                                text = selectedUser.name.uppercase(),
                                 modifier = Modifier
                                     .padding(PaddingValues(start = 20.dp, end = 20.dp))
                             )
@@ -97,7 +97,7 @@ fun changeRol(
                                     .padding(PaddingValues(start = 20.dp, end = 20.dp))
                             )
 
-                            if(mainViewModelViewMembers.currentdRolUser.rol.equals("admin")) {
+                            if(mainViewModelViewMembers.currentRolUser.rol == "admin") {
                                 bigSelectedDropDownMenuMembers (
                                     suggestions = suggestion,
                                     onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,
@@ -106,7 +106,7 @@ fun changeRol(
                             }
                             else {
                                 Text(
-                                    text = "Rol: ${textSelectedItem}",
+                                    text = "Rol: $textSelectedItem",
                                     modifier = Modifier
                                         .padding(PaddingValues(start = 20.dp, end = 20.dp))
                                 )
@@ -124,7 +124,7 @@ fun changeRol(
                                         )
                                     ),
                                 content = {
-                                    if(mainViewModelViewMembers.currentdRolUser.rol == "admin") {
+                                    if(mainViewModelViewMembers.currentRolUser.rol == "admin") {
                                         TextButton(
                                             onClick = {
                                                 onValueChangeRol(false)
@@ -153,7 +153,7 @@ fun changeRol(
                                             onValueChangeRol(false)
                                         },
                                         content = {
-                                            Text(text = if (mainViewModelViewMembers.currentdRolUser.rol.equals("admin")) "Save" else "Aceptar")
+                                            Text(text = if (mainViewModelViewMembers.currentRolUser.rol == "admin") "Save" else "Aceptar")
                                         }
                                     )
 

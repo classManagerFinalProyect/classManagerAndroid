@@ -14,7 +14,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
+import com.example.classmanagerandroid.Screens.Register.PrivacyPolicies.Items.TextItem
+import com.example.classmanagerandroid.Screens.Register.PrivacyPolicies.Items.TextTitle
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
 
 @Composable
 fun MainPrivacyPolicies(
@@ -22,7 +24,7 @@ fun MainPrivacyPolicies(
 ) {
     Scaffold(
         topBar = {
-            defaultTopBar(
+            DefaultTopBar(
                 title = "Políticas de privacidad",
                 navigationContent = {
                     IconButton(
@@ -45,116 +47,116 @@ fun MainPrivacyPolicies(
             LazyColumn(
                 content = {
                     item {
-                        textTitle(stringResource(R.string.privacyPoliciesTitle))
+                        TextTitle(stringResource(R.string.privacyPoliciesTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.privacyPoliciesText1))
+                        TextItem(stringResource(R.string.privacyPoliciesText1))
                     }
                     item {
-                        textItem(stringResource(R.string.privacyPoliciesText2))
+                        TextItem(stringResource(R.string.privacyPoliciesText2))
                     }
                     item {
-                        textTitle(stringResource(R.string.logDataTitle))
+                        TextTitle(stringResource(R.string.logDataTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.logDataText1))
+                        TextItem(stringResource(R.string.logDataText1))
                     }
                     item {
-                        textItem(stringResource(R.string.logDataText2))
+                        TextItem(stringResource(R.string.logDataText2))
                     }
                     item {
-                        textTitle(stringResource(R.string.userInformationTitle))
+                        TextTitle(stringResource(R.string.userInformationTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.userInformationText1))
+                        TextItem(stringResource(R.string.userInformationText1))
                     }
                     item {
-                        textItem(stringResource(R.string.userInformationText2))
+                        TextItem(stringResource(R.string.userInformationText2))
                     }
                     item {
-                        textItem(stringResource(R.string.userInformationText3))
+                        TextItem(stringResource(R.string.userInformationText3))
                     }
                     item {
-                        textItem(stringResource(R.string.userInformationText4))
+                        TextItem(stringResource(R.string.userInformationText4))
                     }
                     item {
-                        textTitle(stringResource(R.string.securityInformationTitle))
+                        TextTitle(stringResource(R.string.securityInformationTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.securityInformationText1))
+                        TextItem(stringResource(R.string.securityInformationText1))
                     }
                     item {
-                        textItem(stringResource(R.string.securityInformationText2))
+                        TextItem(stringResource(R.string.securityInformationText2))
                     }
                     item {
-                        textItem(stringResource(R.string.securityInformationText3))
+                        TextItem(stringResource(R.string.securityInformationText3))
                     }
                     item {
-                        textTitle(stringResource(R.string.keepInformationTitle))
+                        TextTitle(stringResource(R.string.keepInformationTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.keepInformationText1))
+                        TextItem(stringResource(R.string.keepInformationText1))
                     }
                     item {
-                        textItem(stringResource(R.string.keepInformationText2))
+                        TextItem(stringResource(R.string.keepInformationText2))
                     }
                     item {
-                        textTitle(stringResource(R.string.internationalInformationTitle))
+                        TextTitle(stringResource(R.string.internationalInformationTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.internationalInformationText))
+                        TextItem(stringResource(R.string.internationalInformationText))
                     }
                     item {
-                        textTitle(stringResource(R.string.informationControllingTitle))
+                        TextTitle(stringResource(R.string.informationControllingTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.informationControllingText1))
+                        TextItem(stringResource(R.string.informationControllingText1))
                     }
                     item {
-                        textItem(stringResource(R.string.informationControllingText2))
+                        TextItem(stringResource(R.string.informationControllingText2))
                     }
                     item {
-                        textItem(stringResource(R.string.informationControllingText3))
+                        TextItem(stringResource(R.string.informationControllingText3))
                     }
                     item {
-                        textItem(stringResource(R.string.informationControllingText4))
+                        TextItem(stringResource(R.string.informationControllingText4))
                     }
                     item {
-                        textItem(stringResource(R.string.informationControllingText5))
+                        TextItem(stringResource(R.string.informationControllingText5))
                     }
                     item {
-                        textTitle(stringResource(R.string.cookiesTitle))
+                        TextTitle(stringResource(R.string.cookiesTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.cookiesText))
+                        TextItem(stringResource(R.string.cookiesText))
                     }
                     item {
-                        textTitle(stringResource(R.string.limitsTitle))
+                        TextTitle(stringResource(R.string.limitsTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.limitsText))
+                        TextItem(stringResource(R.string.limitsText))
                     }
                     item {
-                        textTitle(stringResource(R.string.policyChangesTitle))
+                        TextTitle(stringResource(R.string.policyChangesTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.policyChangesText1))
+                        TextItem(stringResource(R.string.policyChangesText1))
                     }
                     item {
-                        textItem(stringResource(R.string.policyChangesText2))
+                        TextItem(stringResource(R.string.policyChangesText2))
                     }
                     item {
-                        textTitle(stringResource(R.string.contactUsTitle))
+                        TextTitle(stringResource(R.string.contactUsTitle))
                     }
                     item {
-                        textItem(stringResource(R.string.contactUsText1))
+                        TextItem(stringResource(R.string.contactUsText1))
                     }
                     item {
                         Spacer(modifier = Modifier.padding(5.dp))
-                        textItem(stringResource(R.string.contactUsName))
+                        TextItem(stringResource(R.string.contactUsName))
                     }
                     item {
-                        textItem(stringResource(R.string.contactUsMail))
+                        TextItem(stringResource(R.string.contactUsMail))
                         Spacer(modifier = Modifier.padding(5.dp))
                     }
 

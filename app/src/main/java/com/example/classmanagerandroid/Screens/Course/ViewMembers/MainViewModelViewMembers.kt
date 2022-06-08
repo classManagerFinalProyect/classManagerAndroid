@@ -16,11 +16,12 @@ import com.example.classmanagerandroid.data.remote.AppUser
 
 class MainViewModelViewMembers: ViewModel() {
     var selectedCourse: Course = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","","")
-    var selectedusers: MutableList<AppUser> = arrayListOf()
-    var currentdRolUser: RolUser = RolUser("","")
+    var selectedUsers: MutableList<AppUser> = arrayListOf()
+    var currentRolUser: RolUser = RolUser("","")
 
     fun getSelectedCourse(
         idCourse: String,
+        onFinish: () -> Unit
     ) {
         AccessToDataBase.db.collection("course")
             .document(idCourse)
@@ -28,11 +29,11 @@ class MainViewModelViewMembers: ViewModel() {
             .addOnSuccessListener {
                 val users = it.get("users") as  MutableList<HashMap<String,String>> //Any
                 val listOfRolUser: MutableList<RolUser> = mutableListOf()
-                users.forEach {
+                users.forEach { task ->
                     listOfRolUser.add(
                         RolUser(
-                            id = it.get("id") as String,
-                            rol = it.get("rol") as String
+                            id = task.get("id") as String,
+                            rol = task.get("rol") as String
                         )
                     )
                 }
@@ -47,29 +48,38 @@ class MainViewModelViewMembers: ViewModel() {
                         id = it.id,
                         img = it.get("img") as String
                     )
-                getAllUser(selectedCourse.users)
+                getAllUser(
+                    allUsers = selectedCourse.users,
+                    onFinish = {
+                        onFinish()
+                    }
+                )
                 getCurrentRolUser()
             }
     }
 
-    fun getCurrentRolUser() {
+    private fun getCurrentRolUser() {
         selectedCourse.users.forEach{
-            if(it.id.equals(CurrentUser.currentUser.id))
-                currentdRolUser = it
+            if(it.id == CurrentUser.currentUser.id)
+                currentRolUser = it
         }
     }
 
-    fun getAllUser(
-        allUsers: MutableList<RolUser>
+    private fun getAllUser(
+        allUsers: MutableList<RolUser>,
+        onFinish: () -> Unit
     ){
-        selectedusers.clear()
+        selectedUsers.clear()
         allUsers.forEach{
             getUserById(
                 idOfUser = it.id,
                 onFinished = { finish, user ->
                     if (finish) {
-                        selectedusers.add(user)
+                        onFinish()
+                        selectedUsers.add(user)
                     }
+                    else
+                        onFinish()
                 }
             )
         }
@@ -78,7 +88,7 @@ class MainViewModelViewMembers: ViewModel() {
         idOfuser: String
     ) : RolUser{
         selectedCourse.users.forEach {
-            if(it.id.equals(idOfuser)) {
+            if(it.id == idOfuser) {
                 return it
             }
         }
@@ -91,9 +101,9 @@ class MainViewModelViewMembers: ViewModel() {
     ) {
         var deleteuser = RolUser("","")
         selectedCourse.users.forEach {
-            if(it.id.equals(selectedUser.id)) {
+            if(it.id == selectedUser.id) {
                 deleteuser = it
-                selectedusers.remove(selectedUser)
+                selectedUsers.remove(selectedUser)
                 return@forEach
             }
         }
@@ -116,7 +126,7 @@ class MainViewModelViewMembers: ViewModel() {
         onFinish: () -> Unit
     ) {
         selectedCourse.users.forEach {
-            if(it.id.equals(idOfuser)) {
+            if(it.id == idOfuser) {
                 it.rol = newRol
                 updateCourse(
                     newCourse = selectedCourse,

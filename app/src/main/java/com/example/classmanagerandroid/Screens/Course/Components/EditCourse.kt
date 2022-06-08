@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.Course
+package com.example.classmanagerandroid.Screens.Course.Components
 
 import android.content.Context
 import android.net.Uri
@@ -20,29 +20,26 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Course.MainViewModelCourse
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
-import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
 import com.example.classmanagerandroid.Screens.Utils.isValidDescription
 import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 @Composable
-fun editCourse(
+fun EditCourse(
     onValueChangeGetInformation: (Boolean) -> Unit,
     mainViewModelCourse: MainViewModelCourse
 ) {
-    val selectedCourse = remember { mainViewModelCourse.selectedCourse}
     var textName by remember{ mutableStateOf(mainViewModelCourse.selectedCourse.name) }
     var nameError by remember { mutableStateOf(false) }
-    val messageNameClassError by remember { mutableStateOf("Debes usar caracteres alfanumérico") }
     var editImg by remember { mutableStateOf(false) }
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     var textDescription by remember{ mutableStateOf(mainViewModelCourse.selectedCourse.description) }
     var descriptionError by remember { mutableStateOf(false) }
-    val messageDescriptionClassError by remember { mutableStateOf("Debes usar caracteres caracter alfanumérico") }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts
@@ -90,7 +87,7 @@ fun editCourse(
                     )
                     Spacer(modifier = Modifier.padding(3.dp))
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Nombre del curso",
                         value = textName,
                         onValueChange = { textName = it },
@@ -103,8 +100,8 @@ fun editCourse(
                         enabled = true
                     )
 
-                    bigOutlineTextFieldWithErrorMessage(
-                        text = "Descipción del curso",
+                    BigOutlineTextFieldWithErrorMessage(
+                        text = "Descripción del curso",
                         value = textDescription,
                         onValueChange = { textDescription = it },
                         validateError = { isValidDescription(it) },
@@ -188,8 +185,8 @@ fun updateImages(
                 if(it.isComplete){
                     photoRef
                         .putFile(imageUri)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
                                 mainViewModelCourse.selectedCourse.img =  "gs://class-manager-58dbf.appspot.com/courses/${mainViewModelCourse.selectedCourse.id}"
                                 mainViewModelCourse.updateCurrentCourse(
                                     updateCourse =  mainViewModelCourse.selectedCourse,

@@ -27,24 +27,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ContentState
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.showClasses
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.showCourses
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.bottomBar
-import com.example.classmanagerandroid.Screens.MainAppActivity.Components.mainAppBar
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ShowClasses
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainBody.ShowCourses
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.BottomBar
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.CreateNewItem
+import com.example.classmanagerandroid.Screens.MainAppActivity.Components.MainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
-import me.saine.android.Views.MainAppActivity.MainViewModelMainAppView
-import me.saine.android.Views.MainAppActivity.createNewItem
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -58,18 +56,18 @@ fun MainAppView(
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val searchWidgetState by mainViewModelMainAppView.searchWidgetState
     val searchTextState by mainViewModelMainAppView.searchTextState
-    var createItem = remember { mutableStateOf(false) }
-    val aplicateFilter = remember { mutableStateOf(true) }
+    val createItem = remember { mutableStateOf(false) }
+    val applicativeFilter = remember { mutableStateOf(true) }
     var filter = ""
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val contentState by mainViewModelMainAppView.contentState
-    var sendId = remember { mutableStateOf(false) }
+    val sendId = remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
 
     if(sendId.value) {
-        sendId(
+        SendId(
             id = auth.currentUser?.uid!!
         )
         sendId.value = false
@@ -92,14 +90,14 @@ fun MainAppView(
             Scaffold (
                 scaffoldState = scaffoldState,
                 topBar = {
-                    mainAppBar(
+                    MainAppBar(
                         searchWidgetState = searchWidgetState,
                         searchTextState = searchTextState,
                         onTextChange = {
                             mainViewModelMainAppView.updateSearchTextState(newValue = it)
-                            aplicateFilter.value = false
+                            applicativeFilter.value = false
                             filter = it.lowercase()
-                            aplicateFilter.value = true
+                            applicativeFilter.value = true
                         },
                         onCloseClicked = {
                             mainViewModelMainAppView.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
@@ -114,7 +112,7 @@ fun MainAppView(
                     )
                 },
                 bottomBar = {
-                    bottomBar(navController = navController, mainAppView = mainViewModelMainAppView)
+                    BottomBar(mainAppView = mainViewModelMainAppView)
                 },
                 floatingActionButtonPosition = FabPosition.End,
                 isFloatingActionButtonDocked = !createItem.value,
@@ -125,7 +123,7 @@ fun MainAppView(
                         //modifier = Modifier.background(Color.Black),
                         content = {
                             if (createItem.value) {
-                                createNewItem(
+                                CreateNewItem(
                                     navController = navController,
                                     onValueChangeCreateItem = { createItem.value = it }
                                 )
@@ -188,7 +186,7 @@ fun MainAppView(
                                                             )
                                                     }
                                                 )
-                                                Text(text = "${CurrentUser.currentUser.name.uppercase()}")
+                                                Text(text = CurrentUser.currentUser.name.uppercase())
                                                 Text(text = CurrentUser.currentUser.email)
                                                 Row(
                                                     modifier = Modifier
@@ -282,7 +280,7 @@ fun MainAppView(
                                         )
                                     }
                                     if(expanded) {
-                                        itemsIndexed(CurrentUser.myCourses) { index, item ->
+                                        itemsIndexed(CurrentUser.myCourses) { _, item ->
                                             TextButton (
                                                 onClick = {
                                                     navController.navigate("${Destinations.Course.route}/${item.id}")
@@ -361,7 +359,7 @@ fun MainAppView(
                                 mainViewModelMainAppView = mainViewModelMainAppView,
                                 filter = filter,
                                 navController = navController,
-                                applyFilter = aplicateFilter.value,
+                                applyFilter = applicativeFilter.value,
                                 createItem = createItem
                             )
                         }
@@ -382,7 +380,7 @@ private fun MainContent(
     createItem: MutableState<Boolean>
 ) {
     when(contentState) {
-        ContentState.COURSES -> showCourses(
+        ContentState.COURSES -> ShowCourses(
             navController = navController,
             applyFilter = applyFilter,
             filter = filter,
@@ -392,7 +390,7 @@ private fun MainContent(
             createItem = createItem
         )
         ContentState.ALL -> {
-            showCourses(
+            ShowCourses(
                 navController = navController,
                 applyFilter = applyFilter,
                 filter = filter,
@@ -401,7 +399,7 @@ private fun MainContent(
                 contentState = contentState,
                 createItem = createItem
             )
-            showClasses(
+            ShowClasses(
                 applyFilter = applyFilter,
                 navController = navController,
                 filter = filter,
@@ -410,7 +408,7 @@ private fun MainContent(
                 createItem = createItem
             )
         }
-        ContentState.CLASSES -> showClasses(
+        ContentState.CLASSES -> ShowClasses(
             applyFilter = applyFilter,
             navController = navController,
             filter = filter,
@@ -422,58 +420,17 @@ private fun MainContent(
 }
 
 
-
-
-
 @Composable
-private fun BottomNavigation(navController: NavController) {
-    val items = listOf(
-        "Home",
-        "Classes",
-        "Curses",
-    )
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = Color.Black,
-        content = {
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home"
-                    )
-                },
-                label = { Text(text = "Home", fontSize = 9.sp) },
-                selectedContentColor = Color.Black,
-                unselectedContentColor = Color.Black.copy(0.4f),
-                alwaysShowLabel = true,
-                selected = true,
-                onClick = {}
-            )
-        }
-    )
-}
-
-@Composable
-private fun sendId(
+private fun SendId(
     id: String
 ) {
     val context = LocalContext.current
 
-    var email: Intent  = Intent(Intent.ACTION_SEND, Uri.parse(CurrentUser.currentUser.email))
-    email.setData(Uri.parse(CurrentUser.currentUser.email))
-    email.setType("text/plain")
-    email.putExtra(Intent.EXTRA_TEXT,"${id}")
+    val senId = Intent(Intent.ACTION_SEND, Uri.parse(id))
+    senId.setData(Uri.parse(id))
+    senId.setType("text/plain")
 
-    context.startActivity(email)
-}
+    senId.putExtra(Intent.EXTRA_TEXT,id)
+    context.startActivity(senId)
 
-@Composable
-fun MyButton() {
-    val context = LocalContext.current
-    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/")) }
-
-    Button(onClick = { context.startActivity(intent) }) {
-        Text(text = "Navigate to Google!")
-    }
 }

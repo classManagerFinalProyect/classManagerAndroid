@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
-import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.ConfirmAlertDialog
 import com.example.classmanagerandroid.Screens.Settings.MyAccount.changeUserValue
 import com.example.classmanagerandroid.Screens.Settings.ViewModelSettings
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
@@ -56,7 +56,7 @@ fun MainMyAccountOptions(
     }
 
     if (deleteItem) {
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = "¿Estas seguro que desea eliminar su cuenta?",
             subtitle = "No podrás volver a recuperarla",
             onValueChangeGoBack = onValueChangeDeleteItem,

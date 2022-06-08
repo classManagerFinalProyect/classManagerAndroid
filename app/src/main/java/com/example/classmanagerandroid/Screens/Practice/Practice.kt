@@ -25,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.data.local.CurrentUser
-import com.example.classmanagerandroid.Screens.Practice.Components.bottomAppBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.Practice.Components.BottomAppBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.ConfirmAlertDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigTextField
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowDatePicker
 import com.example.classmanagerandroid.data.network.AccessToDataBase.Companion.auth
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -45,9 +47,10 @@ fun MainPractice(
     val expanded = remember { mutableStateOf(false) }
     var commentsIsSelected by remember { mutableStateOf(true) }
     val context = LocalContext.current
-    var (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
-    var refresh = remember { mutableStateOf(false)}
+    val (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
+    val refresh = remember { mutableStateOf(false)}
     val getPractice = remember { mutableStateOf(true) }
+    val showContent = remember { mutableStateOf(false) }
 
 
     //Texts
@@ -64,16 +67,17 @@ fun MainPractice(
                 onValueChangeTextDate(mainViewModelPractice.selectedPractice.deliveryDate)
                 onValueChangeTextAnnotation(mainViewModelPractice.selectedPractice.teacherAnnotation)
                 getPractice.value = false
+                showContent.value = true
             }
         )
     }
 
 
     if (deleteItem) {
-        var title = "¿Seguro que desea eliminar la prácica seleccionada?"
-        var subtitle = "No podrás volver a recuperarla"
+        val title = "¿Seguro que desea eliminar la prácica seleccionada?"
+        val subtitle = "No podrás volver a recuperarla"
 
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = title,
             subtitle = subtitle,
             onValueChangeGoBack = onValueChangeDeleteItem,
@@ -104,7 +108,7 @@ fun MainPractice(
         content =  {
             Scaffold(
                 topBar = {
-                    defaultTopBar(
+                    DefaultTopBar(
                         title = mainViewModelPractice.selectedPractice.name,
                         navigationContent = {
                             IconButton(
@@ -161,8 +165,8 @@ fun MainPractice(
                     )
                 },
                 bottomBar = {
-                    if(mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol != "padre") {
-                        bottomAppBar(
+                    if(mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol != "padre" && mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol != "Sin asignar") {
+                        BottomAppBar(
                             value = textMessage,
                             refresh = refresh ,
                             mainViewModelPractice = mainViewModelPractice
@@ -170,143 +174,145 @@ fun MainPractice(
                     }
                 },
                 content = {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        content = {
-                            if (commentsIsSelected) {
-                                item {
-                                    Spacer(modifier = Modifier.padding(5.dp))
-                                    showDatePicker(
-                                        context = context,
-                                        textDate = textDate,
-                                        onValueChangeTextDate = onValueChangeTextDate,
-                                        label = "Fecha de entrega",
-                                        placeholder = "Fecha de entrega",
-                                        enabled = false,
-                                        icon = Icons.Default.DateRange
-                                    )
-                                }
-                                item {
-                                    bigTextField(
-                                        text = "Descripción",
-                                        value = textDescription,
-                                        onValueChange = onValueChangeTextDescription,
-                                        KeyboardType = KeyboardType.Text,
-                                        enabled = false
-                                    )
-                                }
-
-                                item {
-                                    if (mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "profesor" || mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "admin"){
-                                        bigTextField(
-                                            text = "Annotation",
-                                            value = textAnnotation,
-                                            onValueChange = onValueChangeTextAnnotation,
+                    if(showContent.value){
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            content = {
+                                if (commentsIsSelected) {
+                                    item {
+                                        Spacer(modifier = Modifier.padding(5.dp))
+                                        ShowDatePicker(
+                                            context = context,
+                                            textDate = textDate,
+                                            onValueChangeTextDate = onValueChangeTextDate,
+                                            label = "Fecha de entrega",
+                                            placeholder = "Fecha de entrega",
+                                            enabled = false,
+                                            icon = Icons.Default.DateRange
+                                        )
+                                    }
+                                    item {
+                                        BigTextField(
+                                            text = "Descripción",
+                                            value = textDescription,
+                                            onValueChange = onValueChangeTextDescription,
                                             KeyboardType = KeyboardType.Text,
                                             enabled = false
                                         )
                                     }
-                                }
-                            }
 
-
-                            item {
-                                Spacer(modifier = Modifier.padding(10.dp))
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .border(BorderStroke(1.dp, Color.LightGray)),
-                                    content = {
-                                        Spacer(modifier = Modifier.padding(1.dp))
-                                    }
-                                )
-                                Row (
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start,
-                                    modifier = Modifier
-                                        .clickable {
-                                            commentsIsSelected = !commentsIsSelected
-                                        },
-                                    content = {
-                                        Text(text = "Comments")
-                                    }
-                                )
-
-                                Spacer(modifier = Modifier.padding(8.dp))
-                            }
-
-                            if (!refresh.value) {
-                                itemsIndexed(mainViewModelPractice.chat.conversation){ index, item ->
-                                    Row(
-                                        horizontalArrangement = if (auth.currentUser?.uid.toString().equals(item.sentBy.id)) Arrangement.End else Arrangement.Start,
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        content = {
-
-                                            Surface(
-                                                modifier = Modifier
-                                                    .padding(8.dp, 4.dp)
-                                                    .fillMaxWidth(0.8f),
-                                                shape = RoundedCornerShape(8.dp),
-                                                elevation = 2.dp,
-                                                content = {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .padding(4.dp)
-                                                            .fillMaxSize(),
-                                                        content = {
-                                                            Column(
-                                                                verticalArrangement = Arrangement.Top,
-                                                                content = {
-                                                                    Image(
-                                                                        painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
-                                                                        contentDescription = "avatar",
-                                                                        modifier = Modifier
-                                                                            .size(40.dp)
-                                                                            .clip(CircleShape)
-                                                                            .border(
-                                                                                1.dp,
-                                                                                Color.Gray,
-                                                                                CircleShape
-                                                                            ),
-                                                                        contentScale = ContentScale.Crop
-                                                                    )
-                                                                }
-                                                            )
-
-
-
-                                                            Spacer(modifier = Modifier.padding(5.dp))
-                                                            Column(
-                                                                modifier = Modifier
-                                                                    .padding(4.dp)
-                                                                    .fillMaxHeight()
-                                                                    .fillMaxWidth(0.8f),
-                                                                verticalArrangement = Arrangement.Center,
-                                                                content = {
-                                                                    Text(
-                                                                        text = item.message,
-                                                                        style = MaterialTheme.typography.subtitle1,
-                                                                        fontWeight = FontWeight.Bold,
-                                                                    )
-                                                                }
-                                                            )
-                                                            Text(
-                                                                text = "${item.sentOn}",
-                                                                style = MaterialTheme.typography.caption,
-                                                                modifier = Modifier
-                                                                    .padding(4.dp),
-                                                            )
-                                                        }
-                                                    )
-                                                }
+                                    item {
+                                        if (mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "profesor" || mainViewModelPractice.rolOfSelectedUserInCurrentPractice.rol == "admin"){
+                                            BigTextField(
+                                                text = "Annotation",
+                                                value = textAnnotation,
+                                                onValueChange = onValueChangeTextAnnotation,
+                                                KeyboardType = KeyboardType.Text,
+                                                enabled = false
                                             )
                                         }
+                                    }
+                                }
+
+
+                                item {
+                                    Spacer(modifier = Modifier.padding(10.dp))
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .border(BorderStroke(1.dp, Color.LightGray)),
+                                        content = {
+                                            Spacer(modifier = Modifier.padding(1.dp))
+                                        }
                                     )
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Start,
+                                        modifier = Modifier
+                                            .clickable {
+                                                commentsIsSelected = !commentsIsSelected
+                                            },
+                                        content = {
+                                            Text(text = "Comments")
+                                        }
+                                    )
+
+                                    Spacer(modifier = Modifier.padding(8.dp))
+                                }
+
+                                if (!refresh.value) {
+                                    itemsIndexed(mainViewModelPractice.chat.conversation){ _, item ->
+                                        Row(
+                                            horizontalArrangement = if (auth.currentUser?.uid.toString() == item.sentBy.id) Arrangement.End else Arrangement.Start,
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            content = {
+
+                                                Surface(
+                                                    modifier = Modifier
+                                                        .padding(8.dp, 4.dp)
+                                                        .fillMaxWidth(0.8f),
+                                                    shape = RoundedCornerShape(8.dp),
+                                                    elevation = 2.dp,
+                                                    content = {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .padding(4.dp)
+                                                                .fillMaxSize(),
+                                                            content = {
+                                                                Column(
+                                                                    verticalArrangement = Arrangement.Top,
+                                                                    content = {
+                                                                        Image(
+                                                                            painter = rememberAsyncImagePainter(model = CurrentUser.myImg.value),
+                                                                            contentDescription = "avatar",
+                                                                            modifier = Modifier
+                                                                                .size(40.dp)
+                                                                                .clip(CircleShape)
+                                                                                .border(
+                                                                                    1.dp,
+                                                                                    Color.Gray,
+                                                                                    CircleShape
+                                                                                ),
+                                                                            contentScale = ContentScale.Crop
+                                                                        )
+                                                                    }
+                                                                )
+
+
+
+                                                                Spacer(modifier = Modifier.padding(5.dp))
+                                                                Column(
+                                                                    modifier = Modifier
+                                                                        .padding(4.dp)
+                                                                        .fillMaxHeight()
+                                                                        .fillMaxWidth(0.8f),
+                                                                    verticalArrangement = Arrangement.Center,
+                                                                    content = {
+                                                                        Text(
+                                                                            text = item.message,
+                                                                            style = MaterialTheme.typography.subtitle1,
+                                                                            fontWeight = FontWeight.Bold,
+                                                                        )
+                                                                    }
+                                                                )
+                                                                Text(
+                                                                    text = item.sentOn,
+                                                                    style = MaterialTheme.typography.caption,
+                                                                    modifier = Modifier
+                                                                        .padding(4.dp),
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             )
         }

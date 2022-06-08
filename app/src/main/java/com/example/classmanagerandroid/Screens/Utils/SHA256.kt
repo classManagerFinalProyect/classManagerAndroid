@@ -1,18 +1,6 @@
 package com.example.classmanagerandroid.Screens.Utils
 import java.security.MessageDigest
 
-fun getSHA256(passw : String) : String {
-    try{
-        val bytes = passw.toString().toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
-
-    }catch (e: Exception){
-        throw e
-    }
-}
-
 fun createSha256(base: String): String? {
     return try {
         val digest = MessageDigest.getInstance("SHA-256")

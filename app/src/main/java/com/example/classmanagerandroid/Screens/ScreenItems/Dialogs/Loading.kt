@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun loadingDialog(
+fun LoadingDialog(
     loading : MutableState<Boolean>,
     informativeText: String
 ) {

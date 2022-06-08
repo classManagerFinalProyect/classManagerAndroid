@@ -1,6 +1,7 @@
 package com.example.classmanagerandroid.Screens.CreateClass
 
 import android.content.Context
+import android.content.IntentSender
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -16,30 +17,18 @@ import com.example.classmanagerandroid.data.remote.Course
 
 class MainViewModelCreateClass: ViewModel() {
 
-    fun getNamesOfCurses(): MutableList<String> {
-        val namesOfCurses = mutableListOf<String>()
-        CurrentUser.myCourses.forEach {
-            namesOfCurses.add(it.name)
-        }
-        return namesOfCurses
-    }
-
     fun createClass(
-        navController: NavController,
-        context: Context,
         textDescription: String,
         textNameOfClass: String,
-        itemSelectedCurse: Course
+        itemSelectedCurse: Course,
+        onFinished: () -> Unit
     ) {
-       /*val document = db.collection("classes").document()
-        val idOfDocument = document.id*/
-
 
         val newClass = Class(
             id = "",
             name = textNameOfClass,
             description = textDescription,
-            idPractices = mutableListOf<String>(),
+            idPractices = mutableListOf(),
             idOfCourse = itemSelectedCurse.id,
             users =  mutableListOf(
                 RolUser(
@@ -54,11 +43,11 @@ class MainViewModelCreateClass: ViewModel() {
             newClass = newClass,
             onFinished = { success, newClass ->
                 if (success) {
-                    if(!itemSelectedCurse.name.equals("Sin asignar") ) {
+                    if(itemSelectedCurse.name != "Sin asignar") {
                         itemSelectedCurse.classes.add(newClass.id)
                         updateCourse(
                             newCourse = itemSelectedCurse,
-                            onFinished = { success, newCourse ->
+                            onFinished = { _, _ ->
                                 CurrentUser.currentUser.classes.add(newClass.id)
                                 updateUser(
                                     idOfUser = auth.currentUser?.uid.toString(),
@@ -67,9 +56,8 @@ class MainViewModelCreateClass: ViewModel() {
                                         if (it) {
                                             CurrentUser.updateDates(
                                                 onFinished = {
-                                                    Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                                    navController.navigate(Destinations.MainAppView.route)
-                                                }
+                                                    onFinished()
+                                                 }
                                             )
                                         }
                                     }
@@ -86,8 +74,7 @@ class MainViewModelCreateClass: ViewModel() {
                                 if (it) {
                                     CurrentUser.updateDates(
                                         onFinished = {
-                                            Toast.makeText(context,"El curso ha sido creado correctamente", Toast.LENGTH_SHORT).show()
-                                            navController.navigate(Destinations.MainAppView.route)
+                                            onFinished()
                                         }
                                     )
                                 }

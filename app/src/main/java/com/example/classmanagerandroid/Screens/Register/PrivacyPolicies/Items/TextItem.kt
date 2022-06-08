@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.Register.PrivacyPolicies
+package com.example.classmanagerandroid.Screens.Register.PrivacyPolicies.Items
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -9,7 +9,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun textItem(
+fun TextItem(
     text: String
 ) {
     Text(

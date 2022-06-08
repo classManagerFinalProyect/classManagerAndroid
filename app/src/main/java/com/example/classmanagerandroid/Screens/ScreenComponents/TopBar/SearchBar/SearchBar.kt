@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun searchAppBar(
+fun SearchAppBar(
     text: String,
     onTextChange: (String) -> Unit,
     onCloseClicked: () -> Unit,

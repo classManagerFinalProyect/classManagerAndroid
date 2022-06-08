@@ -1,16 +1,15 @@
-package com.example.classmanagerandroid.Screens.Practice
+package com.example.classmanagerandroid.Screens.ScreenItems.Inputs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun bigTextField(
+fun BigTextField(
     text: String,
     value: String,
     onValueChange: (String) -> Unit,

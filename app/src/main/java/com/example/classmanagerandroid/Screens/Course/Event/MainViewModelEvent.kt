@@ -42,11 +42,11 @@ class MainViewModelEvent: ViewModel() {
             .addOnSuccessListener {
                 val users = it.get("users") as  MutableList<HashMap<String,String>> //Any
                 val listOfRolUser: MutableList<RolUser> = mutableListOf()
-                users.forEach {
+                users.forEach { task ->
                     listOfRolUser.add(
                         RolUser(
-                            id = it.get("id") as String,
-                            rol = it.get("rol") as String
+                            id = task.get("id") as String,
+                            rol = task.get("rol") as String
                         )
                     )
                 }
@@ -85,11 +85,11 @@ class MainViewModelEvent: ViewModel() {
         }
     }
 
-    fun getRolOfUser(
+    private fun getRolOfUser(
         idOfUser: String
     ) {
         selectedCourse.users.forEach {
-            if (it.id.equals(idOfUser)) rolOfSelectedUserInCurrentCourse = it
+            if (it.id == idOfUser) rolOfSelectedUserInCurrentCourse = it
         }
     }
 

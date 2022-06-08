@@ -21,7 +21,7 @@ class MainViewModelCreateCourse: ViewModel() {
         textOfDescription: String,
         onFinished: () -> Unit
     ) {
-        var mySelectedClasses = mutableListOf<String>()
+        val mySelectedClasses = mutableListOf<String>()
         allListItems.forEach {
             if (it.isSelected)  mySelectedClasses.add(it.id)
         }
@@ -32,7 +32,7 @@ class MainViewModelCreateCourse: ViewModel() {
             events = arrayListOf(),
             id = "",
             classes = mySelectedClasses,
-            users = mutableListOf<RolUser>(
+            users = mutableListOf(
                 RolUser(
                     id = "${auth.currentUser?.uid}",
                     rol = "admin"
@@ -77,7 +77,7 @@ class MainViewModelCreateCourse: ViewModel() {
     fun createListItems() {
         allListItems.clear()
         CurrentUser.myClasses.forEach {
-            if (it.idOfCourse.equals("Sin asignar")) {
+            if (it.idOfCourse == "Sin asignar") {
                 allListItems.add(
                     ListItem(
                         title = it.name,

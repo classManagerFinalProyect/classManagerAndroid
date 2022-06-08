@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.toSize
 import com.example.classmanagerandroid.data.remote.Class
 
 @Composable
-fun bigSelectedDropDownMenuClassItem(
+fun BigSelectedDropDownMenuClassItem(
     label: String,
     suggestions: List<Class>,
     onValueChangeTextSelectedItem: (Class) -> Unit
@@ -24,7 +24,7 @@ fun bigSelectedDropDownMenuClassItem(
     Spacer(modifier = Modifier.padding(4.dp))
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("Sin asignar")}
-    var textfieldSize by remember { mutableStateOf(Size.Zero) }
+    var textileSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
@@ -40,7 +40,7 @@ fun bigSelectedDropDownMenuClassItem(
                     modifier = Modifier
                         .padding(PaddingValues(start = 40.dp, end = 40.dp))
                         .onGloballyPositioned { coordinates ->
-                            textfieldSize = coordinates.size.toSize()
+                            textileSize = coordinates.size.toSize()
                         },
                     trailingIcon = {
                         Icon(
@@ -55,7 +55,7 @@ fun bigSelectedDropDownMenuClassItem(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                     modifier = Modifier
-                        .width(with(LocalDensity.current) { textfieldSize.width.toDp() }),
+                        .width(with(LocalDensity.current) { textileSize.width.toDp() }),
                     content = {
                         suggestions.forEach { label ->
                             DropdownMenuItem(

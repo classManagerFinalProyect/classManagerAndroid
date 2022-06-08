@@ -26,7 +26,7 @@ import com.example.classmanagerandroid.Screens.Course.ViewMembers.bigSelectedDro
 import com.example.classmanagerandroid.data.remote.AppUser
 
 @Composable
-fun changeRolClass(
+fun ChangeRolClass(
     mainViewModelViewMembersClass: MainViewModelViewMembersClass,
     onValueChangeRol: (Boolean) -> Unit,
     selectedUser: AppUser,
@@ -89,7 +89,7 @@ fun changeRolClass(
                                 }
                             )
                             Text(
-                                text = "${selectedUser.name.uppercase()}",
+                                text = selectedUser.name.uppercase(),
                                 modifier = Modifier
                                     .padding(PaddingValues(start = 20.dp, end = 20.dp))
                             )
@@ -100,7 +100,7 @@ fun changeRolClass(
                             )
 
                             
-                            if(mainViewModelViewMembersClass.currentdRolUser.rol == "admin") {
+                            if(mainViewModelViewMembersClass.currentRolUser.rol == "admin") {
                                 Spacer(modifier = Modifier.padding(10.dp))
                                 bigSelectedDropDownMenuMembers (
                                     suggestions = suggestion,
@@ -128,7 +128,7 @@ fun changeRolClass(
                                         )
                                     ),
                                 content = {
-                                    if (mainViewModelViewMembersClass.currentdRolUser.rol.equals("admin")) {
+                                    if (mainViewModelViewMembersClass.currentRolUser.rol.equals("admin")) {
                                         TextButton(
                                             onClick = {
                                                 onValueChangeRol(false)
@@ -146,7 +146,7 @@ fun changeRolClass(
                                         TextButton(
                                             onClick = {
                                                 mainViewModelViewMembersClass.updateRol(
-                                                    idOfuser = selectedUser.id,
+                                                    idUser = selectedUser.id,
                                                     newRol = textSelectedItem,
                                                     onFinish = {
                                                         onValueChangeIsRefreshing(true)

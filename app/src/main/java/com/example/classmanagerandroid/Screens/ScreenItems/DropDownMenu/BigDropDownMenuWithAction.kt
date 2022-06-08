@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.ScreenItems
+package com.example.classmanagerandroid.Screens.ScreenItems.DropDownMenu
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -18,7 +17,7 @@ import androidx.compose.ui.unit.toSize
 
 
 @Composable
-fun bigDropDownMenuWithAction(
+fun BigDropDownMenuWithAction(
     initialValue: String,
     suggestions: MutableList<String>,
     onClick: () -> Unit
@@ -28,7 +27,7 @@ fun bigDropDownMenuWithAction(
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(initialValue) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
-    var editItem = remember{ mutableStateOf(false) }
+    val editItem = remember{ mutableStateOf(false) }
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
@@ -61,7 +60,7 @@ fun bigDropDownMenuWithAction(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit ${initialValue}",
+                            contentDescription = "Edit $initialValue",
                             modifier = Modifier
                                 .clickable {
                                     editItem.value = true

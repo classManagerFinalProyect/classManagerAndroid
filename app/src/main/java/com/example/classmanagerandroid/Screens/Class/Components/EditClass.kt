@@ -28,29 +28,25 @@ import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
-import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
 import com.example.classmanagerandroid.Screens.Utils.isValidDescription
 import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 @Composable
-fun editClass(
+fun EditClass(
     editClass: MutableState<Boolean>,
     mainViewModelClass: MainViewModelClass
 ) {
     val context = LocalContext.current
-    val selectedCourse = remember { mainViewModelClass.selectedClass}
     var textName by remember{ mutableStateOf(mainViewModelClass.selectedClass.name) }
     var nameError by remember { mutableStateOf(false) }
     var editImg by remember { mutableStateOf(false) }
-    val messageNameClassError by remember { mutableStateOf("Debes usar caracteres alfanumérico") }
 
     var textDescription by remember{ mutableStateOf(mainViewModelClass.selectedClass.description) }
     var descriptionError by remember { mutableStateOf(false) }
-    val messageDescriptionClassError by remember { mutableStateOf("Debes usar caracteres caracter alfanumérico") }
 
 
     val launcher = rememberLauncherForActivityResult(
@@ -100,7 +96,7 @@ fun editClass(
                     )
                     Spacer(modifier = Modifier.padding(3.dp))
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Nombre de la clase",
                         value = textName,
                         onValueChange = { textName = it },
@@ -113,7 +109,7 @@ fun editClass(
                         enabled = true
                     )
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Descipción de la clase",
                         value = textDescription,
                         onValueChange = { textDescription = it },
@@ -194,8 +190,8 @@ fun updateImages(
                 if(it.isComplete){
                     photoRef
                         .putFile(imageUri)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
                                 mainViewModelClass.selectedClass.img =  "gs://class-manager-58dbf.appspot.com/classes/${mainViewModelClass.selectedClass.id}"
                                 mainViewModelClass.updateCurrentClass(
                                     updateClass = mainViewModelClass.selectedClass,

@@ -19,20 +19,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavController
-import com.example.classmanagerandroid.Screens.Practice.showDatePicker
-import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowDatePicker
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowTimePicker
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidName
-import com.example.classmanagerandroid.data.remote.Class
 import com.example.classmanagerandroid.data.remote.Event
 
 
 @Composable
-fun modifierEvent(
+fun ModifierEvent(
     onValueChangeModifierEvent: (Boolean) -> Unit,
     mainViewModelEvent: MainViewModelEvent,
-    navController: NavController,
     onValueChangeSelectedEvent: (Event) -> Unit,
     event: Event,
     onValueChangeIsRefreshing: (Boolean) -> Unit,
@@ -42,7 +40,6 @@ fun modifierEvent(
     val (textStartTime,onValueChangeStartTime) = remember { mutableStateOf(event.initialTime) }
     val (textFinalTime,onValueChangeFinalTime) = remember { mutableStateOf(event.finalTime) }
     val nameOfEvent = remember { mutableStateOf(event.name) }
-    val (selectedClass,onValueChangeSelectedClass) = remember { mutableStateOf(Class("","","", arrayListOf(), arrayListOf(),"","")) }
     val nameOfClass = remember { mutableStateOf(event.nameOfClass)}
     val errorOfNameEvent = remember { mutableStateOf(false) }
 
@@ -71,7 +68,7 @@ fun modifierEvent(
                                 modifier = Modifier
                                     .fillMaxHeight(0.2f),
                                 content = {
-                                    bigTextFieldWithErrorMessage(
+                                    BigTextFieldWithErrorMessage(
                                         value = nameOfEvent,
                                         KeyboardType = KeyboardType.Text,
                                         enabled = true,
@@ -98,7 +95,7 @@ fun modifierEvent(
                                 }
                             )
 
-                            showDatePicker(
+                            ShowDatePicker(
                                 context = context,
                                 textDate = textDate,
                                 onValueChangeTextDate = onValueChangeDate,
@@ -108,7 +105,7 @@ fun modifierEvent(
                                 icon = Icons.Default.DateRange
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora inicial",
                                 placeholder = "Hora inicial del evento",
@@ -118,7 +115,7 @@ fun modifierEvent(
                                 enabled = true
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora Final",
                                 placeholder = "Hora final del evento",

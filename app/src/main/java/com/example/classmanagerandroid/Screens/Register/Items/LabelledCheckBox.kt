@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.Register
+package com.example.classmanagerandroid.Screens.Register.Items
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun labelledCheckbox(
+fun LabelledCheckbox(
     labelText: String,
     isCheckedValue: Boolean,
     onValueChangeChecked: (Boolean) -> Unit,
@@ -35,7 +35,7 @@ fun labelledCheckbox(
         )
         Spacer(modifier = Modifier.padding(2.dp))
         Text(
-            text = "${labelText}",
+            text = labelText,
             modifier = Modifier
                 .clickable{
                     onClickText()
@@ -49,8 +49,8 @@ fun labelledCheckbox(
 
 @Preview
 @Composable
-fun preview() {
-    labelledCheckbox(
+fun Preview() {
+    LabelledCheckbox(
         labelText = "Text",
         isCheckedValue = false,
         onValueChangeChecked = {},

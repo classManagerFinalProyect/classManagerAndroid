@@ -17,11 +17,11 @@ import androidx.navigation.NavController
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Screens.Course.MainViewModelCourse
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchAppBar
 
 @Composable
-fun mainAppBar(
+fun MainAppBar(
     searchWidgetState: SearchWidgetState,
     searchTextState: String,
     onTextChange: (String) -> Unit,
@@ -39,8 +39,8 @@ fun mainAppBar(
 
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
-            defaultTopBar(
-                title = "${mainViewModelCourse.selectedCourse.name}",
+            DefaultTopBar(
+                title = mainViewModelCourse.selectedCourse.name,
                 navigationContent = {
                     IconButton(
                         onClick = {
@@ -158,7 +158,7 @@ fun mainAppBar(
             )
         }
         SearchWidgetState.OPENED -> {
-            searchAppBar(
+            SearchAppBar(
                 text = searchTextState,
                 onTextChange = onTextChange,
                 onCloseClicked = onCloseClicked,

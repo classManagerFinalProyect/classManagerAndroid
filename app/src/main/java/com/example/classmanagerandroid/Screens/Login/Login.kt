@@ -2,7 +2,7 @@ package com.example.classmanagerandroid.Screens.Login
 
 
 import android.app.Activity
-import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.Register.bigPasswordInputWithErrorMessage
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
-import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigPasswordInputWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.LoadingDialog
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidEmail
 import com.example.classmanagerandroid.Screens.Utils.isValidPassword
@@ -30,13 +30,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLink
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 
@@ -63,7 +56,7 @@ fun MainLogin(
     val loading = remember { mutableStateOf(false) }
 
     if (loading.value){
-        loadingDialog(
+        LoadingDialog(
             loading = loading,
             informativeText = "Iniciando sesión"
         )
@@ -71,7 +64,7 @@ fun MainLogin(
 
 
     if (loginWithGoogle.value){
-        signInWithGoogle(
+        SignInWithGoogle(
             activity = activity
         )
         loginWithGoogle.value = false
@@ -92,9 +85,9 @@ fun MainLogin(
                 content = {
 
                     //Texts
-                    val emailText = remember{ mutableStateOf("admin@gmail.com") }
+                    val emailText = remember{ mutableStateOf("") }
                     var emailError by remember{ mutableStateOf(false) }
-                    val (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("administrador") }
+                    val (passwordText,onValueChangePasswordText) = remember{ mutableStateOf("") }
                     var passwordError by  remember { mutableStateOf(false) }
 
                     Column(
@@ -117,7 +110,7 @@ fun MainLogin(
                                     }
 
                                     item {
-                                        bigOutlineTextFieldWithErrorMessage(
+                                        BigOutlineTextFieldWithErrorMessage(
                                             text = "Email",
                                             value = emailText.value,
                                             onValueChange = { emailText.value = it },
@@ -132,7 +125,7 @@ fun MainLogin(
                                     }
 
                                     item {
-                                        bigPasswordInputWithErrorMessage(
+                                        BigPasswordInputWithErrorMessage(
                                             value = passwordText,
                                             onValueChangeValue = onValueChangePasswordText,
                                             valueError = passwordError,
@@ -149,17 +142,24 @@ fun MainLogin(
                                                 Text(text = "Iniciar sesión")
                                             },
                                             onClick = {
-                                                loading.value = true
-                                                mainViewModelLogin.signIn(
-                                                    email = emailText.value,
-                                                    password =passwordText,
-                                                    mainViewModelLogin = mainViewModelLogin,
-                                                    context = context,
-                                                    navController = navController,
-                                                    onFinished = {
-                                                        loading.value = false
-                                                    }
-                                                )
+
+                                                if(emailText.value != "" || passwordText != "") {
+                                                    loading.value = true
+                                                    mainViewModelLogin.signIn(
+                                                        email = emailText.value,
+                                                        password =passwordText,
+                                                        mainViewModelLogin = mainViewModelLogin,
+                                                        context = context,
+                                                        navController = navController,
+                                                        onFinished = {
+                                                            loading.value = false
+                                                        }
+                                                    )
+                                                }
+                                                else{
+                                                    Toast.makeText(context,"Debes de rellenar todos los campos",Toast.LENGTH_SHORT).show()
+                                                }
+
                                             },
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -188,7 +188,6 @@ fun MainLogin(
                                                 Text(text = "Iniciar sesión con Google")
                                             },
                                             onClick = {
-                                                //Comprobar inicio de sesión con google
                                                 loginWithGoogle.value = true
 
                                             },
@@ -236,63 +235,8 @@ fun MainLogin(
     )
 }
 
-fun generateContentLink(): Uri {
-    val baseUrl = Uri.parse("https://classManager.page.link")
-    val domain = "https://classManager.page.link"
-
-    val link = FirebaseDynamicLinks
-        .getInstance()
-        .createDynamicLink()
-        .setLink(baseUrl)
-        .setDomainUriPrefix(domain)
-        .setIosParameters(DynamicLink.IosParameters.Builder("com.your.bundleid").build())
-        .setAndroidParameters(DynamicLink.AndroidParameters.Builder("me.saine.android.Views.Register").build())
-        .buildDynamicLink()
-
-    return link.uri
-}
-
-/*
-private fun onShareClicked() {
-    val link = DynamicLinksUtil.generateContentLink()
-
-    val intent = Intent(Intent.ACTION_SEND)
-    intent.type = "text/plain"
-    intent.putExtra(Intent.EXTRA_TEXT, link.toString())
-
-    startActivity(Intent.createChooser(intent, "Share Link"))
-}
-*/
-
-fun crateDynamicLink() {
-    val dynamicLink = Firebase.dynamicLinks.dynamicLink {
-        link = Uri.parse("https://www.classManager.com/")
-        domainUriPrefix = "https://classManager.page.link"
-        // Open links with this app on Android
-        androidParameters("me.saine.android.Views.Register") {
-            minimumVersion = 125
-        }
-        socialMetaTagParameters {
-            title = "Example of a Dynamic Link"
-            description = "This link works whether the app is installed or not!"
-        }
-    }
-
-    val dynamicLinkUri = dynamicLink.uri
-}
-
-
-
-
-
-
-
-
-
-
-
 @Composable
-fun signInWithGoogle(
+fun SignInWithGoogle(
     activity: Activity
 ){
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

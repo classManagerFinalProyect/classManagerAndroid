@@ -10,7 +10,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun bigTextFieldWithErrorMessage(
+fun BigTextFieldWithErrorMessage(
     value: MutableState<String>,
     KeyboardType: KeyboardType,
     enabled: Boolean,

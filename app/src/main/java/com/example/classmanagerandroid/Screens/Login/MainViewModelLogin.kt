@@ -10,12 +10,10 @@ import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.Navigation.navController
 import com.example.classmanagerandroid.Screens.Utils.createSha256
-import com.example.classmanagerandroid.Screens.Utils.getSHA256
 import com.example.classmanagerandroid.data.remote.AppUser
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,21 +21,13 @@ import com.google.firebase.ktx.Firebase
 
 
 class MainViewModelLogin: ViewModel() {
-    var lista: MutableList<Int> = mutableListOf()
-    var auth: FirebaseAuth
-    var db: FirebaseFirestore
-    init {
-        db = FirebaseFirestore.getInstance()
-        auth = Firebase.auth
-        for(i in 0..100) {
-            lista.add(i)
-        }
-    }
+    var auth  = Firebase.auth
+    var db = FirebaseFirestore.getInstance()
 
     fun saveCurrentUser(onFinished: () -> Unit) {
         db.collection("users").get().addOnSuccessListener {
             for (document in it) {
-                if(document.id.equals(auth.currentUser?.uid.toString())) {
+                if(document.id == auth.currentUser?.uid.toString()) {
                     val currentUser = AppUser(
                         id = document.id,
                         name = document.get("name") as String,
@@ -86,9 +76,9 @@ class MainViewModelLogin: ViewModel() {
         db.collection("users")
             .document(auth.currentUser?.uid.toString())
             .get()
-            .addOnCompleteListener() {
+            .addOnCompleteListener {
                 if (it.result.exists())
-                    saveCurrentUser() { navController.navigate(Destinations.MainAppView.route) }
+                    saveCurrentUser { navController.navigate(Destinations.MainAppView.route) }
                 else
                     setInformationUser(account)
             }
@@ -112,7 +102,7 @@ class MainViewModelLogin: ViewModel() {
         db.collection("users")
             .document(auth.currentUser?.uid.toString())
             .set(newUser)
-        saveCurrentUser() {
+        saveCurrentUser {
             navController.navigate(Destinations.MainAppView.route)
         }
     }
@@ -131,7 +121,7 @@ class MainViewModelLogin: ViewModel() {
             if (task.isSuccessful) {
                 Log.d("Inicio de sesión", "Se ha iniciado la sesión")
                 Toast.makeText(context,"Usted se ha logeado correctamente", Toast.LENGTH_SHORT).show()
-                mainViewModelLogin.saveCurrentUser() {
+                mainViewModelLogin.saveCurrentUser {
                     navController.navigate(Destinations.MainAppView.route)
                 }
 

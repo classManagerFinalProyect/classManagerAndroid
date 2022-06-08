@@ -1,4 +1,4 @@
-package com.example.classmanagerandroid.Screens.Course
+package com.example.classmanagerandroid.Screens.ScreenItems.DropDownMenu
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 
 @Composable
-fun bigSelectedDropDownMenu(
+fun BigSelectedDropDownMenu(
     suggestions: List<String>,
     onValueChangeTextSelectedItem: (String) -> Unit,
     initialValue: String

@@ -17,8 +17,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Screens.Class.MainViewModelClass
-import com.example.classmanagerandroid.Screens.Practice.showDatePicker
-import com.example.classmanagerandroid.Screens.Register.bigOutlineTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowDatePicker
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigOutlineTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isAlphanumeric
 import com.example.classmanagerandroid.Screens.Utils.isValidDescription
@@ -26,7 +26,7 @@ import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.example.classmanagerandroid.data.remote.Practice
 
 @Composable
-fun addNewPractice(
+fun AddNewPractice(
     onValueCloseDialog: (Boolean) -> Unit,
     mainViewModelClass: MainViewModelClass,
     navController: NavController
@@ -53,7 +53,7 @@ fun addNewPractice(
 
 
             //Help variables
-            var context = LocalContext.current
+            val context = LocalContext.current
 
             Column(
                 verticalArrangement = Arrangement.Top,
@@ -63,7 +63,7 @@ fun addNewPractice(
                 content = {
                     Spacer(modifier = Modifier.padding(10.dp))
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Nombre de la práctica",
                         value = textName,
                         onValueChange = {  textName = it },
@@ -76,7 +76,7 @@ fun addNewPractice(
                         enabled = true
                     )
 
-                   showDatePicker(
+                   ShowDatePicker(
                        context = LocalContext.current,
                        textDate = textDeliveryDate,
                        onValueChangeTextDate = { textDeliveryDate = it },
@@ -86,7 +86,7 @@ fun addNewPractice(
                        icon = Icons.Default.DateRange
                    )
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Descripción de la práctica",
                         value = textDescription,
                         onValueChange = {  textDescription = it },
@@ -99,7 +99,7 @@ fun addNewPractice(
                         enabled = true
                     )
 
-                    bigOutlineTextFieldWithErrorMessage(
+                    BigOutlineTextFieldWithErrorMessage(
                         text = "Anotación del profesor",
                         value = textAnnotation,
                         onValueChange = {  textAnnotation = it },

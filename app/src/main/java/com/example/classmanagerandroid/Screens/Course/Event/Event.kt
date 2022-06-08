@@ -2,37 +2,25 @@ package com.example.classmanagerandroid.Screens.Course.Event
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import com.example.classmanagerandroid.Screens.Course.Event.Components.createNewEvent
-import com.example.classmanagerandroid.Screens.Course.Event.Components.mainAppBar
-import com.example.classmanagerandroid.Screens.Course.Event.Components.seeEvent
-import com.example.classmanagerandroid.Screens.Practice.showDatePicker
+import com.example.classmanagerandroid.Screens.Course.Event.Components.CreateNewEvent
+import com.example.classmanagerandroid.Screens.Course.Event.Components.MainAppBar
+import com.example.classmanagerandroid.Screens.Course.Event.Components.SeeEvent
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
-import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
-import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.LoadingDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.ConfirmAlertDialog
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.example.classmanagerandroid.data.remote.Class
 import com.example.classmanagerandroid.data.remote.Event
 import kotlinx.coroutines.delay
 
@@ -47,18 +35,15 @@ fun MainEvent(
     val context = LocalContext.current
     val searchWidgetState by mainViewModelEvent.searchWidgetState
     val searchTextState by mainViewModelEvent.searchTextState
-    val aplicateFilter = remember { mutableStateOf(true) }
-    var filter: String = ""
-    var (deleteItems,onValueChangeDeleteItems) = remember { mutableStateOf(false) }
-    val getClass = remember { mutableStateOf(true) }
-    val (addNewUser,onValueChangeAddNewUser) = remember { mutableStateOf(false) }
-    var (isRefreshing, onValueChangeIsRefreshing) = remember { mutableStateOf(false) }
-    var startView by remember { mutableStateOf(true) }//false
-    var (createEvent, onValueChangeCreateEvent) = remember { mutableStateOf(false) }
-    var (modifierItem,onValueChangeModifierItem) = remember { mutableStateOf(false) }
+    val applicativeFilter = remember { mutableStateOf(true) }
+    var filter = ""
+    val (deleteItems,onValueChangeDeleteItems) = remember { mutableStateOf(false) }
+    val (isRefreshing, onValueChangeIsRefreshing) = remember { mutableStateOf(false) }
+    val (createEvent, onValueChangeCreateEvent) = remember { mutableStateOf(false) }
+    val (modifierItem,onValueChangeModifierItem) = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
 
-    var (selectedEvent,onValueChangeSelectedEvent) = remember { mutableStateOf(Event("","","","","","",""))}
+    val (selectedEvent,onValueChangeSelectedEvent) = remember { mutableStateOf(Event("","","","","","",""))}
 
 
     var getCourse by remember { mutableStateOf(true) }
@@ -79,7 +64,7 @@ fun MainEvent(
     }
 
     if (loading.value){
-        loadingDialog(
+        LoadingDialog(
             loading = loading,
             informativeText = "Creando evento..."
         )
@@ -89,7 +74,7 @@ fun MainEvent(
         val title = "¿Seguro que desea eliminar todos los eventos?"
         val subtitle = "No podrás volver a recuperarlos."
 
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = title,
             subtitle = subtitle,
             onValueChangeGoBack = onValueChangeDeleteItems,
@@ -108,17 +93,16 @@ fun MainEvent(
     }
     if(modifierItem) {
         if(mainViewModelEvent.rolOfSelectedUserInCurrentCourse.rol == "admin") {
-            modifierEvent(
+            ModifierEvent(
                 onValueChangeModifierEvent = onValueChangeModifierItem,
                 mainViewModelEvent = mainViewModelEvent,
-                navController = navController,
                 event = selectedEvent,
                 onValueChangeSelectedEvent = onValueChangeSelectedEvent,
                 onValueChangeIsRefreshing = onValueChangeIsRefreshing,
             )
         }
         else {
-            seeEvent(
+            SeeEvent(
                 onValueChangeModifierEvent = onValueChangeModifierItem,
                 event = selectedEvent,
             )
@@ -126,7 +110,7 @@ fun MainEvent(
     }
 
     if (createEvent) {
-        createNewEvent(
+        CreateNewEvent(
             onValueChangeCreateEvent = onValueChangeCreateEvent,
             mainViewModelEvent = mainViewModelEvent,
             loading = loading
@@ -139,22 +123,20 @@ fun MainEvent(
         content =  {
             Scaffold(
                 topBar = {
-                    mainAppBar(
+                    MainAppBar(
                         searchWidgetState = searchWidgetState,
                         searchTextState = searchTextState,
                         onTextChange = {
                             mainViewModelEvent.updateSearchTextState(newValue = it)
-                            aplicateFilter.value = false
+                            applicativeFilter.value = false
                             filter = it.lowercase()
-                            aplicateFilter.value = true
+                            applicativeFilter.value = true
                         },
                         onCloseClicked = {
                             mainViewModelEvent.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
                         onSearchClicked = {
-                            /*aplicateFilter.value = false
-                            filter = it.lowercase()
-                            aplicateFilter.value = true*/
+
                         },
                         onSearchTriggered = {
                             mainViewModelEvent.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
@@ -162,7 +144,6 @@ fun MainEvent(
                         navController = navController,
                         mainViewModelEvent = mainViewModelEvent,
                         onValueChangeDeleteItems = onValueChangeDeleteItems,
-                        onValueChangeAddNewUser = onValueChangeAddNewUser,
                     )
                 },
                 floatingActionButton = {
@@ -188,11 +169,11 @@ fun MainEvent(
                                 cells = GridCells.Adaptive(minSize = 128.dp),
                                 contentPadding = PaddingValues(start = 30.dp, end = 30.dp)
                             ) {
-                                if (aplicateFilter.value) {
+                                if (applicativeFilter.value) {
                                     if(!loading.value) {
-                                        itemsIndexed(mainViewModelEvent.selectedEvents) { index: Int, item ->
+                                        itemsIndexed(mainViewModelEvent.selectedEvents) { _: Int, item ->
                                             if (item.name.lowercase().contains(filter)) {
-                                                longItemEvent(
+                                                LongItemEvent(
                                                     event = item,
                                                     onClick = {
                                                         onValueChangeSelectedEvent(item)

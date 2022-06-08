@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.classmanagerandroid.Screens.Course.bigSelectedDropDownMenu
+import com.example.classmanagerandroid.Screens.ScreenItems.DropDownMenu.BigSelectedDropDownMenu
 
 @Composable
-fun addNewUser(
+fun AddNewUser(
     onValueCloseDialog: (Boolean) -> Unit,
     onValueChangeIdOfUser: (String) -> Unit,
     value: String,
@@ -71,7 +71,7 @@ fun addNewUser(
                                 singleLine = true,
                             )
                             Spacer(modifier = Modifier.padding(6.dp))
-                            bigSelectedDropDownMenu (
+                            BigSelectedDropDownMenu (
                                 suggestions = suggestion,
                                 onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,
                                 initialValue = "Sin asignar"

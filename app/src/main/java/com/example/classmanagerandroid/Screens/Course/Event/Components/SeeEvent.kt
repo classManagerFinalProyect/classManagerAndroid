@@ -1,8 +1,6 @@
 package com.example.classmanagerandroid.Screens.Course.Event.Components
 
-import com.example.classmanagerandroid.Screens.Course.Event.MainViewModelEvent
-import com.example.classmanagerandroid.Screens.Course.Event.showTimePicker
-import android.widget.Toast
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowTimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +11,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -21,17 +18,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavController
-import com.example.classmanagerandroid.Screens.Practice.showDatePicker
-import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowDatePicker
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidName
-import com.example.classmanagerandroid.data.remote.Class
 import com.example.classmanagerandroid.data.remote.Event
 
 
 @Composable
-fun seeEvent(
+fun SeeEvent(
     onValueChangeModifierEvent: (Boolean) -> Unit,
     event: Event,
 ) {
@@ -40,7 +35,6 @@ fun seeEvent(
     val (textStartTime,onValueChangeStartTime) = remember { mutableStateOf(event.initialTime) }
     val (textFinalTime,onValueChangeFinalTime) = remember { mutableStateOf(event.finalTime) }
     val nameOfEvent = remember { mutableStateOf(event.name) }
-    val (selectedClass,onValueChangeSelectedClass) = remember { mutableStateOf(Class("","","", arrayListOf(), arrayListOf(),"","")) }
     val nameOfClass = remember { mutableStateOf(event.nameOfClass)}
     val errorOfNameEvent = remember { mutableStateOf(false) }
 
@@ -69,7 +63,7 @@ fun seeEvent(
                                 modifier = Modifier
                                     .fillMaxHeight(0.2f),
                                 content = {
-                                    bigTextFieldWithErrorMessage(
+                                    BigTextFieldWithErrorMessage(
                                         value = nameOfEvent,
                                         KeyboardType = KeyboardType.Text,
                                         enabled = false,
@@ -96,7 +90,7 @@ fun seeEvent(
                                 }
                             )
 
-                            showDatePicker(
+                            ShowDatePicker(
                                 context = context,
                                 textDate = textDate,
                                 onValueChangeTextDate = onValueChangeDate,
@@ -106,7 +100,7 @@ fun seeEvent(
                                 icon = Icons.Default.DateRange,
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora inicial",
                                 placeholder = "Hora inicial del evento",
@@ -116,7 +110,7 @@ fun seeEvent(
                                 enabled = false
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora Final",
                                 placeholder = "Hora final del evento",

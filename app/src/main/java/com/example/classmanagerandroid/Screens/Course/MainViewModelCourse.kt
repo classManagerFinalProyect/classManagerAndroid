@@ -25,12 +25,11 @@ import com.example.classmanagerandroid.data.remote.Course
 import com.example.classmanagerandroid.data.remote.AppUser
 import com.example.classmanagerandroid.data.remote.Class
 
-
 class MainViewModelCourse: ViewModel() {
 
     var selectedCourse: Course = Course(arrayListOf(), arrayListOf(), arrayListOf(),"","","","")
     var selectedClasses: MutableList<Class> = mutableListOf()
-    lateinit var addNewUser: AppUser
+    private lateinit var addNewUser: AppUser
     var rolOfSelectedUserInCurrentCourse: RolUser = RolUser(id = "", rol = "Sin asignar")
     val courseImg =  mutableStateOf<Uri?>(null)
 
@@ -60,7 +59,7 @@ class MainViewModelCourse: ViewModel() {
         }
     }
 
-    fun getCourseImg() {
+    private fun getCourseImg() {
         val gsReference = AccessToDataBase.storageInstance.getReferenceFromUrl(selectedCourse.img)
         gsReference.downloadUrl.addOnSuccessListener { courseImg.value = it }
     }
@@ -83,11 +82,11 @@ class MainViewModelCourse: ViewModel() {
                 if (it.result.exists()) {
                     val users = it.result.get("users") as  MutableList<HashMap<String,String>> //Any
                     val listOfRolUser: MutableList<RolUser> = mutableListOf()
-                    users.forEach {
+                    users.forEach { task ->
                         listOfRolUser.add(
                             RolUser(
-                                id = it.get("id") as String,
-                                rol = it.get("rol") as String
+                                id = task.get("id") as String,
+                                rol = task.get("rol") as String
                             )
                         )
                     }
@@ -121,7 +120,7 @@ class MainViewModelCourse: ViewModel() {
 
 
 
-    fun getSelectedClasses(
+    private fun getSelectedClasses(
         allSelectedClasses: MutableList<String>,
         onFinishResult: () -> Unit
     ) {
@@ -203,7 +202,7 @@ class MainViewModelCourse: ViewModel() {
                 Toast.makeText(context,"El curso se ha eliminado correctamente",Toast.LENGTH_SHORT).show()
             }
     }
-    fun deleteIfOfCourseByUserId(
+    private fun deleteIfOfCourseByUserId(
         idOfUser: String
     ) {
         db.collection("users")
@@ -229,7 +228,7 @@ class MainViewModelCourse: ViewModel() {
             }
     }
 
-    fun uploadUser(
+    private fun uploadUser(
         AppUser: AppUser
     ) {
         db.collection("users")
@@ -237,7 +236,7 @@ class MainViewModelCourse: ViewModel() {
             .set(AppUser)
     }
 
-    fun deleteClass(idOfClass: String) {
+    private fun deleteClass(idOfClass: String) {
         db.collection("classes")
             .document(idOfClass)
             .delete()
@@ -245,7 +244,7 @@ class MainViewModelCourse: ViewModel() {
             }
     }
 
-    fun updateUserById(
+    private fun updateUserById(
         id: String,
         newClassId: String
     ) {
@@ -299,7 +298,7 @@ class MainViewModelCourse: ViewModel() {
             id = document.id,
             idOfCourse = itemSelectedCurse.id,
             description = textDescription,
-            idPractices = mutableListOf<String>(),
+            idPractices = mutableListOf(),
             users = allRolUser,
             img = selectedCourse.img
         )
@@ -307,7 +306,7 @@ class MainViewModelCourse: ViewModel() {
         document
             .set(newClass)
             .addOnSuccessListener {
-            if(!itemSelectedCurse.name.equals("Sin asignar") ) {
+            if(itemSelectedCurse.name != "Sin asignar") {
                 itemSelectedCurse.classes.add(idOfDocument)
                 db.collection("course")
                     .document(itemSelectedCurse.id)
@@ -356,7 +355,7 @@ class MainViewModelCourse: ViewModel() {
             }
     }
 
-    fun checkIfUserIsInscribedInCourse(
+    private fun checkIfUserIsInscribedInCourse(
         idOfUser: String
     ):Boolean {
         selectedCourse.users.forEach {
@@ -395,7 +394,7 @@ class MainViewModelCourse: ViewModel() {
                             }
                         )
                         db.collection("users")
-                            .document("${idOfUser}")
+                            .document(idOfUser)
                             .set(addNewUser)
                             .addOnSuccessListener {
                                 db.collection("course")
@@ -419,7 +418,7 @@ class MainViewModelCourse: ViewModel() {
         )
     }
 
-    fun addNewMemberInCLasses(
+    private fun addNewMemberInCLasses(
         onFinished: () -> Unit,
         rolUser: RolUser
     ){
@@ -442,17 +441,17 @@ class MainViewModelCourse: ViewModel() {
     ) {
         updateCourse(
             newCourse = updateCourse,
-            onFinished = { finish: Boolean, course: Course ->
+            onFinished = { _: Boolean, _: Course ->
                 CurrentUser.getMyCourses( onFinished = {} )
                 onFinishResult()
             }
         )
     }
-    fun getRolOfUser(
+    private fun getRolOfUser(
         idOfUser: String
     ) {
         selectedCourse.users.forEach {
-            if (it.id.equals(idOfUser)) rolOfSelectedUserInCurrentCourse = it
+            if (it.id == idOfUser) rolOfSelectedUserInCurrentCourse = it
         }
     }
 

@@ -15,11 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.classmanagerandroid.Screens.Course.Event.MainViewModelEvent
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.defaultTopBar
-import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.searchAppBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.DefaultTopBar
+import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchAppBar
 
 @Composable
-fun mainAppBar(
+fun MainAppBar(
     searchWidgetState: SearchWidgetState,
     searchTextState: String,
     onTextChange: (String) -> Unit,
@@ -29,13 +29,12 @@ fun mainAppBar(
     navController: NavController,
     mainViewModelEvent: MainViewModelEvent,
     onValueChangeDeleteItems: (Boolean) -> Unit,
-    onValueChangeAddNewUser: (Boolean) -> Unit,
 ) {
     val expanded = remember { mutableStateOf(false) }
 
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
-            defaultTopBar(
+            DefaultTopBar(
                 title = "List of events",
                 navigationContent = {
                     IconButton(
@@ -103,7 +102,7 @@ fun mainAppBar(
             )
         }
         SearchWidgetState.OPENED -> {
-            searchAppBar(
+            SearchAppBar(
                 text = searchTextState,
                 onTextChange = onTextChange,
                 onCloseClicked = onCloseClicked,

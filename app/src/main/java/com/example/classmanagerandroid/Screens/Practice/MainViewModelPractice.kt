@@ -32,7 +32,7 @@ class MainViewModelPractice: ViewModel() {
         )
     }
 
-    fun getRolOfClass(
+    private fun getRolOfClass(
         idOfUser: String
     ) {
         currentClass.users.forEach {
@@ -51,7 +51,7 @@ class MainViewModelPractice: ViewModel() {
             .addOnSuccessListener {
                 getClassById(
                     idOfClass = it.get("idOfClass") as String,
-                    onFinished = { finish, newClass ->
+                    onFinished = { _, newClass ->
                         currentClass = newClass
                         getRolOfClass(CurrentUser.currentUser.id)
                     }

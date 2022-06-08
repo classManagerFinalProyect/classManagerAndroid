@@ -3,7 +3,6 @@ package com.example.classmanagerandroid.Screens.Course
 
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,17 +24,16 @@ import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
-import com.example.classmanagerandroid.Screens.Course.Components.mainAppBar
+import com.example.classmanagerandroid.Screens.Course.Components.EditCourse
+import com.example.classmanagerandroid.Screens.Course.Components.MainAppBar
 import com.example.classmanagerandroid.Screens.ScreenComponents.TopBar.SearchBar.SearchWidgetState
-import com.example.classmanagerandroid.Screens.ScreenItems.Cards.longHorizontalCard
-import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.loadingDialog
-import com.example.classmanagerandroid.Screens.ScreenItems.confirmAlertDialog
+import com.example.classmanagerandroid.Screens.ScreenItems.Cards.LongHorizontalCard
+import com.example.classmanagerandroid.Screens.ScreenItems.Dialogs.ConfirmAlertDialog
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.example.classmanagerandroid.data.network.AccessToDataBase
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -51,11 +48,11 @@ fun MainCourse(
     //Help variables
     val loading = remember { mutableStateOf(true) }
     val context = LocalContext.current
-    var (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
+    val (deleteItem,onValueChangeDeleteItem) = remember { mutableStateOf(false)}
     val searchWidgetState by mainViewModelCourse.searchWidgetState
     val searchTextState by mainViewModelCourse.searchTextState
     val applyFilter = remember { mutableStateOf(true) }
-    var filter: String = ""
+    var filter = ""
     val getCourse = remember { mutableStateOf(true) }
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -80,14 +77,13 @@ fun MainCourse(
     val (IdOfUser,onValueChangeIdOfUser) = remember { mutableStateOf("") }
     val (addNewUser,onValueChangeAddNewUser) = remember { mutableStateOf(false) }
     val (textSelectedItem,onValueChangeTextSelectedItem) = remember { mutableStateOf("Sin asignar") }
-    val (viewMembers,onValueChangeViewMembers) = remember { mutableStateOf(false) }
 
 
     if (leaveCourse.value) {
-        var title = "¿Seguro que desea dejar este curso?"
-        var subtitle = "El administrador deberá de darle nuevamente el acceso"
+        val title = "¿Seguro que desea dejar este curso?"
+        val subtitle = "El administrador deberá de darle nuevamente el acceso"
 
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = title,
             subtitle = subtitle,
             onValueChangeGoBack = { leaveCourse.value = it },
@@ -107,14 +103,14 @@ fun MainCourse(
         )
     }
     if(getInformation) {
-        editCourse(
+        EditCourse(
             onValueChangeGetInformation = onValueChangeGetInformation,
             mainViewModelCourse = mainViewModelCourse
         )
     }
 
     if (addNewUser) {
-        addNewUser(
+        AddNewUser(
             onValueCloseDialog = onValueChangeAddNewUser,
             onValueChangeIdOfUser = onValueChangeIdOfUser,
             onValueChangeTextSelectedItem = onValueChangeTextSelectedItem,
@@ -131,14 +127,13 @@ fun MainCourse(
 
 
     if (deleteItem) {
-        var title: String = "¿Seguro que desea eliminar el Curso seleccionado?"
-        var subtitle: String = ""
-        if (mainViewModelCourse.selectedClasses.size == 0)
-            subtitle = "Este curso no contiene ninguna clase"
+        val title = "¿Seguro que desea eliminar el Curso seleccionado?"
+        val subtitle = if (mainViewModelCourse.selectedClasses.size == 0)
+            "Este curso no contiene ninguna clase"
         else
-            subtitle = "Este curso contiene ${mainViewModelCourse.selectedClasses.size} clases, se eliminarán también. "
+            "Este curso contiene ${mainViewModelCourse.selectedClasses.size} clases, se eliminarán también. "
 
-        confirmAlertDialog(
+        ConfirmAlertDialog(
             title = title,
             subtitle = subtitle,
             onValueChangeGoBack = onValueChangeDeleteItem,
@@ -166,7 +161,7 @@ fun MainCourse(
         content =  {
             Scaffold(
                 topBar = {
-                    mainAppBar(
+                    MainAppBar(
                         searchWidgetState = searchWidgetState,
                         searchTextState = searchTextState,
                         onTextChange = {
@@ -179,9 +174,7 @@ fun MainCourse(
                             mainViewModelCourse.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
                         onSearchClicked = {
-                            /*aplicateFilter.value = false
-                            filter = it.lowercase()
-                            aplicateFilter.value = true*/
+
                         },
                         onSearchTriggered = {
                             mainViewModelCourse.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
@@ -214,7 +207,7 @@ fun MainCourse(
                                             gsReference.downloadUrl.addOnSuccessListener { classImg.value = it }
 
                                             if (item.name.lowercase().contains(filter)) {
-                                                longHorizontalCard(
+                                                LongHorizontalCard(
                                                     title = item.name,
                                                     subtitle = "${item.idPractices.size}",
                                                     onClick = {
@@ -236,8 +229,8 @@ fun MainCourse(
 
                                     if(mainViewModelCourse.rolOfSelectedUserInCurrentCourse.rol == "admin") {
                                         item {
-                                            var newClass = remember{ mutableStateOf("") }
-                                            var newClassError = remember{ mutableStateOf(false) }
+                                            val newClass = remember{ mutableStateOf("") }
+                                            val newClassError = remember{ mutableStateOf(false) }
                                             val newItem = remember { mutableStateOf(false) }
                                             Card(
                                                 modifier = Modifier

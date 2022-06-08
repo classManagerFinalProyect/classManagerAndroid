@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun longButton(
+fun LongButton(
     text: String,
     onClick: () -> Unit
 ) {
@@ -22,7 +22,7 @@ fun longButton(
             onClick()
         },
         content = {
-            Text(text = "${text}")
+            Text(text = text)
         }
     )
 }

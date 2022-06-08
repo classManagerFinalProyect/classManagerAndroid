@@ -19,4 +19,5 @@ sealed class Destinations (
     object Events: Destinations(route = "Views.Course.Events.Events")
     object ViewMembers: Destinations(route = "Views.Course.ViewMembers.VieMembers")
     object ViewMembersClass: Destinations(route = "Views.Class.ViewMembersClass.ViewMembersClass")
+    object SplashScreen: Destinations(route = "Views.SplashScreen")
 }

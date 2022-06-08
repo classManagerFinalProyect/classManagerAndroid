@@ -21,16 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.classmanagerandroid.Screens.Course.Event.MainViewModelEvent
-import com.example.classmanagerandroid.Screens.Course.Event.bigSelectedDropDownMenuClassItem
-import com.example.classmanagerandroid.Screens.Course.Event.showTimePicker
-import com.example.classmanagerandroid.Screens.Practice.showDatePicker
-import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.bigTextFieldWithErrorMessage
+import com.example.classmanagerandroid.Screens.Course.Event.BigSelectedDropDownMenuClassItem
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowTimePicker
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.ShowDatePicker
+import com.example.classmanagerandroid.Screens.ScreenItems.Inputs.BigTextFieldWithErrorMessage
 import com.example.classmanagerandroid.Screens.Utils.CommonErrors
 import com.example.classmanagerandroid.Screens.Utils.isValidName
 import com.example.classmanagerandroid.data.remote.Class
 
 @Composable
-fun createNewEvent(
+fun CreateNewEvent(
     onValueChangeCreateEvent: (Boolean) -> Unit,
     mainViewModelEvent: MainViewModelEvent,
     loading: MutableState<Boolean>
@@ -67,7 +67,7 @@ fun createNewEvent(
                                 modifier = Modifier
                                     .fillMaxHeight(0.2f),
                                 content = {
-                                    bigTextFieldWithErrorMessage(
+                                    BigTextFieldWithErrorMessage(
                                         value = nameOfEvent,
                                         KeyboardType = KeyboardType.Text,
                                         enabled = true,
@@ -79,13 +79,13 @@ fun createNewEvent(
                                     )
                                 }
                             )
-                            bigSelectedDropDownMenuClassItem(
+                            BigSelectedDropDownMenuClassItem(
                                 label = "Clase asignada",
                                 suggestions = mainViewModelEvent.selectedClasses,
                                 onValueChangeTextSelectedItem =  onValueChangeSelectedClass
                             )
 
-                            showDatePicker(
+                            ShowDatePicker(
                                 context = context,
                                 textDate = textDate,
                                 onValueChangeTextDate = onValueChangeDate,
@@ -95,7 +95,7 @@ fun createNewEvent(
                                 icon = Icons.Default.DateRange
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora inicial",
                                 placeholder = "Hora inicial del evento",
@@ -105,7 +105,7 @@ fun createNewEvent(
                                 enabled = true
                             )
 
-                            showTimePicker(
+                            ShowTimePicker(
                                 context = context,
                                 label = "Hora Final",
                                 placeholder = "Hora final del evento",

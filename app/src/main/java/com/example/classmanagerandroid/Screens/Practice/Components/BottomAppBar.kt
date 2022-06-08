@@ -26,7 +26,7 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun bottomAppBar(
+fun BottomAppBar(
     value: MutableState<String>,
     mainViewModelPractice: MainViewModelPractice,
     refresh: MutableState<Boolean>

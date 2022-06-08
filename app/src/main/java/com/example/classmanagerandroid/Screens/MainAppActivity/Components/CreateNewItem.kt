@@ -1,4 +1,4 @@
-package me.saine.android.Views.MainAppActivity
+package com.example.classmanagerandroid.Screens.MainAppActivity.Components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,11 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.Navigation.Destinations
 import com.example.classmanagerandroid.R
 @Composable
-fun createNewItem(
+fun CreateNewItem(
     navController: NavController,
     onValueChangeCreateItem: (Boolean) -> Unit
 ) {
