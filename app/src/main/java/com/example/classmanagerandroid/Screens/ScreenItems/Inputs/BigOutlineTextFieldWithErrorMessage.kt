@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun BigOutlineTextFieldWithErrorMessage(
     text: String,
@@ -19,7 +22,7 @@ fun BigOutlineTextFieldWithErrorMessage(
     error: Boolean,
     mandatory: Boolean,
     KeyboardType : KeyboardType,
-    enabled : Boolean
+    enabled : Boolean,
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,

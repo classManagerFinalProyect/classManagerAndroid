@@ -119,7 +119,7 @@ fun MainCreateCourse(
                                     errorMessage = CommonErrors.notValidDescription,
                                     changeError = { descriptionError = it},
                                     error = descriptionError,
-                                    mandatory = true,
+                                    mandatory = false,
                                     KeyboardType = KeyboardType.Text,
                                     enabled = true
                                 )

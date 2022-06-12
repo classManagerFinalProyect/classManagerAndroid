@@ -34,8 +34,42 @@ class MainViewModelClass:ViewModel() {
     private lateinit var addNewUser: AppUser
     val classImg =  mutableStateOf<Uri?>(null)
 
+
+    fun leaveClass(
+        onFinishResult: () -> Unit,
+        context: Context,
+        navController: NavController
+    ) {
+        selectedClass.users.remove(rolOfSelectedUserInCurrentClass)
+        if(selectedClass.users.size == 0) {
+            deleteClass(
+                context = context,
+                navController = navController
+            )
+        }
+        else {
+            updateClass(
+                newClass =  selectedClass,
+                onFinished = {_: Boolean, _: Class ->
+
+                }
+            )
+        }
+
+        CurrentUser.currentUser.classes.remove(selectedClass.id)
+        CurrentUser.myClasses.remove(selectedClass)
+
+        updateUser(
+            idOfUser = CurrentUser.currentUser.id,
+            user = CurrentUser.currentUser,
+            onFinished = {
+                onFinishResult()
+            }
+        )
+    }
+
     fun clearVariables() {
-        selectedClass= Class("","","", arrayListOf(), arrayListOf(),"","")
+        selectedClass = Class("","","", arrayListOf(), arrayListOf(),"","")
         selectedPractices = arrayListOf()
         rolOfSelectedUserInCurrentClass = RolUser(id = "", rol = "Sin asignar")
         addNewUser = AppUser("","","", arrayListOf(), arrayListOf(),"","","")

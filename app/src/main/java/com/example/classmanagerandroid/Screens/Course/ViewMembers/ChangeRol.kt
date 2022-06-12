@@ -144,7 +144,7 @@ fun changeRol(
                                     TextButton(
                                         onClick = {
                                               mainViewModelViewMembers.updateRol(
-                                                  idOfuser = selectedUser.id,
+                                                  idOfUser = selectedUser.id,
                                                   newRol = textSelectedItem,
                                                   onFinish = {
                                                       onValueChangeIsRefreshing(true)

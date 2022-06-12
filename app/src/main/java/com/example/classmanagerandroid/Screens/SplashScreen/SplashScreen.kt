@@ -60,7 +60,7 @@ fun Splash(alpha: Float) {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_sin_fondo),
+            painter = painterResource(id = R.drawable.class_manager_sin_fondo),
             contentDescription = "Logo",
             modifier = Modifier
                 .height(300.dp)

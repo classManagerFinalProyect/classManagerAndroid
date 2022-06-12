@@ -51,6 +51,7 @@ fun MainClass(
     var showAddPractice by remember { mutableStateOf(false)}
     val editClass = remember { mutableStateOf(false)}
     val loading = remember { mutableStateOf(true) }
+    val leaveClass = remember { mutableStateOf(false) }
 
     if(editClass.value) {
         EditClass(
@@ -106,6 +107,29 @@ fun MainClass(
                     )
                 }
                 onValueChangeDeleteItem(false)
+            }
+        )
+    }
+
+    if (leaveClass.value) {
+        val title = "¿Seguro que desea abandonar la clase seleccionada?"
+        val subtitle = "No podrás volver a acceder sin permiso del administrador "
+
+        ConfirmAlertDialog(
+            title = title,
+            subtitle = subtitle,
+            onValueChangeGoBack = { leaveClass.value = it},
+            onFinishAlertDialog = {
+                if (it) {
+                    mainViewModelClass.leaveClass(
+                        navController =  navController,
+                        context = context,
+                        onFinishResult = {
+                            navController.navigate(Destinations.MainAppView.route)
+                        }
+                    )
+                }
+                leaveClass.value = false
             }
         )
     }
@@ -171,7 +195,8 @@ fun MainClass(
                             onValueChangeDeleteItem = onValueChangeDeleteItem,
                             onValueChangeAddNewUser = onValueChangeAddNewUser,
                             editClass = editClass,
-                            loading = loading
+                            loading = loading,
+                            leaveClass = leaveClass
                         )
                     },
                     content = {

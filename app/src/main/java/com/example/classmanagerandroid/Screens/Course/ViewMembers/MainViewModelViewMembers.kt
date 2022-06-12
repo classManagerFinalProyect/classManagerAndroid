@@ -121,16 +121,17 @@ class MainViewModelViewMembers: ViewModel() {
     }
 
     fun updateRol(
-        idOfuser: String,
+        idOfUser: String,
         newRol: String,
         onFinish: () -> Unit
     ) {
         selectedCourse.users.forEach {
-            if(it.id == idOfuser) {
+            if(it.id == idOfUser) {
                 it.rol = newRol
+
                 updateCourse(
                     newCourse = selectedCourse,
-                    onFinished = { finish, course ->
+                    onFinished = { finish, _ ->
                         if (finish) {
                             Log.d("Update course","update course")
                         }

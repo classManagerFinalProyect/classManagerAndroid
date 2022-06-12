@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -15,6 +18,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.classmanagerandroid.R
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun BigPasswordInputWithErrorMessage(
     value: String,
@@ -24,7 +28,8 @@ fun BigPasswordInputWithErrorMessage(
     errorMessage:  String,
     validateError: (String) -> Boolean,
     mandatory: Boolean,
-    keyboardType: KeyboardType
+    keyboardType: KeyboardType,
+    keyActionEnter: () -> Unit
 ) {
 
     var hidden by remember { mutableStateOf(true) }
@@ -68,6 +73,15 @@ fun BigPasswordInputWithErrorMessage(
               modifier = Modifier
                   .fillMaxWidth()
                   .focusRequester(focusRequester)
+                  .onPreviewKeyEvent {
+                      when{
+                          (it.key == Key.Enter && it.type == KeyEventType.KeyDown) -> {
+                              keyActionEnter()
+                              true
+                          }
+                          else -> false
+                      }
+                  }
           )
           val assistiveElementText = if (valueError) errorMessage else if (mandatory) "*Obligatorio" else ""
           val assistiveElementColor = if (valueError) {

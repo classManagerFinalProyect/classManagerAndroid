@@ -106,9 +106,9 @@ class MainViewModelViewMembersClass: ViewModel() {
                 it.rol = newRol
                 updateClass(
                     newClass = selectedClass,
-                    onFinished = { finish, course ->
+                    onFinished = { finish, _ ->
                         if (finish) {
-                            Log.d("Update course", "update course")
+                            Log.d("Update class", "update class")
                         }
                         onFinish()
                     }

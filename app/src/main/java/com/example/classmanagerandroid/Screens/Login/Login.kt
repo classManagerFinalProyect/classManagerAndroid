@@ -120,7 +120,7 @@ fun MainLogin(
                                             error = emailError,
                                             mandatory = true,
                                             KeyboardType = KeyboardType.Text,
-                                            enabled = true
+                                            enabled = true,
                                         )
                                     }
 
@@ -133,7 +133,26 @@ fun MainLogin(
                                             errorMessage = CommonErrors.notValidPassword,
                                             validateError = ::isValidPassword,
                                             mandatory = false,
-                                            keyboardType = KeyboardType.Text
+                                            keyboardType = KeyboardType.Password,
+                                            keyActionEnter = {
+
+                                                if(emailText.value != "" || passwordText != "") {
+                                                    loading.value = true
+                                                    mainViewModelLogin.signIn(
+                                                        email = emailText.value,
+                                                        password =passwordText,
+                                                        mainViewModelLogin = mainViewModelLogin,
+                                                        context = context,
+                                                        navController = navController,
+                                                        onFinished = {
+                                                            loading.value = false
+                                                        }
+                                                    )
+                                                }
+                                                else{
+                                                    Toast.makeText(context,"Debes de rellenar todos los campos",Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
                                         )
                                     }
                                     item {
@@ -234,6 +253,7 @@ fun MainLogin(
         }
     )
 }
+
 
 @Composable
 fun SignInWithGoogle(

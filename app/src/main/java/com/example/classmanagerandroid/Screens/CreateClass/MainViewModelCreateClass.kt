@@ -43,7 +43,7 @@ class MainViewModelCreateClass: ViewModel() {
             newClass = newClass,
             onFinished = { success, newClass ->
                 if (success) {
-                    if(itemSelectedCurse.name != "Sin asignar") {
+                    if(itemSelectedCurse.name != "Sin Asignar") {
                         itemSelectedCurse.classes.add(newClass.id)
                         updateCourse(
                             newCourse = itemSelectedCurse,

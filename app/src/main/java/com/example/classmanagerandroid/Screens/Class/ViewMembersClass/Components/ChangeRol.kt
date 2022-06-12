@@ -23,7 +23,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
 import com.example.classmanagerandroid.Screens.Course.ViewMembers.bigSelectedDropDownMenuMembers
+import com.example.classmanagerandroid.data.local.CurrentUser
 import com.example.classmanagerandroid.data.remote.AppUser
+import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun ChangeRolClass(
@@ -35,6 +37,14 @@ fun ChangeRolClass(
     val selectedRolUser = mainViewModelViewMembersClass.getRolOfUserById(selectedUser.id)
     val suggestion: MutableList<String> = mutableListOf("admin","profesor","padre","alumno")
     val (textSelectedItem, onValueChangeTextSelectedItem) = remember{ mutableStateOf(selectedRolUser.rol)}
+
+    val storage = FirebaseStorage.getInstance()
+    val gsReference = storage.getReferenceFromUrl(CurrentUser.currentUser.imgPath)
+    var myImg = remember { mutableStateOf<Uri?>(null)}
+
+    gsReference.downloadUrl.addOnSuccessListener{
+        myImg.value = it
+    }
 
 
     Dialog(
@@ -70,9 +80,7 @@ fun ChangeRolClass(
                                     ),
                                 content = {
                                     Image(
-                                        painter = rememberAsyncImagePainter(
-                                            model = Uri.parse(selectedUser.imgPath)
-                                        ),
+                                        painter = rememberAsyncImagePainter(myImg),
                                         contentDescription = "avatar",
                                         modifier = Modifier
                                             .size(150.dp)
@@ -128,21 +136,24 @@ fun ChangeRolClass(
                                         )
                                     ),
                                 content = {
-                                    if (mainViewModelViewMembersClass.currentRolUser.rol.equals("admin")) {
-                                        TextButton(
-                                            onClick = {
-                                                onValueChangeRol(false)
-                                                mainViewModelViewMembersClass.deleteRolUser(
-                                                    selectedUser = selectedUser,
-                                                    onFinish = {
-                                                        onValueChangeIsRefreshing(true)
-                                                    }
-                                                )
-                                            },
-                                            content = {
-                                                Text(text = "Eliminar", color = Color.Red)
-                                            }
-                                        )
+                                    if (mainViewModelViewMembersClass.currentRolUser.rol == "admin") {
+                                        if(mainViewModelViewMembersClass.selectedClass.idOfCourse == "Sin Asignar" || mainViewModelViewMembersClass.selectedClass.idOfCourse == "") {
+                                            TextButton(
+                                                onClick = {
+                                                    onValueChangeRol(false)
+                                                    mainViewModelViewMembersClass.deleteRolUser(
+                                                        selectedUser = selectedUser,
+                                                        onFinish = {
+                                                            onValueChangeIsRefreshing(true)
+                                                        }
+                                                    )
+                                                },
+                                                content = {
+                                                    Text(text = "Eliminar", color = Color.Red)
+                                                }
+                                            )
+                                        }
+
                                         TextButton(
                                             onClick = {
                                                 mainViewModelViewMembersClass.updateRol(

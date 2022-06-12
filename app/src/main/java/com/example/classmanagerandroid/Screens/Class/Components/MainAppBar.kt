@@ -30,9 +30,11 @@ fun MainAppBar(
     onValueChangeDeleteItem: (Boolean) -> Unit,
     onValueChangeAddNewUser: (Boolean) -> Unit,
     editClass: MutableState<Boolean>,
-    loading: MutableState<Boolean>
+    loading: MutableState<Boolean>,
+    leaveClass: MutableState<Boolean>
 ) {
     val expanded = remember { mutableStateOf(false) }
+
 
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
@@ -115,6 +117,19 @@ fun MainAppBar(
                                                 Text(text = "Ver miembros")
                                             }
                                         )
+
+                                        if(mainViewModelClass.selectedClass.idOfCourse == "Sin Asignar" || mainViewModelClass.selectedClass.idOfCourse == "") {
+                                            DropdownMenuItem(
+                                                onClick = {
+                                                    leaveClass.value = true
+                                                },
+                                                content = {
+                                                    Text(text = "Abandonar clase")
+                                                }
+                                            )
+                                        }
+
+
                                         if (mainViewModelClass.rolOfSelectedUserInCurrentClass.rol == "admin") {
                                             DropdownMenuItem(
                                                 onClick = {

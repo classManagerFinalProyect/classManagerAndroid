@@ -306,7 +306,7 @@ class MainViewModelCourse: ViewModel() {
         document
             .set(newClass)
             .addOnSuccessListener {
-            if(itemSelectedCurse.name != "Sin asignar") {
+            if(itemSelectedCurse.name != "Sin Asignar") {
                 itemSelectedCurse.classes.add(idOfDocument)
                 db.collection("course")
                     .document(itemSelectedCurse.id)

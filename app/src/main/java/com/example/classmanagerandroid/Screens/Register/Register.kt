@@ -121,8 +121,9 @@ fun MainRegister(
                                 errorMessage = CommonErrors.notValidPassword,
                                 validateError = ::isValidPassword,
                                 mandatory = true,
-                                keyboardType = KeyboardType.Text
-                            )
+                                keyboardType = KeyboardType.Text,
+                                keyActionEnter = {}
+                             )
                         }
                         item {
                             BigPasswordInputWithErrorMessage(
@@ -133,7 +134,8 @@ fun MainRegister(
                                 errorMessage = CommonErrors.notValidPassword,
                                 validateError = ::isValidPassword,
                                 mandatory = true,
-                                keyboardType = KeyboardType.Text
+                                keyboardType = KeyboardType.Text,
+                                keyActionEnter = {}
                             )
                         }
 
@@ -172,7 +174,7 @@ fun MainRegister(
                                                 navController = navController,
                                                 onFinished = {
                                                     if(!it) {
-                                                        Toast.makeText(context,"No se ha podido crear el usuario, pruebe con otra cuenta",Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context,"No se ha podido crear el usuario, pruebe con otro email",Toast.LENGTH_SHORT).show()
                                                     }
                                                     loading.value = false
                                                 }
